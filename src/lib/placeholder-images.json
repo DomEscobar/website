@@ -1,0 +1,58 @@
+{
+  "placeholderImages": [
+    {
+      "id": "project-derplanner-ai",
+      "description": "DerPlanner AI project image",
+      "imageUrl": "https://storage.googleapis.com/placho_bucket/Screenshot_1.png",
+      "imageHint": "task planner app"
+    },
+    {
+      "id": "project-1000-prototypes",
+      "description": "1000 Prototypes project image",
+      "imageUrl": "https://storage.googleapis.com/placho_bucket/1000prto.png",
+      "imageHint": "AI agents"
+    },
+    {
+      "id": "project-pdf-editor",
+      "description": "PDF Editor project image",
+      "imageUrl": "https://storage.googleapis.com/placho_bucket/pdf.png",
+      "imageHint": "pdf editor interface"
+    },
+    {
+      "id": "project-crm-board",
+      "description": "CRM Canvas Board project image",
+      "imageUrl": "https://storage.googleapis.com/placho_bucket/CRM.png",
+      "imageHint": "crm board interface"
+    },
+    {
+      "id": "project-derplanner-ai-detail",
+      "description": "DerPlanner AI project detail image",
+      "imageUrl": "https://images.unsplash.com/photo-1547078216-775c7c880f12?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHx3aWRlc2NyZWVuJTIwdGFzayUyMHBsYW5uZXJ8ZW58MHx8fHwxNzYzMjg4OTg1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "widescreen task planner"
+    },
+    {
+      "id": "project-1000-prototypes-detail",
+      "description": "1000 Prototypes project detail image",
+      "imageUrl": "https://storage.googleapis.com/placho_bucket/1000prto.png",
+      "imageHint": "AI agents"
+    },
+    {
+      "id": "project-pdf-editor-detail",
+      "description": "PDF Editor project detail image",
+      "imageUrl": "https://storage.googleapis.com/placho_bucket/pdf.png",
+      "imageHint": "pdf editor interface widescreen"
+    },
+    {
+      "id": "project-crm-board-detail",
+      "description": "CRM Canvas Board project detail image",
+      "imageUrl": "https://storage.googleapis.com/placho_bucket/CRM.png",
+      "imageHint": "crm board interface widescreen"
+    },
+    {
+      "id": "project-github-more",
+      "description": "GitHub profile link image",
+      "imageUrl": "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxnaXRodWJ8ZW58MHx8fHwxNzE3NTk5NjM0fDA&ixlib=rb-4.0.3&q=80&w=1080",
+      "imageHint": "github logo"
+    }
+  ]
+}

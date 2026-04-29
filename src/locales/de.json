@@ -1,0 +1,113 @@
+
+{
+  "navbar": {
+    "about": "Über mich",
+    "projects": "Projekte",
+    "skills": "Fähigkeiten",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "subtitle": "Fullstack Entwickler | Architekt | KI"
+  },
+  "about": {
+    "title": "Über mich",
+    "stat1": "Jahre Berufserfahrung",
+    "p1": "Ich bin Softwarearchitekt und Entwickler aus Leidenschaft – immer auf der Suche nach dem elegantesten Weg von A nach B (oder manchmal Z, wenn es spannender ist). Mein Ziel? Komplexes so einfach zu machen, dass es Spaß macht, und Code zu schreiben, der nicht nur funktioniert, sondern auch in 6 Monaten noch verständlich ist.",
+    "p2": "Wenn ich nicht gerade Pixel schubse oder Datenbanken optimiere, gestalte ich digitale Erlebnisse, die hängenbleiben. Technik ist mein Werkzeug, Kreativität mein Treibstoff.",
+    "ai_title": "Mein Ansatz ist ‚AI first‘!",
+    "ai_text": "Warum alles selbst machen, wenn man smarte Assistenten hat? Ich nutze KI, um schneller, besser und innovativer zu bauen – für Software, die heute schon im Morgen lebt."
+  },
+  "projects": {
+    "title": "Meine öffentlichen Projekte",
+    "subtitle": "Projekte, die ich erstellt habe und deren Code meist öffentlich zugänglich ist.",
+    "project_items": {
+      "derplanner-ai": {
+        "title": "DerPlanner AI",
+        "subtitle": "Der teilbare Aufgaben-Event-Planer",
+        "description": "Eine KI-gestützte Planungsanwendung, die das Organisieren von Aufgaben und Veranstaltungen vereinfacht. Benutzer können Aufgaben in natürlicher Sprache hinzufügen, und die KI strukturiert, priorisiert und plant sie automatisch. Die Planner sind einfach per Link teilbar, um die Zusammenarbeit zu erleichtern."
+      },
+      "1000-prototypes": {
+        "title": "1000 Prototypes",
+        "subtitle": "Parallele Ausführung von KI-Agenten",
+        "description": "Führen Sie mehrere KI-Agenten parallel aus, um Prototypen von Websites, Bildern, Blogposts und mehr zu erstellen."
+      },
+      "pdf-editor": {
+        "title": "PDF Editor",
+        "subtitle": "Super einfacher PDF-Editor",
+        "description": "Ein unkomplizierter PDF-Editor zum schnellen Kommentieren, Zeichnen und Signieren von Dokumenten direkt im Browser. Keine Installation erforderlich, einfach hochladen und bearbeiten."
+      },
+      "crm-board": {
+        "title": "CRM Canvas Board",
+        "subtitle": "Ein Werkzeug zur Visualisierung von Workflows",
+        "description": "Ein einfaches und intuitives CRM-Board, inspiriert von Canva, zur Visualisierung und Verwaltung von Arbeitsabläufen. Ermöglicht das einfache Verwalten von Kontakten und Prozessen per Drag-and-Drop."
+      },
+      "more-on-github": {
+        "title": "Mehr auf GitHub",
+        "subtitle": "Entdecken Sie weitere Projekte und Codebeispiele",
+        "description": ""
+      }
+    }
+  },
+  "brands": {
+    "title": "Marken, die mir vertrauen",
+    "subtitle": "Einblicke in meine Kernverantwortlichkeiten bei führenden Unternehmen.",
+    "details": {
+      "lidl": {
+        "name": "Lidl",
+        "role": "Softwarearchitekt & Full-Stack Entwickler",
+        "description": "Betreuung und Weiterentwicklung von digitalen Plattformen mit über 5 Millionen monatlichen Nutzern. Mein Fokus lag auf Skalierbarkeit, Performance und der Implementierung neuer, kundenorientierter Features."
+      },
+      "vega": {
+        "name": "VEGA",
+        "role": "Architekt & Lead Entwickler",
+        "description": "Konzeption und Entwicklung eines komplexen, internen ERP-Lagersystems von Grund auf. Ziel war die Optimierung der Logistikprozesse durch eine moderne, maßgeschneiderte Softwarelösung."
+      },
+      "stackit": {
+        "name": "StackIT / Schwarz Digits",
+        "role": "Cloud & Software Architekt",
+        "description": "Entwicklung und Architektur von Cloud-nativen Anwendungen auf der StackIT-Plattform. Ich war verantwortlich für die Gestaltung robuster und sicherer Systemlandschaften für digitale Dienste."
+      },
+      "drk": {
+        "name": "Deutsches Rotes Kreuz",
+        "role": "Lead Entwickler & Berater",
+        "description": "Technische Leitung bei der Entwicklung von Web-Plattformen und internen Anwendungen. Meine Aufgabe war es, die digitalen Dienste des DRK zu modernisieren und die Benutzerfreundlichkeit zu verbessern."
+      }
+    }
+  },
+  "fun_facts": {
+    "title": "Fun Facts",
+    "subtitle": "Ein paar Dinge, die Sie vielleicht noch nicht über mich wussten.",
+    "facts": {
+      "darkmode": "Lebt im Dark Mode. Das echte Sonnenlicht ist oft zu hell.",
+      "coffee": "Liest Code wie andere die Zeitung, braucht dafür aber genauso viel Kaffee.",
+      "ai_whisperer": "Spricht mit KI-Modellen manchmal höflicher als mit echten Menschen."
+    }
+  },
+  "skills": {
+    "title_top": "Top-Fähigkeiten",
+    "title_additional": "Zusätzliche Fähigkeiten",
+    "title_industries": "Branchenkenntnisse",
+    "top_skills": ["KI", "Software Architektur", "Fullstack", "KI Beratung", "Growth Hacking"],
+    "additional_skills": ["Backend Service-Entwicklung", "Externe API-Integration", "Frontend Interface-Entwicklung", "SEO-Optimierung", "Prüfung & Qualitätssicherung", "künstliche Intelligenz", "KI & Advanced Analytics", "Softwareentwicklung", "Software Development", "IT-Architektur", "ERP-Integration mit externen Systemen", "Agiles Projektmanagement", "Web Scraping", "ETL-Prozesse", "Datenschutz (GDPR, CCPA)", "Serverless Computing", "Skripting-Automatisierung", "CMS-Anpassung", "Mobile App-Bereitstellung", "Angular", "Vue.js", "artificial intelligence", "Softwarearchitektur", "Typescript", "Front-End-Entwicklung", "C#", "React.js", "Node.js", "n8n"],
+    "industries": ["Digitale & IT-Dienstleistungen", "E-Commerce", "Digitale Geschäftsmodelle"]
+  },
+  "footer": {
+    "contact": "Kontakt",
+    "copyright": "Hücki. Alle Rechte vorbehalten."
+  },
+  "project_modal": {
+    "close_button_label": "Projektdetails schließen",
+    "tech_stack": "Technologien",
+    "proof_of_work": "Proof of Work"
+  },
+  "ai_advisor": {
+    "button_label": "Portfolio-Verbesserungen vorschlagen",
+    "dialog_title": "KI-basierte Portfolio-Analyse",
+    "dialog_description": "Vorschläge zur Verbesserung von Inhalt und Design Ihres Portfolios.",
+    "suggestions_title": "Vorgeschlagene Verbesserungen:",
+    "rationale_title": "Begründung:",
+    "close_button": "Schließen",
+    "error_title": "Analyse fehlgeschlagen",
+    "error_description": "Die KI-Analyse konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut."
+  }
+}

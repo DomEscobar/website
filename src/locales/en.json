@@ -1,0 +1,113 @@
+
+{
+  "navbar": {
+    "about": "About",
+    "projects": "Projects",
+    "skills": "Skills",
+    "contact": "Contact"
+  },
+  "hero": {
+    "subtitle": "Senior Software Developer | Architect | AI"
+  },
+  "about": {
+    "title": "About Me",
+    "stat1": "Years of professional experience",
+    "p1": "I am an experienced software architect and developer with a passion for creating elegant, efficient, and scalable solutions. My goal is to translate complex problems into clean, maintainable code that delivers real business value.",
+    "p2": "With a keen eye for design details and deep technical expertise, I don't just build software—I craft experiences.",
+    "ai_title": "My approach is 'AI first'!",
+    "ai_text": "I proactively automate, accelerate, and optimize processes using AI technologies to create innovative and future-proof software architectures."
+  },
+  "projects": {
+    "title": "Public Projects",
+    "subtitle": "Projects I've created where the code is mostly public.",
+    "project_items": {
+      "derplanner-ai": {
+        "title": "DerPlanner AI",
+        "subtitle": "The Shareable Task Event Planner",
+        "description": "An AI-powered planning application that simplifies organizing tasks and events. Users can add tasks in natural language, and the AI automatically structures, prioritizes, and schedules them. Planners are easily shareable via a link to facilitate collaboration."
+      },
+      "1000-prototypes": {
+        "title": "1000 Prototypes",
+        "subtitle": "Run multiple AI agents in parallel",
+        "description": "Run multiple AI agents in parallel to prototype websites, Image, Blogposts and more."
+      },
+      "pdf-editor": {
+        "title": "PDF Editor",
+        "subtitle": "Super Simple PDF Editor",
+        "description": "A straightforward PDF editor for quickly annotating, drawing, and signing documents directly in the browser. No installation required, just upload and edit."
+      },
+      "crm-board": {
+        "title": "CRM Canvas Board",
+        "subtitle": "A workflow visualization tool",
+        "description": "A simple and intuitive CRM board inspired by Canva to visualize and manage workflows. Allows for easy drag-and-drop management of contacts and processes."
+      },
+      "more-on-github": {
+        "title": "More on GitHub",
+        "subtitle": "Discover more projects and code samples",
+        "description": ""
+      }
+    }
+  },
+  "brands": {
+    "title": "Trusted by these Brands",
+    "subtitle": "Insights into my core responsibilities at leading companies.",
+    "details": {
+      "lidl": {
+        "name": "Lidl",
+        "role": "Software Architect & Full-Stack Developer",
+        "description": "Managed and enhanced digital platforms with over 5 million monthly users. My focus was on scalability, performance, and implementing new customer-centric features."
+      },
+      "vega": {
+        "name": "VEGA",
+        "role": "Architect & Lead Developer",
+        "description": "Designed and developed a complex, internal ERP warehouse system from scratch. The goal was to optimize logistics processes through a modern, tailor-made software solution."
+      },
+      "stackit": {
+        "name": "StackIT / Schwarz Digits",
+        "role": "Cloud & Software Architect",
+        "description": "Developed and architected cloud-native applications on the StackIT platform. I was responsible for designing robust and secure system landscapes for digital services."
+      },
+      "drk": {
+        "name": "German Red Cross",
+        "role": "Lead Developer & Consultant",
+        "description": "Provided technical leadership in the development of web platforms and internal applications. My task was to modernize the DRK's digital services and improve user-friendliness."
+      }
+    }
+  },
+  "fun_facts": {
+    "title": "Fun Facts",
+    "subtitle": "A few things you might not know about me.",
+    "facts": {
+      "darkmode": "Lives in Dark Mode. Real sunlight is often too bright.",
+      "coffee": "Reads code like others read the newspaper, but needs just as much coffee for it.",
+      "ai_whisperer": "Sometimes speaks to AI models more politely than to real people."
+    }
+  },
+  "skills": {
+    "title_top": "Top Skills",
+    "title_additional": "Additional Skills",
+    "title_industries": "Industry Knowledge",
+    "top_skills": ["AI", "Software Architecture", "Fullstack", "AI Consulting", "Growth Hacking"],
+    "additional_skills": ["Backend Service Development", "External API Integration", "Frontend Interface Development", "SEO Optimization", "Testing & Quality Assurance", "Artificial Intelligence", "AI & Advanced Analytics", "Software Development", "IT Architecture", "ERP Integration with external systems", "Agile Project Management", "Web Scraping", "ETL Processes", "Data Privacy (GDPR, CCPA)", "Serverless Computing", "Scripting Automation", "CMS Customization", "Mobile App Deployment", "Angular", "Vue.js", "Typescript", "Front-End Development", "C#", "React.js", "Node.js", "n8n"],
+    "industries": ["Digital & IT Services", "E-Commerce", "Digital Business Models"]
+  },
+  "footer": {
+    "contact": "Contact",
+    "copyright": "Hücki. All rights reserved."
+  },
+  "project_modal": {
+    "close_button_label": "Close project details",
+    "tech_stack": "Technologies",
+    "proof_of_work": "Proof of Work"
+  },
+  "ai_advisor": {
+    "button_label": "Suggest Portfolio Improvements",
+    "dialog_title": "AI-Powered Portfolio Analysis",
+    "dialog_description": "Suggestions to improve the content and design of your portfolio.",
+    "suggestions_title": "Suggested Improvements:",
+    "rationale_title": "Rationale:",
+    "close_button": "Close",
+    "error_title": "Analysis Failed",
+    "error_description": "The AI analysis could not be completed. Please try again later."
+  }
+}
