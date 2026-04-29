@@ -3,25 +3,25 @@
     {
       "id": "project-derplanner-ai",
       "description": "DerPlanner AI project image",
-      "imageUrl": "https://storage.googleapis.com/placho_bucket/Screenshot_1.png",
+      "imageUrl": "https://placehold.co/1600x900/111827/f9fafb/png?text=DerPlanner+AI",
       "imageHint": "task planner app"
     },
     {
       "id": "project-1000-prototypes",
       "description": "1000 Prototypes project image",
-      "imageUrl": "https://storage.googleapis.com/placho_bucket/1000prto.png",
+      "imageUrl": "https://placehold.co/1600x900/1f2937/fbbf24/png?text=1000+Prototypes",
       "imageHint": "AI agents"
     },
     {
       "id": "project-pdf-editor",
       "description": "PDF Editor project image",
-      "imageUrl": "https://storage.googleapis.com/placho_bucket/pdf.png",
+      "imageUrl": "https://placehold.co/1600x900/7f1d1d/fef2f2/png?text=PDF+Editor",
       "imageHint": "pdf editor interface"
     },
     {
       "id": "project-crm-board",
       "description": "CRM Canvas Board project image",
-      "imageUrl": "https://storage.googleapis.com/placho_bucket/CRM.png",
+      "imageUrl": "https://placehold.co/1600x900/064e3b/ecfdf5/png?text=CRM+Canvas+Board",
       "imageHint": "crm board interface"
     },
     {
@@ -33,19 +33,19 @@
     {
       "id": "project-1000-prototypes-detail",
       "description": "1000 Prototypes project detail image",
-      "imageUrl": "https://storage.googleapis.com/placho_bucket/1000prto.png",
+      "imageUrl": "https://placehold.co/1600x900/1f2937/fbbf24/png?text=1000+Prototypes",
       "imageHint": "AI agents"
     },
     {
       "id": "project-pdf-editor-detail",
       "description": "PDF Editor project detail image",
-      "imageUrl": "https://storage.googleapis.com/placho_bucket/pdf.png",
+      "imageUrl": "https://placehold.co/1600x900/7f1d1d/fef2f2/png?text=PDF+Editor",
       "imageHint": "pdf editor interface widescreen"
     },
     {
       "id": "project-crm-board-detail",
       "description": "CRM Canvas Board project detail image",
-      "imageUrl": "https://storage.googleapis.com/placho_bucket/CRM.png",
+      "imageUrl": "https://placehold.co/1600x900/064e3b/ecfdf5/png?text=CRM+Canvas+Board",
       "imageHint": "crm board interface widescreen"
     },
     {

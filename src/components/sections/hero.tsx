@@ -19,7 +19,7 @@ const Hero = () => {
     >
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://storage.googleapis.com/placho_bucket/placho_bucketScreenshot%202025-10-31%20115254.png.png"
+          src="/dominic-h.png"
           alt="Hücki"
           fill
           className="object-contain object-right-top opacity-20 md:opacity-40"
