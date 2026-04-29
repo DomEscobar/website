@@ -10,7 +10,7 @@ const AiSpiral = () => {
   useEffect(() => {
     let observer: IntersectionObserver;
     if (svgRef.current) {
-        vivusRef.current = new Vivus(svgRef.current, { 
+        vivusRef.current = new Vivus('ai-spiral-svg', { 
             duration: 150, 
             type: 'delayed',
             animTimingFunction: Vivus.EASE_OUT,

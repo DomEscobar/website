@@ -30,7 +30,7 @@ const PortfolioClient = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // --- UTILITIES ---
-      const splitText = (selector: string, type: 'chars' | 'words' = 'chars') => {
+      const splitText = (selector: string, type: 'chars' | 'words' = 'chars'): HTMLElement[] => {
         const element = document.querySelector(selector);
         if (!element) return [];
         const text = element.textContent?.trim() ?? '';
@@ -38,14 +38,14 @@ const PortfolioClient = () => {
         const splitItems = type === 'chars' ? text.split('') : text.split(' ');
         
         element.innerHTML = splitItems.map(item => `<span class="${wrapperClass}">${item === ' ' ? '&nbsp;' : item}</span>`).join(type === 'chars' ? '' : ' ');
-        return Array.from(element.querySelectorAll(`.${wrapperClass}`));
+        return Array.from(element.querySelectorAll<HTMLElement>(`.${wrapperClass}`));
       };
 
       // --- SMOOTH SCROLL ---
       document.querySelectorAll('.smooth-scroll').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+        anchor.addEventListener('click', (e) => {
           e.preventDefault();
-          const targetId = (this as HTMLAnchorElement).getAttribute('href');
+          const targetId = (anchor as HTMLAnchorElement).getAttribute('href');
           if (targetId) {
             gsap.to(window, { duration: 1.5, scrollTo: { y: targetId, offsetY: 70 }, ease: 'power2.inOut' });
           }
@@ -113,8 +113,8 @@ const PortfolioClient = () => {
         });
       });
 
-      gsap.utils.toArray('.stat-value').forEach(stat => {
-        const endValue = parseInt((stat as HTMLElement).dataset.value || '0');
+      gsap.utils.toArray<HTMLElement>('.stat-value').forEach(stat => {
+        const endValue = parseInt(stat.dataset.value || '0');
         gsap.from(stat, {
           textContent: 0,
           duration: 2,
@@ -153,7 +153,7 @@ const PortfolioClient = () => {
       ScrollTrigger.refresh();
 
       return () => {
-        heroCleanup();
+        heroCleanup?.();
       };
     }, mainRef);
 

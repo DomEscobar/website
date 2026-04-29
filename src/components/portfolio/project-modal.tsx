@@ -25,12 +25,15 @@ const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) => {
     const content = contentContainerRef.current;
 
     if (isOpen && project && modal && content) {
+      const innerContent = content.querySelector('#modal-inner-content');
+      if (!innerContent) return;
+
       document.body.style.overflow = 'hidden';
       const tl = gsap.timeline();
       tl.set(modal, { visibility: 'visible' })
         .to(modal, { opacity: 1, duration: 0.5, ease: 'power2.inOut' })
         .fromTo(
-          content.querySelector('#modal-inner-content'),
+          innerContent,
           { opacity: 0, y: 50 },
           { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' },
           '-=0.2'
@@ -46,19 +49,23 @@ const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) => {
           }
         },
       });
-      tl.to(content?.querySelector('#modal-inner-content'), {
-        opacity: 0,
-        y: 50,
-        duration: 0.5,
-        ease: 'power3.in',
-      }).to(modal, { opacity: 0, duration: 0.5, ease: 'power2.inOut' }, '-=0.2');
+      const innerContent = content?.querySelector('#modal-inner-content');
+      if (innerContent) {
+        tl.to(innerContent, {
+          opacity: 0,
+          y: 50,
+          duration: 0.5,
+          ease: 'power3.in',
+        });
+      }
+      tl.to(modal, { opacity: 0, duration: 0.5, ease: 'power2.inOut' }, '-=0.2');
     }
   }, [isOpen, project]);
 
   if (!project) return null;
 
-  const detailImage = getImageById(project.detailImagePlaceholderId);
-  const ProofComponent = project.proof.component;
+  const detailImage = project.detailImagePlaceholderId ? getImageById(project.detailImagePlaceholderId) : undefined;
+  const ProofComponent = project.proof?.component;
 
   return (
     <div
@@ -109,7 +116,7 @@ const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) => {
                 </div>
                 <h4 className="text-muted-foreground uppercase tracking-widest font-medium mt-8 mb-4">{t('project_modal.proof_of_work')}</h4>
                 <div className="bg-black/20 aspect-[4/2] rounded-lg overflow-hidden border border-border">
-                  <ProofComponent />
+                  {ProofComponent && <ProofComponent />}
                 </div>
               </div>
             </div>
