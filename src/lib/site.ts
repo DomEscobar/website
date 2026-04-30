@@ -1,0 +1,93 @@
+export const defaultLocale = 'de' as const;
+export const locales = ['de', 'en'] as const;
+export type Locale = (typeof locales)[number];
+
+export const siteUrl =
+  import.meta.env.SITE_URL ||
+  import.meta.env.PUBLIC_SITE_URL ||
+  'https://studio-4458124143.web.app';
+
+export const person = {
+  name: 'Dominic Hückmann',
+  displayName: 'Hücki',
+  jobTitle: 'Senior Software Developer & AI Architect',
+  email: 'd.hueckmann@googlemail.com',
+  image: '/dominic-h.png',
+  sameAs: [
+    'https://www.linkedin.com/in/dominic-h%C3%BCckmann-2b9499173',
+    'https://github.com/DomEscobar',
+  ],
+};
+
+export const seoDefaults = {
+  de: {
+    title: 'Hücki | Senior Software Developer & AI Architect',
+    description:
+      'Portfolio und Blog von Dominic Hückmann: Softwarearchitektur, Fullstack-Entwicklung, KI-first Workflows, GenAI und praktische Engineering-Erfahrung.',
+  },
+  en: {
+    title: 'Hücki | Senior Software Developer & AI Architect',
+    description:
+      'Portfolio and blog by Dominic Hückmann: software architecture, full-stack development, AI-first workflows, GenAI, and practical engineering experience.',
+  },
+} satisfies Record<Locale, { title: string; description: string }>;
+
+export function localizedPath(locale: Locale, path = '/') {
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  if (locale === defaultLocale) return normalized;
+  return normalized === '/' ? `/${locale}/` : `/${locale}${normalized}`;
+}
+
+export function absoluteUrl(path = '/') {
+  return new URL(path, siteUrl).toString();
+}
+
+export function alternateUrls(path = '/') {
+  return {
+    de: absoluteUrl(localizedPath('de', path)),
+    en: absoluteUrl(localizedPath('en', path)),
+  };
+}
+
+export function formatDate(date: Date, locale: Locale) {
+  return new Intl.DateTimeFormat(locale === 'de' ? 'de-DE' : 'en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(date);
+}
+
+export function baseJsonLd() {
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: person.name,
+      alternateName: person.displayName,
+      jobTitle: person.jobTitle,
+      email: `mailto:${person.email}`,
+      image: absoluteUrl(person.image),
+      url: siteUrl,
+      sameAs: person.sameAs,
+      knowsAbout: [
+        'Software Architecture',
+        'Fullstack Development',
+        'Artificial Intelligence',
+        'Generative AI',
+        'Cloud Native Applications',
+        'SEO Optimization',
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'Hücki',
+      url: siteUrl,
+      inLanguage: ['de-DE', 'en-US'],
+      author: {
+        '@type': 'Person',
+        name: person.name,
+      },
+    },
+  ];
+}

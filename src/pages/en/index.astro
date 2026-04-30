@@ -1,0 +1,14 @@
+---
+import HomePage from '@/components/portfolio/HomePage.astro';
+import Navbar from '@/components/portfolio/Navbar.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { seoDefaults } from '@/lib/site';
+
+const locale = 'en';
+export const prerender = true;
+---
+
+<BaseLayout locale={locale} title={seoDefaults.en.title} description={seoDefaults.en.description} path="/">
+  <Navbar locale={locale} />
+  <HomePage locale={locale} />
+</BaseLayout>

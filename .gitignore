@@ -17,6 +17,11 @@
 /.next/
 /out/
 
+# astro
+/.astro/
+/dist/
+.astro-*.log
+
 # production
 /build
 

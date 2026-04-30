@@ -1,0 +1,72 @@
+---
+import '../app/globals.css';
+import { absoluteUrl, alternateUrls, baseJsonLd, localizedPath, person, seoDefaults, type Locale } from '@/lib/site';
+
+interface Props {
+  locale: Locale;
+  title?: string;
+  description?: string;
+  path?: string;
+  alternatePaths?: Partial<Record<Locale, string>>;
+  image?: string;
+  type?: 'website' | 'article';
+  jsonLd?: unknown[];
+  noindex?: boolean;
+}
+
+const {
+  locale,
+  title = seoDefaults[locale].title,
+  description = seoDefaults[locale].description,
+  path = '/',
+  alternatePaths,
+  image = person.image,
+  type = 'website',
+  jsonLd = [],
+  noindex = false,
+} = Astro.props;
+
+const canonical = absoluteUrl(localizedPath(locale, path));
+const alternates = alternatePaths
+  ? {
+      de: absoluteUrl(localizedPath('de', alternatePaths.de ?? path)),
+      en: absoluteUrl(localizedPath('en', alternatePaths.en ?? path)),
+    }
+  : alternateUrls(path);
+const socialImage = absoluteUrl(image);
+const lang = locale === 'de' ? 'de-DE' : 'en-US';
+const graph = [...baseJsonLd(), ...jsonLd];
+---
+
+<!doctype html>
+<html lang={locale} class="dark scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={noindex ? 'noindex,nofollow' : 'index,follow,max-image-preview:large'} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="de-DE" href={alternates.de} />
+    <link rel="alternate" hreflang="en-US" href={alternates.en} />
+    <link rel="alternate" hreflang="x-default" href={alternates.de} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <meta property="og:site_name" content="Hücki" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:locale" content={lang.replace('-', '_')} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(graph)} />
+  </head>
+  <body class="font-body antialiased">
+    <slot />
+  </body>
+</html>

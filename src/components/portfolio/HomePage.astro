@@ -1,0 +1,166 @@
+---
+import AIAdvisorIsland from '@/components/react/AIAdvisorIsland';
+import { localizedPath, person, type Locale } from '@/lib/site';
+import { brands, funFacts, portfolioCopy, projects, skills } from '@/lib/portfolio-content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = portfolioCopy[locale];
+const skillGroups = skills[locale];
+const advisorLabels =
+  locale === 'de'
+    ? {
+        button: 'Portfolio-Verbesserungen vorschlagen',
+        title: 'KI-basierte Portfolio-Analyse',
+        description: 'Vorschläge zur Verbesserung von Inhalt und Design Ihres Portfolios.',
+        suggestions: 'Vorgeschlagene Verbesserungen',
+        rationale: 'Begründung',
+        close: 'Schließen',
+        loading: 'Analyse läuft',
+        errorTitle: 'Analyse fehlgeschlagen',
+        errorDescription: 'Die KI-Analyse konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut.',
+      }
+    : {
+        button: 'Suggest Portfolio Improvements',
+        title: 'AI-Powered Portfolio Analysis',
+        description: 'Suggestions to improve the content and design of your portfolio.',
+        suggestions: 'Suggested Improvements',
+        rationale: 'Rationale',
+        close: 'Close',
+        loading: 'Analyzing',
+        errorTitle: 'Analysis Failed',
+        errorDescription: 'The AI analysis could not be completed. Please try again later.',
+      };
+---
+
+<header id="home" class="min-h-screen flex flex-col justify-center items-start p-6 md:p-12 lg:p-24 relative overflow-hidden">
+  <div class="absolute inset-y-0 right-0 z-0 flex w-full justify-end overflow-hidden">
+    <img
+      src="/dominic-h.png"
+      alt="Portrait von Dominic Hückmann, Senior Software Developer und AI Architect"
+      class="h-full w-auto max-w-none object-contain object-right opacity-45 md:opacity-90"
+    />
+  </div>
+  <div class="max-w-4xl relative z-10">
+    <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter">{copy.hero.title}</h1>
+    <p class="text-xl md:text-2xl lg:text-3xl font-light text-foreground/70 mt-4">{copy.hero.subtitle}</p>
+    <a href={localizedPath(locale, '/blog/')} class="inline-flex mt-8 rounded-md bg-foreground text-background px-5 py-3 text-sm font-semibold hover:bg-foreground/90 transition-colors">
+      {copy.hero.cta}
+    </a>
+  </div>
+</header>
+
+<main class="w-full">
+  <section id="about" class="py-20 md:py-32 px-6 md:p-12 lg:p-24">
+    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-24">
+      <div>
+        <h2 class="uppercase text-muted font-medium tracking-widest mb-8">{copy.about.title}</h2>
+        <p class="text-2xl font-semibold">10+</p>
+        <p class="text-muted-foreground">{copy.about.stat}</p>
+      </div>
+      <div class="lg:col-span-2 text-lg md:text-xl font-light text-foreground/80 space-y-6 leading-relaxed">
+        <p>{copy.about.p1}</p>
+        <p>{copy.about.p2}</p>
+        <div class="pt-8">
+          <p class="text-2xl md:text-3xl font-semibold mb-4 text-foreground">{copy.about.aiTitle}</p>
+          <p class="font-light text-foreground/70">{copy.about.aiText}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="py-20 md:py-32 bg-background overflow-hidden">
+    <div class="w-full max-w-[1400px] mx-auto px-6 md:px-12">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl md:text-3xl font-bold text-foreground">{copy.projectsTitle}</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {
+          projects.map((project) => (
+            <article class="relative overflow-hidden rounded-md border border-border/50 bg-card min-h-[360px] transition-all hover:border-accent">
+              <img src={project.imageUrl} alt={`${project.title} preview`} class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/15"></div>
+              <div class="relative z-10 flex min-h-[360px] flex-col justify-end p-6">
+                <p class="text-sm uppercase tracking-widest text-gray-300">{project.subtitle[locale]}</p>
+                <h3 class="font-bold text-white leading-tight mt-3 text-2xl md:text-3xl">{project.title}</h3>
+                <p class="text-gray-300 mt-4 leading-relaxed">{project.description[locale]}</p>
+                <div class="flex flex-wrap gap-2 my-6">
+                  {project.tech.map((tech) => (
+                    <span class="text-xs rounded-full border border-white/20 bg-black/30 px-3 py-1 text-white/85">{tech}</span>
+                  ))}
+                </div>
+                <div class="flex items-center gap-3 mt-auto">
+                  <a href={project.url} target="_blank" rel="noopener noreferrer" class="rounded-md bg-white text-black hover:bg-white/90 px-4 py-2 font-semibold text-sm transition-colors">Visit</a>
+                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" class="rounded-md bg-white/15 text-white hover:bg-white/25 px-4 py-2 font-semibold text-sm transition-colors">GitHub</a>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="brands" class="py-20 md:py-24 bg-card/50">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+      <div class="text-center mb-16">
+        <h2 class="uppercase text-muted font-medium tracking-widest">{copy.brandsTitle}</h2>
+        <p class="text-lg text-muted-foreground mt-2">{copy.brandsSubtitle}</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {
+          brands.map((brand) => (
+            <article class="h-full bg-background/50 border border-border/50 rounded-md p-6 hover:border-accent transition-colors">
+              <h3 class="text-xl font-bold">{brand.name}</h3>
+              <p class="text-sm text-muted-foreground mt-1">{brand.role[locale]}</p>
+              <p class="text-foreground/80 mt-4">{brand.description[locale]}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 md:py-32 bg-secondary/20">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+      <div class="text-center mb-16">
+        <h2 class="uppercase text-primary font-bold tracking-widest text-sm mb-3">{copy.funTitle}</h2>
+        <p class="text-lg text-muted-foreground max-w-2xl mx-auto">{copy.funSubtitle}</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        {funFacts[locale].map((fact) => <p class="p-8 rounded-md text-center border border-border/40 bg-card text-foreground/90 font-medium leading-relaxed">{fact}</p>)}
+      </div>
+    </div>
+  </section>
+
+  <section id="skills" class="py-20 md:py-32 px-6 md:p-12 lg:p-24">
+    <div class="max-w-7xl mx-auto">
+      <h2 class="uppercase text-muted font-medium tracking-widest mb-16 text-center">{copy.skillsTop}</h2>
+      <div class="flex flex-wrap justify-center gap-3 md:gap-4">
+        {skillGroups.top.map((skill) => <span class="skill-pill bg-card border border-border text-foreground/80 text-sm font-medium px-4 py-2 rounded-full">{skill}</span>)}
+      </div>
+      <h2 class="uppercase text-muted font-medium tracking-widest mt-24 mb-16 text-center">{copy.skillsAdditional}</h2>
+      <div class="flex flex-wrap justify-center gap-3 md:gap-4">
+        {skillGroups.additional.map((skill) => <span class="skill-pill bg-card border border-border text-foreground/80 text-sm font-medium px-4 py-2 rounded-full">{skill}</span>)}
+      </div>
+      <h2 class="uppercase text-muted font-medium tracking-widest mt-24 mb-16 text-center">{copy.skillsIndustries}</h2>
+      <div class="flex flex-wrap justify-center gap-3 md:gap-4">
+        {skillGroups.industries.map((industry) => <span class="skill-pill bg-card border border-border text-foreground/80 text-sm font-medium px-4 py-2 rounded-full">{industry}</span>)}
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="contact" class="py-12 px-6 md:p-12 text-center text-muted-foreground">
+  <div class="flex flex-wrap justify-center gap-8 mb-8">
+    <a href={person.sameAs[0]} target="_blank" rel="noopener noreferrer" class="text-foreground hover:text-accent transition-colors">LinkedIn</a>
+    <a href={person.sameAs[1]} target="_blank" rel="noopener noreferrer" class="text-foreground hover:text-accent transition-colors">GitHub</a>
+    <a href={`mailto:${person.email}`} class="text-foreground hover:text-accent transition-colors">{copy.contact}</a>
+  </div>
+  <p class="text-sm">&copy; {new Date().getFullYear()} {copy.copyright}</p>
+</footer>
+
+<AIAdvisorIsland client:load labels={advisorLabels} locale={locale} endpoint="/api/portfolio-advisor" />
