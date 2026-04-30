@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
-import Image from 'next/image';
 import { X } from 'lucide-react';
 import { type Project } from '@/lib/projects-data';
 import { getImageById } from '@/lib/placeholder-images';
@@ -92,11 +91,10 @@ const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) => {
             <h1 className="text-4xl md:text-6xl font-bold tracking-tighter my-4">{project.title}</h1>
             <div className="my-12 aspect-[16/9] overflow-hidden rounded-md relative">
               {detailImage && (
-                <Image
+                <img
                   src={detailImage.imageUrl}
                   alt={project.title}
-                  fill
-                  className="object-cover"
+                  className="absolute inset-0 h-full w-full object-cover"
                   data-ai-hint={detailImage.imageHint}
                 />
               )}

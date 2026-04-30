@@ -1,6 +1,5 @@
 "use client";
 
-import Image from 'next/image';
 import { gsap } from 'gsap';
 import { getProjects, type Project } from '@/lib/projects-data';
 import { getImageById } from '@/lib/placeholder-images';
@@ -36,15 +35,13 @@ const ProjectCard = ({ project, isActive, onClick }: ProjectCardProps) => {
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full">
         {image && (
-          <Image
+          <img
             src={image.imageUrl}
             alt={project.title}
-            fill
             className={cn(
-                "object-cover transition-transform duration-700 ease-in-out",
+                "absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-in-out",
                  isActive ? "scale-105" : "scale-100"
             )}
-            priority={isActive}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />

@@ -1,7 +1,6 @@
 "use client";
 
 import { ChevronDown } from 'lucide-react';
-import Image from 'next/image';
 import { useLanguage } from '@/hooks/use-language';
 import { useEffect } from 'react';
 
@@ -18,18 +17,16 @@ const Hero = () => {
       className="h-screen flex flex-col justify-center items-start p-6 md:p-12 lg:p-24 relative overflow-hidden"
     >
       <div className="absolute inset-0 z-0">
-        <Image
+        <img
           src="/dominic-h.png"
           alt="Hücki"
-          fill
-          className="object-contain object-right-top opacity-20 md:opacity-40"
+          className="absolute inset-0 h-full w-full object-contain object-right-top opacity-20 md:opacity-40"
           style={{
             maskImage:
               'radial-gradient(circle at 80% 40%, white 25%, transparent 55%)',
             WebkitMaskImage:
               'radial-gradient(circle at 80% 40%, white 25%, transparent 55%)',
           }}
-          priority
         />
       </div>
       <div className="max-w-4xl relative z-10">

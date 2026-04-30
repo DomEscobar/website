@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { Bot, Loader2 } from "lucide-react";
 import { suggestPortfolioImprovements, SuggestPortfolioImprovementsOutput } from "@/ai/flows/ai-portfolio-improvement";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import { useLanguage } from "@/hooks/use-language";
 import { ScrollArea } from "../ui/scroll-area";
 
 export function AIAdvisor() {
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const [result, setResult] = useState<SuggestPortfolioImprovementsOutput | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
@@ -27,7 +27,8 @@ export function AIAdvisor() {
     setIsOpen(true);
     if (result) return; // Don't re-fetch if we have results
 
-    startTransition(async () => {
+    const analyzePortfolio = async () => {
+      setIsPending(true);
       try {
         const portfolioContent = `
           Hücki - Senior Software Developer | Architect | AI.
@@ -52,8 +53,12 @@ export function AIAdvisor() {
           description: t('ai_advisor.error_description'),
         });
         setIsOpen(false);
+      } finally {
+        setIsPending(false);
       }
-    });
+    };
+
+    void analyzePortfolio();
   };
 
   return (
