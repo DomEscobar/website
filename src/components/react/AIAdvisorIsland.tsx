@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Bot, Loader2, X } from 'lucide-react';
 
 type Labels = {
@@ -29,6 +29,29 @@ export default function AIAdvisorIsland({ labels, locale, endpoint }: Props) {
   const [isPending, setIsPending] = useState(false);
   const [result, setResult] = useState<AdvisorResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+      triggerRef.current?.focus();
+    };
+  }, [isOpen]);
 
   async function handleAnalysis() {
     setIsOpen(true);
@@ -61,8 +84,9 @@ export default function AIAdvisorIsland({ labels, locale, endpoint }: Props) {
     <>
       <div className="fixed bottom-6 right-6 z-50">
         <button
+          ref={triggerRef}
           type="button"
-          className="inline-flex items-center justify-center rounded-full w-14 h-14 shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-lg shadow-accent/20 transition hover:-translate-y-0.5 hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={handleAnalysis}
           aria-label={labels.button}
         >
@@ -71,16 +95,23 @@ export default function AIAdvisorIsland({ labels, locale, endpoint }: Props) {
       </div>
 
       {isOpen && (
-        <div className="fixed inset-0 z-[100] bg-background/90 backdrop-blur-sm p-4 md:p-8">
-          <div className="mx-auto mt-10 max-w-2xl rounded-md border border-border bg-card shadow-2xl">
+        <div className="fixed inset-0 z-[100] bg-background/90 p-4 backdrop-blur-sm md:p-8">
+          <div
+            className="mx-auto mt-10 max-w-2xl rounded-md border border-border bg-card shadow-2xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ai-advisor-title"
+            aria-describedby="ai-advisor-description"
+          >
             <div className="flex items-start justify-between gap-4 border-b border-border p-6">
               <div>
-                <h2 className="text-xl font-semibold text-foreground">{labels.title}</h2>
-                <p className="mt-2 text-sm text-muted-foreground">{labels.description}</p>
+                <h2 id="ai-advisor-title" className="text-xl font-semibold text-foreground">{labels.title}</h2>
+                <p id="ai-advisor-description" className="mt-2 text-sm text-muted-foreground">{labels.description}</p>
               </div>
               <button
+                ref={closeRef}
                 type="button"
-                className="rounded-md p-2 text-muted-foreground hover:text-foreground"
+                className="rounded-md p-2 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => setIsOpen(false)}
                 aria-label={labels.close}
               >
@@ -114,7 +145,7 @@ export default function AIAdvisorIsland({ labels, locale, endpoint }: Props) {
               )}
             </div>
             <div className="flex justify-end border-t border-border p-6">
-              <button type="button" className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-background" onClick={() => setIsOpen(false)}>
+              <button type="button" className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setIsOpen(false)}>
                 {labels.close}
               </button>
             </div>

@@ -9,7 +9,7 @@ const LinkAccent = ({ href, children }: { href: string, children: React.ReactNod
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="relative inline-block text-foreground transition-colors duration-300 ease-in-out hover:text-accent g-social-icon after:content-[''] after:absolute after:w-full after:h-px after:bottom-[-3px] after:left-0 after:bg-muted-foreground after:origin-bottom-right after:scale-x-0 after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.86,0,0.07,1)] hover:after:origin-bottom-left hover:after:scale-x-100"
+              className="relative inline-block text-foreground transition-colors duration-300 ease-in-out hover:text-accent g-social-icon after:content-[''] after:absolute after:w-full after:h-px after:bottom-[-3px] after:left-0 after:bg-muted-foreground after:origin-bottom-right after:scale-x-0 after:transition-transform after:duration-300 after:ease-in-out hover:after:origin-bottom-left hover:after:scale-x-100"
   >
     {children}
   </a>

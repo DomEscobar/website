@@ -3,77 +3,149 @@ import type { Locale } from './site';
 export const portfolioCopy = {
   de: {
     nav: {
-      about: 'Über mich',
+      about: 'Profil',
       projects: 'Projekte',
       blog: 'Blog',
-      skills: 'Fähigkeiten',
+      skills: 'Expertise',
       contact: 'Kontakt',
+      menu: 'Menü öffnen',
     },
     hero: {
-      title: 'Hücki',
-      subtitle: 'Fullstack Entwickler | Architekt | KI',
-      cta: 'Blog lesen',
+      eyebrow: 'Dominic Hückmann · Hücki',
+      title: 'AI Architect & Senior Full-Stack Developer',
+      subtitle:
+        'Ich entwerfe und baue AI-first Software, Automatisierungen und skalierbare Web-Plattformen, die aus komplexen Ideen verlässliche Produkte machen.',
+      primaryCta: 'Projekt anfragen',
+      secondaryCta: 'Projekte ansehen',
+      blogCta: 'Engineering Blog',
+      portraitAlt: 'Portrait von Dominic Hückmann, Senior Software Developer und AI Architect',
     },
+    proof: [
+      { value: '10+', label: 'Jahre Erfahrung' },
+      { value: 'AI-first', label: 'Workflows & Automatisierung' },
+      { value: 'Cloud', label: 'Architektur & Plattformen' },
+      { value: 'E-Commerce', label: 'Produkt- und Prozesssysteme' },
+    ],
     about: {
-      title: 'Über mich',
-      stat: 'Jahre Berufserfahrung',
-      p1: 'Ich bin Softwarearchitekt und Entwickler aus Leidenschaft, immer auf der Suche nach dem elegantesten Weg von A nach B. Mein Ziel ist es, Komplexes so einfach zu machen, dass es Spaß macht, und Code zu schreiben, der auch in sechs Monaten noch verständlich ist.',
-      p2: 'Ich gestalte digitale Erlebnisse, die technische Tiefe, saubere Architektur und klare Nutzerführung verbinden.',
-      aiTitle: 'Mein Ansatz ist AI first.',
-      aiText: 'Ich nutze KI, um schneller, besser und innovativer zu bauen: für Software, die heute schon im Morgen lebt.',
+      eyebrow: 'Profil',
+      title: 'Engineering mit Architektur, Produktgefühl und AI-Hebel.',
+      p1:
+        'Ich unterstütze Teams dabei, robuste Software schneller zu liefern: von klaren Systemgrenzen über moderne Frontends bis zu AI-gestützten Workflows, die echte Arbeitslast reduzieren.',
+      p2:
+        'Mein Schwerpunkt liegt auf pragmatischer Architektur, sauberer Umsetzung und Interfaces, die nicht nur funktionieren, sondern im Alltag gerne genutzt werden.',
     },
-    projectsTitle: 'Open Source Spaß Projekte',
-    brandsTitle: 'Marken, die mir vertrauen',
-    brandsSubtitle: 'Einblicke in meine Kernverantwortlichkeiten bei führenden Unternehmen.',
-    funTitle: 'Fun Facts',
-    funSubtitle: 'Ein paar Dinge, die Sie vielleicht noch nicht über mich wussten.',
-    skillsTop: 'Top-Fähigkeiten',
-    skillsAdditional: 'Zusätzliche Fähigkeiten',
-    skillsIndustries: 'Branchenkenntnisse',
-    contact: 'Kontakt',
-    copyright: 'Hücki. Alle Rechte vorbehalten.',
+    approach: {
+      eyebrow: 'AI-first Ansatz',
+      title: 'AI ist für mich kein Add-on, sondern ein Architekturmaterial.',
+      text:
+        'Ich nutze KI für Planung, Automatisierung, Prototyping, Analyse und Produktfunktionen. Entscheidend ist dabei nicht der Hype, sondern saubere Integration: sichere Datenflüsse, klare UX, testbare Systeme und messbarer Nutzen.',
+      items: ['Systeme verständlich schneiden', 'Automatisierung gezielt einsetzen', 'Prototypen schnell validieren'],
+    },
+    projects: {
+      eyebrow: 'Selected Work',
+      title: 'Öffentliche Projekte mit Produkt- und Architekturbezug',
+      description:
+        'Kleine bis mittlere Produkte, die AI-Workflows, produktive Interfaces und pragmatische Full-Stack-Architektur zeigen.',
+      open: 'Projekt öffnen',
+      code: 'Code ansehen',
+    },
+    brands: {
+      eyebrow: 'Professional Proof',
+      title: 'Erfahrung in Plattformen, Handel, Cloud und internen Systemen',
+      description: 'Ausgewählte Stationen und Verantwortungsbereiche aus professionellen Projekten.',
+    },
+    skills: {
+      eyebrow: 'Expertise',
+      title: 'Fähigkeiten, gruppiert nach Wirkung',
+      description: 'Keine reine Tool-Liste, sondern die Arbeitsbereiche, in denen ich Wert stifte.',
+    },
     blog: {
       eyebrow: 'SEO/GEO Blog',
       title: 'AI-first Engineering Blog',
       description:
-        'Praxisnahe Artikel über KI, Softwarearchitektur, Growth Engineering und suchmaschinenfreundliche Inhalte für Menschen und generative Engines.',
+        'Praxisnahe Artikel über KI, Softwarearchitektur, Growth Engineering und Inhalte für Menschen und generative Engines.',
       readMore: 'Artikel lesen',
       latest: 'Neueste Artikel',
       summary: 'Kurzantwort',
       sources: 'Quellen und weiterführende Hinweise',
+      ctaTitle: 'Brauchen Sie AI-first Architekturunterstützung?',
+      ctaText: 'Schreiben Sie mir eine kurze Nachricht zu Ihrem Projekt oder technischen Engpass.',
+      ctaButton: 'Kontakt aufnehmen',
     },
+    personality: {
+      eyebrow: 'Nebenbei',
+      title: 'Ein bisschen Hücki bleibt drin.',
+      description: 'Professionell, aber nicht steril. Gute Systeme dürfen Persönlichkeit haben.',
+    },
+    contact: {
+      eyebrow: 'Kontakt',
+      title: 'Lassen Sie uns aus einer komplexen Idee ein klares System machen.',
+      description:
+        'Für AI-first Produkte, Architekturfragen, Automatisierung oder moderne Web-Plattformen: eine kurze E-Mail reicht als Startpunkt.',
+      primary: 'Projekt per E-Mail anfragen',
+      linkedin: 'LinkedIn',
+      github: 'GitHub',
+    },
+    copyright: 'Hücki. Alle Rechte vorbehalten.',
   },
   en: {
     nav: {
-      about: 'About',
+      about: 'Profile',
       projects: 'Projects',
       blog: 'Blog',
-      skills: 'Skills',
+      skills: 'Expertise',
       contact: 'Contact',
+      menu: 'Open menu',
     },
     hero: {
-      title: 'Hücki',
-      subtitle: 'Senior Software Developer | Architect | AI',
-      cta: 'Read the blog',
+      eyebrow: 'Dominic Hückmann · Hücki',
+      title: 'AI Architect & Senior Full-Stack Developer',
+      subtitle:
+        'I design and build AI-first software, automation workflows, and scalable web platforms that turn complex ideas into reliable products.',
+      primaryCta: 'Start a project',
+      secondaryCta: 'View projects',
+      blogCta: 'Engineering blog',
+      portraitAlt: 'Portrait of Dominic Hückmann, Senior Software Developer and AI Architect',
     },
+    proof: [
+      { value: '10+', label: 'Years experience' },
+      { value: 'AI-first', label: 'Workflows & automation' },
+      { value: 'Cloud', label: 'Architecture & platforms' },
+      { value: 'E-commerce', label: 'Product and process systems' },
+    ],
     about: {
-      title: 'About Me',
-      stat: 'Years of professional experience',
-      p1: 'I am a software architect and developer with a passion for elegant, efficient, and scalable systems. My goal is to translate complex problems into maintainable software that creates practical business value.',
-      p2: 'I build digital experiences that combine technical depth, clean architecture, and clear user journeys.',
-      aiTitle: 'My approach is AI first.',
-      aiText: 'I use AI to automate, accelerate, and improve development workflows so software can move closer to tomorrow.',
+      eyebrow: 'Profile',
+      title: 'Engineering with architecture, product sense, and AI leverage.',
+      p1:
+        'I help teams ship robust software faster: from clear system boundaries and modern frontends to AI-supported workflows that remove real operational load.',
+      p2:
+        'My focus is pragmatic architecture, clean implementation, and interfaces that do not merely work, but become useful in daily practice.',
     },
-    projectsTitle: 'Public Projects',
-    brandsTitle: 'Trusted by these Brands',
-    brandsSubtitle: 'Insights into my core responsibilities at leading companies.',
-    funTitle: 'Fun Facts',
-    funSubtitle: 'A few things you might not know about me.',
-    skillsTop: 'Top Skills',
-    skillsAdditional: 'Additional Skills',
-    skillsIndustries: 'Industry Knowledge',
-    contact: 'Contact',
-    copyright: 'Hücki. All rights reserved.',
+    approach: {
+      eyebrow: 'AI-first approach',
+      title: 'AI is not an add-on for me. It is architecture material.',
+      text:
+        'I use AI for planning, automation, prototyping, analysis, and product features. The point is not hype, but integration: safe data flows, clear UX, testable systems, and measurable value.',
+      items: ['Make systems understandable', 'Apply automation where it pays off', 'Validate prototypes quickly'],
+    },
+    projects: {
+      eyebrow: 'Selected Work',
+      title: 'Public projects with product and architecture signal',
+      description:
+        'Small to mid-sized products showing AI workflows, useful interfaces, and pragmatic full-stack architecture.',
+      open: 'Open project',
+      code: 'View code',
+    },
+    brands: {
+      eyebrow: 'Professional Proof',
+      title: 'Experience across platforms, retail, cloud, and internal systems',
+      description: 'Selected roles and responsibility areas from professional project work.',
+    },
+    skills: {
+      eyebrow: 'Expertise',
+      title: 'Capabilities grouped by impact',
+      description: 'Less a raw tool list, more the areas where I create leverage.',
+    },
     blog: {
       eyebrow: 'SEO/GEO Blog',
       title: 'AI-first Engineering Blog',
@@ -83,110 +155,195 @@ export const portfolioCopy = {
       latest: 'Latest Articles',
       summary: 'Short Answer',
       sources: 'Sources and further reading',
+      ctaTitle: 'Need AI-first architecture support?',
+      ctaText: 'Send me a short note about your project or technical bottleneck.',
+      ctaButton: 'Get in touch',
     },
+    personality: {
+      eyebrow: 'Aside',
+      title: 'A little Hücki stays in.',
+      description: 'Professional, not sterile. Good systems can have a point of view.',
+    },
+    contact: {
+      eyebrow: 'Contact',
+      title: 'Let’s turn a complex idea into a clear system.',
+      description:
+        'For AI-first products, architecture questions, automation, or modern web platforms: a short email is enough to start.',
+      primary: 'Send a project email',
+      linkedin: 'LinkedIn',
+      github: 'GitHub',
+    },
+    copyright: 'Hücki. All rights reserved.',
   },
-} satisfies Record<Locale, Record<string, unknown>>;
+} satisfies Record<Locale, {
+  nav: Record<string, string>;
+  hero: Record<string, string>;
+  proof: { value: string; label: string }[];
+  about: Record<string, string>;
+  approach: { eyebrow: string; title: string; text: string; items: string[] };
+  projects: Record<string, string>;
+  brands: Record<string, string>;
+  skills: Record<string, string>;
+  blog: Record<string, string>;
+  personality: Record<string, string>;
+  contact: Record<string, string>;
+  copyright: string;
+}>;
 
 export const projects = [
   {
     id: 'derplanner-ai',
     title: 'DerPlanner AI',
-    subtitle: { de: 'Der teilbare Aufgaben-Event-Planer', en: 'The Shareable Task Event Planner' },
+    subtitle: { de: 'AI-Planung für Aufgaben und Events', en: 'AI planning for tasks and events' },
     description: {
-      de: 'Eine KI-gestützte Planungsanwendung, die Aufgaben in natürlicher Sprache strukturiert, priorisiert und planbar macht.',
-      en: 'An AI-powered planning application that structures, prioritizes, and schedules natural-language tasks.',
+      de: 'Eine KI-gestützte Planungsanwendung, die natürliche Sprache in strukturierte, priorisierte und planbare Aufgaben übersetzt.',
+      en: 'An AI-powered planning application that turns natural language into structured, prioritized, and schedulable tasks.',
+    },
+    outcome: {
+      de: 'Zeigt, wie AI-UX, Firebase und Genkit in ein fokussiertes Produkt zusammenspielen.',
+      en: 'Shows how AI UX, Firebase, and Genkit can work together in a focused product.',
     },
     tech: ['Next.js', 'TypeScript', 'Tailwind CSS', 'Genkit AI', 'Firebase'],
-    imageUrl: 'https://placehold.co/1600x900/111827/f9fafb/png?text=DerPlanner+AI',
+    imageUrl: '/project-screenshots/derplanner-ai.png',
     url: 'https://derplanner.space/',
     githubUrl: 'https://github.com/DomEscobar/DerPlanner',
   },
   {
     id: '1000-prototypes',
     title: '1000 Prototypes',
-    subtitle: { de: 'Parallele Ausführung von KI-Agenten', en: 'Run multiple AI agents in parallel' },
+    subtitle: { de: 'Parallele Ausführung von KI-Agenten', en: 'Parallel AI-agent prototyping' },
     description: {
-      de: 'Eine Plattform, um mehrere KI-Agenten parallel Prototypen für Websites, Bilder, Blogposts und mehr erstellen zu lassen.',
+      de: 'Eine Plattform, um mehrere KI-Agenten parallel Ideen für Websites, Bilder, Blogposts und mehr ausarbeiten zu lassen.',
       en: 'A platform for running multiple AI agents in parallel to prototype websites, images, blog posts, and more.',
     },
+    outcome: {
+      de: 'Experimentiert mit Agenten-Orchestrierung und schnellem Produkt-Prototyping.',
+      en: 'Explores agent orchestration and fast product prototyping.',
+    },
     tech: ['Next.js', 'Genkit AI', 'Firebase', 'Vercel'],
-    imageUrl: 'https://placehold.co/1600x900/1f2937/fbbf24/png?text=1000+Prototypes',
+    imageUrl: '/project-screenshots/1000-prototypes.png',
     url: 'https://1000prototypes.space/',
     githubUrl: 'https://github.com/DomEscobar/1000prototypes',
   },
   {
     id: 'pdf-editor',
     title: 'PDF Editor',
-    subtitle: { de: 'Super einfacher PDF-Editor', en: 'Super Simple PDF Editor' },
+    subtitle: { de: 'Browser-Werkzeug für PDFs', en: 'Browser tool for PDFs' },
     description: {
-      de: 'Ein unkomplizierter PDF-Editor zum Kommentieren, Zeichnen und Signieren direkt im Browser.',
+      de: 'Ein einfacher PDF-Editor zum Kommentieren, Zeichnen und Signieren direkt im Browser.',
       en: 'A simple browser-based PDF editor for annotation, drawing, and signing.',
     },
+    outcome: {
+      de: 'Reduziert ein häufiges Dokumentenproblem auf ein klares, schnelles Interface.',
+      en: 'Turns a common document problem into a clear, fast interface.',
+    },
     tech: ['React', 'TypeScript', 'PDF-lib', 'Tailwind CSS'],
-    imageUrl: 'https://placehold.co/1600x900/7f1d1d/fef2f2/png?text=PDF+Editor',
+    imageUrl: '/project-screenshots/pdf-editor.png',
     url: 'https://annotate-draw-sign.lovable.app/',
     githubUrl: 'https://github.com/DomEscobar/PDF_Simple',
   },
   {
     id: 'crm-board',
     title: 'CRM Canvas Board',
-    subtitle: { de: 'Ein Werkzeug zur Workflow-Visualisierung', en: 'A workflow visualization tool' },
+    subtitle: { de: 'Workflow-Visualisierung per Drag-and-Drop', en: 'Drag-and-drop workflow visualization' },
     description: {
-      de: 'Ein intuitives CRM-Board zur Visualisierung und Verwaltung von Arbeitsabläufen per Drag-and-Drop.',
-      en: 'An intuitive CRM board for visualizing and managing workflows with drag-and-drop interactions.',
+      de: 'Ein CRM-Board zur visuellen Verwaltung von Workflows, Zuständen und Aufgaben per Drag-and-Drop.',
+      en: 'A CRM board for visualizing and managing workflows, states, and tasks with drag-and-drop interactions.',
+    },
+    outcome: {
+      de: 'Verbindet operative Übersicht mit einem Interface für wiederholte tägliche Nutzung.',
+      en: 'Connects operational overview with an interface built for repeated daily use.',
     },
     tech: ['React', 'TypeScript', 'Tailwind CSS', 'dnd-kit'],
-    imageUrl: 'https://placehold.co/1600x900/064e3b/ecfdf5/png?text=CRM+Canvas+Board',
+    imageUrl: '/project-screenshots/crm-board.png',
     url: 'https://canvas-flow-insights.lovable.app/',
     githubUrl: 'https://github.com/DomEscobar/CRM_Canva_Board',
   },
 ];
 
-export const skills = {
-  de: {
-    top: ['KI', 'Software Architektur', 'Fullstack', 'KI Beratung', 'Growth Hacking'],
-    additional: ['Backend Service-Entwicklung', 'Externe API-Integration', 'Frontend Interface-Entwicklung', 'SEO-Optimierung', 'Testing & Qualitätssicherung', 'Artificial Intelligence', 'Softwareentwicklung', 'IT-Architektur', 'Web Scraping', 'ETL-Prozesse', 'Datenschutz', 'Serverless Computing', 'Angular', 'Vue.js', 'TypeScript', 'React.js', 'Node.js', 'n8n'],
-    industries: ['Digitale & IT-Dienstleistungen', 'E-Commerce', 'Digitale Geschäftsmodelle'],
-  },
-  en: {
-    top: ['AI', 'Software Architecture', 'Fullstack', 'AI Consulting', 'Growth Hacking'],
-    additional: ['Backend Service Development', 'External API Integration', 'Frontend Interface Development', 'SEO Optimization', 'Testing & Quality Assurance', 'Artificial Intelligence', 'Software Development', 'IT Architecture', 'Web Scraping', 'ETL Processes', 'Data Privacy', 'Serverless Computing', 'Angular', 'Vue.js', 'TypeScript', 'React.js', 'Node.js', 'n8n'],
-    industries: ['Digital & IT Services', 'E-Commerce', 'Digital Business Models'],
-  },
-} satisfies Record<Locale, { top: string[]; additional: string[]; industries: string[] }>;
+export const capabilityGroups = {
+  de: [
+    {
+      title: 'AI & Automatisierung',
+      description: 'Workflows, Agenten, GenAI-Integration und produktive AI-Unterstützung für echte Prozesse.',
+      skills: ['Genkit', 'AI Workflows', 'n8n', 'Agenten-Prototyping', 'Automatisierung'],
+    },
+    {
+      title: 'Architektur & Cloud',
+      description: 'Saubere Systemgrenzen, APIs, Serverless, Datenschutz und belastbare Plattformentscheidungen.',
+      skills: ['Softwarearchitektur', 'Cloud Native', 'APIs', 'Serverless', 'Datenschutz'],
+    },
+    {
+      title: 'Produkt & Frontend',
+      description: 'Moderne Interfaces, klare Nutzerführung und robuste Umsetzung in React, Vue, Angular und TypeScript.',
+      skills: ['React', 'Vue.js', 'Angular', 'TypeScript', 'UX Engineering'],
+    },
+    {
+      title: 'Growth & Daten',
+      description: 'SEO, GEO, Scraping, ETL und datengetriebene Verbesserungen für digitale Geschäftsmodelle.',
+      skills: ['SEO', 'GEO', 'Web Scraping', 'ETL', 'E-Commerce'],
+    },
+  ],
+  en: [
+    {
+      title: 'AI & Automation',
+      description: 'Workflows, agents, GenAI integration, and productive AI support for real processes.',
+      skills: ['Genkit', 'AI Workflows', 'n8n', 'Agent Prototyping', 'Automation'],
+    },
+    {
+      title: 'Architecture & Cloud',
+      description: 'Clear system boundaries, APIs, serverless, privacy, and resilient platform decisions.',
+      skills: ['Software Architecture', 'Cloud Native', 'APIs', 'Serverless', 'Data Privacy'],
+    },
+    {
+      title: 'Product & Frontend',
+      description: 'Modern interfaces, clear user journeys, and robust implementation in React, Vue, Angular, and TypeScript.',
+      skills: ['React', 'Vue.js', 'Angular', 'TypeScript', 'UX Engineering'],
+    },
+    {
+      title: 'Growth & Data',
+      description: 'SEO, GEO, scraping, ETL, and data-driven improvements for digital business models.',
+      skills: ['SEO', 'GEO', 'Web Scraping', 'ETL', 'E-commerce'],
+    },
+  ],
+} satisfies Record<Locale, { title: string; description: string; skills: string[] }[]>;
 
 export const brands = [
   {
     name: 'Lidl',
-    role: { de: 'Softwarearchitekt & Full-Stack Entwickler', en: 'Software Architect & Full-Stack Developer' },
+    role: { de: 'Softwarearchitektur & Full-Stack Entwicklung', en: 'Software Architecture & Full-Stack Development' },
     description: {
-      de: 'Betreuung und Weiterentwicklung digitaler Plattformen mit Fokus auf Skalierbarkeit, Performance und kundenorientierte Features.',
-      en: 'Managed and enhanced digital platforms with a focus on scalability, performance, and customer-centric features.',
+      de: 'Weiterentwicklung digitaler Plattformen mit Fokus auf Skalierbarkeit, Performance und kundenorientierte Features.',
+      en: 'Enhanced digital platforms with a focus on scalability, performance, and customer-facing features.',
     },
+    focus: { de: 'E-Commerce · Plattformen · Performance', en: 'E-commerce · Platforms · Performance' },
   },
   {
     name: 'VEGA',
-    role: { de: 'Architekt & Lead Entwickler', en: 'Architect & Lead Developer' },
+    role: { de: 'Architektur & Lead Entwicklung', en: 'Architecture & Lead Development' },
     description: {
-      de: 'Konzeption und Entwicklung eines komplexen internen ERP-Lagersystems zur Optimierung logistischer Prozesse.',
-      en: 'Designed and developed a complex internal ERP warehouse system to optimize logistics processes.',
+      de: 'Konzeption und Entwicklung eines internen ERP-Lagersystems zur Optimierung logistischer Prozesse.',
+      en: 'Designed and developed an internal ERP warehouse system to optimize logistics processes.',
     },
+    focus: { de: 'ERP · Logistik · Prozesssysteme', en: 'ERP · Logistics · Process systems' },
   },
   {
     name: 'StackIT / Schwarz Digits',
-    role: { de: 'Cloud & Software Architekt', en: 'Cloud & Software Architect' },
+    role: { de: 'Cloud & Software Architektur', en: 'Cloud & Software Architecture' },
     description: {
       de: 'Architektur cloud-nativer Anwendungen auf der StackIT-Plattform mit robusten und sicheren Systemlandschaften.',
       en: 'Architected cloud-native applications on the StackIT platform with robust and secure system landscapes.',
     },
+    focus: { de: 'Cloud Native · Sicherheit · Plattformen', en: 'Cloud native · Security · Platforms' },
   },
   {
     name: 'Deutsches Rotes Kreuz',
-    role: { de: 'Lead Entwickler & Berater', en: 'Lead Developer & Consultant' },
+    role: { de: 'Lead Entwicklung & Beratung', en: 'Lead Development & Consulting' },
     description: {
       de: 'Technische Leitung bei der Modernisierung von Web-Plattformen und internen Anwendungen.',
       en: 'Provided technical leadership while modernizing web platforms and internal applications.',
     },
+    focus: { de: 'Modernisierung · Beratung · Web-Plattformen', en: 'Modernization · Consulting · Web platforms' },
   },
 ];
 

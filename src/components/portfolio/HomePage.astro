@@ -1,7 +1,8 @@
 ---
+import { getCollection } from 'astro:content';
 import AIAdvisorIsland from '@/components/react/AIAdvisorIsland';
-import { localizedPath, person, type Locale } from '@/lib/site';
-import { brands, funFacts, portfolioCopy, projects, skills } from '@/lib/portfolio-content';
+import { formatDate, localizedPath, person, type Locale } from '@/lib/site';
+import { brands, capabilityGroups, funFacts, portfolioCopy } from '@/lib/portfolio-content';
 
 interface Props {
   locale: Locale;
@@ -9,7 +10,13 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = portfolioCopy[locale];
-const skillGroups = skills[locale];
+const contactHref = `mailto:${person.email}?subject=${encodeURIComponent(
+  locale === 'de' ? 'Projektanfrage an Hücki' : 'Project inquiry for Hücki',
+)}`;
+const latestPosts = (await getCollection('blog'))
+  .filter((post) => post.data.language === locale && !post.data.draft)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+  .slice(0, 2);
 const advisorLabels =
   locale === 'de'
     ? {
@@ -36,87 +43,92 @@ const advisorLabels =
       };
 ---
 
-<header id="home" class="min-h-screen flex flex-col justify-center items-start p-6 md:p-12 lg:p-24 relative overflow-hidden">
-  <div class="absolute inset-y-0 right-0 z-0 flex w-full justify-end overflow-hidden">
+<header id="home" class="relative isolate min-h-[92vh] overflow-hidden border-b border-border/70 px-6 pt-28 md:px-12 lg:px-24">
+  <div class="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_20%_20%,hsl(var(--accent)/0.16),transparent_32%),linear-gradient(115deg,hsl(var(--background))_0%,hsl(var(--background))_50%,hsl(var(--card))_100%)]"></div>
+  <div class="absolute inset-y-0 right-0 -z-10 hidden w-[42%] justify-end overflow-hidden md:flex">
     <img
-      src="/dominic-h.png"
-      alt="Portrait von Dominic Hückmann, Senior Software Developer und AI Architect"
-      class="h-full w-auto max-w-none object-contain object-right opacity-45 md:opacity-90"
+      src="/me.png"
+      alt={copy.hero.portraitAlt}
+      class="motion-portrait h-[76%] w-auto max-w-none -scale-x-100 self-end object-contain object-left opacity-25 grayscale saturate-50 contrast-110 brightness-75 mix-blend-luminosity [mask-image:linear-gradient(90deg,transparent,black_42%,black_58%,transparent)]"
+      fetchpriority="high"
     />
   </div>
-  <div class="max-w-4xl relative z-10">
-    <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter">{copy.hero.title}</h1>
-    <p class="text-xl md:text-2xl lg:text-3xl font-light text-foreground/70 mt-4">{copy.hero.subtitle}</p>
-    <a href={localizedPath(locale, '/blog/')} class="inline-flex mt-8 rounded-md bg-foreground text-background px-5 py-3 text-sm font-semibold hover:bg-foreground/90 transition-colors">
-      {copy.hero.cta}
-    </a>
+  <div class="mx-auto grid min-h-[calc(92vh-7rem)] max-w-7xl items-center gap-12 py-16 lg:grid-cols-[1.05fr_0.95fr]">
+    <div class="relative z-10 max-w-4xl" data-motion="reveal">
+      <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">{copy.hero.eyebrow}</p>
+      <h1 class="mt-6 max-w-5xl text-5xl font-bold leading-[0.95] tracking-tight text-foreground md:text-7xl lg:text-8xl">
+        {copy.hero.title}
+      </h1>
+      <p class="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground md:text-xl">
+        {copy.hero.subtitle}
+      </p>
+      <div class="mt-9 flex flex-wrap gap-3">
+        <a href={contactHref} class="inline-flex min-h-11 items-center rounded-md bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground shadow-[0_0_35px_hsl(var(--accent)/0.18)] transition hover:-translate-y-0.5 hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          {copy.hero.primaryCta}
+        </a>
+        <a href={localizedPath(locale, '/blog/')} class="inline-flex min-h-11 items-center rounded-md px-2 py-3 text-sm font-semibold text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          {copy.hero.blogCta}
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="mx-auto grid max-w-7xl grid-cols-2 border-t border-border/70 bg-background/55 backdrop-blur md:grid-cols-4">
+    {copy.proof.map((item) => (
+      <div class="border-b border-r border-border/70 p-5 last:border-r-0 md:border-b-0" data-motion="reveal">
+        <p class="text-2xl font-bold text-foreground">{item.value}</p>
+        <p class="mt-1 text-sm leading-5 text-muted-foreground">{item.label}</p>
+      </div>
+    ))}
   </div>
 </header>
 
-<main class="w-full">
-  <section id="about" class="py-20 md:py-32 px-6 md:p-12 lg:p-24">
-    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-24">
-      <div>
-        <h2 class="uppercase text-muted font-medium tracking-widest mb-8">{copy.about.title}</h2>
-        <p class="text-2xl font-semibold">10+</p>
-        <p class="text-muted-foreground">{copy.about.stat}</p>
+<main id="main-content" class="w-full">
+  <section id="about" class="px-6 py-20 md:px-12 md:py-28 lg:px-24">
+    <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+      <div data-motion="reveal">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.about.eyebrow}</p>
+        <h2 class="mt-4 text-3xl font-bold tracking-tight md:text-5xl">{copy.about.title}</h2>
       </div>
-      <div class="lg:col-span-2 text-lg md:text-xl font-light text-foreground/80 space-y-6 leading-relaxed">
+      <div class="space-y-6 text-lg leading-8 text-muted-foreground" data-motion="reveal">
         <p>{copy.about.p1}</p>
         <p>{copy.about.p2}</p>
-        <div class="pt-8">
-          <p class="text-2xl md:text-3xl font-semibold mb-4 text-foreground">{copy.about.aiTitle}</p>
-          <p class="font-light text-foreground/70">{copy.about.aiText}</p>
-        </div>
       </div>
     </div>
   </section>
 
-  <section id="projects" class="py-20 md:py-32 bg-background overflow-hidden">
-    <div class="w-full max-w-[1400px] mx-auto px-6 md:px-12">
-      <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl md:text-3xl font-bold text-foreground">{copy.projectsTitle}</h2>
+  <section class="px-6 py-20 md:px-12 md:py-28 lg:px-24">
+    <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+      <div data-motion="reveal">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.approach.eyebrow}</p>
+        <h2 class="mt-4 text-3xl font-bold tracking-tight md:text-5xl">{copy.approach.title}</h2>
+        <p class="mt-5 text-lg leading-8 text-muted-foreground">{copy.approach.text}</p>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {
-          projects.map((project) => (
-            <article class="relative overflow-hidden rounded-md border border-border/50 bg-card min-h-[360px] transition-all hover:border-accent">
-              <img src={project.imageUrl} alt={`${project.title} preview`} class="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/15"></div>
-              <div class="relative z-10 flex min-h-[360px] flex-col justify-end p-6">
-                <p class="text-sm uppercase tracking-widest text-gray-300">{project.subtitle[locale]}</p>
-                <h3 class="font-bold text-white leading-tight mt-3 text-2xl md:text-3xl">{project.title}</h3>
-                <p class="text-gray-300 mt-4 leading-relaxed">{project.description[locale]}</p>
-                <div class="flex flex-wrap gap-2 my-6">
-                  {project.tech.map((tech) => (
-                    <span class="text-xs rounded-full border border-white/20 bg-black/30 px-3 py-1 text-white/85">{tech}</span>
-                  ))}
-                </div>
-                <div class="flex items-center gap-3 mt-auto">
-                  <a href={project.url} target="_blank" rel="noopener noreferrer" class="rounded-md bg-white text-black hover:bg-white/90 px-4 py-2 font-semibold text-sm transition-colors">Visit</a>
-                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" class="rounded-md bg-white/15 text-white hover:bg-white/25 px-4 py-2 font-semibold text-sm transition-colors">GitHub</a>
-                </div>
-              </div>
-            </article>
-          ))
-        }
+      <div class="grid content-start gap-4" data-motion="reveal">
+        {copy.approach.items.map((item, index) => (
+          <div class="rounded-md border border-border/70 bg-card/70 p-5">
+            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-accent">0{index + 1}</p>
+            <p class="mt-3 text-xl font-semibold">{item}</p>
+          </div>
+        ))}
       </div>
     </div>
   </section>
 
-  <section id="brands" class="py-20 md:py-24 bg-card/50">
-    <div class="max-w-7xl mx-auto px-6 md:px-12">
-      <div class="text-center mb-16">
-        <h2 class="uppercase text-muted font-medium tracking-widest">{copy.brandsTitle}</h2>
-        <p class="text-lg text-muted-foreground mt-2">{copy.brandsSubtitle}</p>
+  <section id="brands" class="border-y border-border/70 bg-background px-6 py-20 md:px-12 md:py-28">
+    <div class="mx-auto max-w-7xl">
+      <div class="max-w-3xl" data-motion="reveal">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.brands.eyebrow}</p>
+        <h2 class="mt-4 text-3xl font-bold tracking-tight md:text-5xl">{copy.brands.title}</h2>
+        <p class="mt-5 text-lg leading-8 text-muted-foreground">{copy.brands.description}</p>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="mt-12 grid gap-4 md:grid-cols-2">
         {
           brands.map((brand) => (
-            <article class="h-full bg-background/50 border border-border/50 rounded-md p-6 hover:border-accent transition-colors">
-              <h3 class="text-xl font-bold">{brand.name}</h3>
-              <p class="text-sm text-muted-foreground mt-1">{brand.role[locale]}</p>
-              <p class="text-foreground/80 mt-4">{brand.description[locale]}</p>
+            <article class="rounded-md border border-border/70 bg-card/60 p-6 transition hover:border-accent/80" data-motion="reveal">
+              <p class="text-xs font-semibold uppercase tracking-[0.22em] text-accent">{brand.focus[locale]}</p>
+              <h3 class="mt-4 text-2xl font-bold">{brand.name}</h3>
+              <p class="mt-2 text-sm font-medium text-foreground/80">{brand.role[locale]}</p>
+              <p class="mt-4 leading-7 text-muted-foreground">{brand.description[locale]}</p>
             </article>
           ))
         }
@@ -124,43 +136,125 @@ const advisorLabels =
     </div>
   </section>
 
-  <section class="py-20 md:py-32 bg-secondary/20">
-    <div class="max-w-7xl mx-auto px-6 md:px-12">
-      <div class="text-center mb-16">
-        <h2 class="uppercase text-primary font-bold tracking-widest text-sm mb-3">{copy.funTitle}</h2>
-        <p class="text-lg text-muted-foreground max-w-2xl mx-auto">{copy.funSubtitle}</p>
+  <section id="skills" class="px-6 py-20 md:px-12 md:py-28 lg:px-24">
+    <div class="mx-auto max-w-7xl">
+      <div class="max-w-3xl" data-motion="reveal">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.skills.eyebrow}</p>
+        <h2 class="mt-4 text-3xl font-bold tracking-tight md:text-5xl">{copy.skills.title}</h2>
+        <p class="mt-5 text-lg leading-8 text-muted-foreground">{copy.skills.description}</p>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-        {funFacts[locale].map((fact) => <p class="p-8 rounded-md text-center border border-border/40 bg-card text-foreground/90 font-medium leading-relaxed">{fact}</p>)}
+      <div class="mt-12 grid gap-5 md:grid-cols-2">
+        {capabilityGroups[locale].map((group) => (
+          <article class="rounded-md border border-border/70 bg-card/60 p-6" data-motion="reveal">
+            <h3 class="text-xl font-bold">{group.title}</h3>
+            <p class="mt-3 leading-7 text-muted-foreground">{group.description}</p>
+            <div class="mt-6 flex flex-wrap gap-2">
+              {group.skills.map((skill) => (
+                <span class="skill-pill rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground/80">{skill}</span>
+              ))}
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 
-  <section id="skills" class="py-20 md:py-32 px-6 md:p-12 lg:p-24">
-    <div class="max-w-7xl mx-auto">
-      <h2 class="uppercase text-muted font-medium tracking-widest mb-16 text-center">{copy.skillsTop}</h2>
-      <div class="flex flex-wrap justify-center gap-3 md:gap-4">
-        {skillGroups.top.map((skill) => <span class="skill-pill bg-card border border-border text-foreground/80 text-sm font-medium px-4 py-2 rounded-full">{skill}</span>)}
+  <section class="border-y border-border/70 bg-card/35 px-6 py-20 md:px-12 md:py-24">
+    <div class="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.75fr_1.25fr]">
+      <div data-motion="reveal">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.personality.eyebrow}</p>
+        <h2 class="mt-4 text-3xl font-bold tracking-tight">{copy.personality.title}</h2>
+        <p class="mt-4 leading-7 text-muted-foreground">{copy.personality.description}</p>
       </div>
-      <h2 class="uppercase text-muted font-medium tracking-widest mt-24 mb-16 text-center">{copy.skillsAdditional}</h2>
-      <div class="flex flex-wrap justify-center gap-3 md:gap-4">
-        {skillGroups.additional.map((skill) => <span class="skill-pill bg-card border border-border text-foreground/80 text-sm font-medium px-4 py-2 rounded-full">{skill}</span>)}
+      <div class="grid gap-4 md:grid-cols-3">
+        {funFacts[locale].map((fact) => <p class="rounded-md border border-border/70 bg-background/80 p-5 leading-7 text-foreground/85" data-motion="reveal">{fact}</p>)}
       </div>
-      <h2 class="uppercase text-muted font-medium tracking-widest mt-24 mb-16 text-center">{copy.skillsIndustries}</h2>
-      <div class="flex flex-wrap justify-center gap-3 md:gap-4">
-        {skillGroups.industries.map((industry) => <span class="skill-pill bg-card border border-border text-foreground/80 text-sm font-medium px-4 py-2 rounded-full">{industry}</span>)}
+    </div>
+  </section>
+
+  <section class="px-6 py-20 md:px-12 md:py-28 lg:px-24">
+    <div class="mx-auto max-w-7xl">
+      <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between" data-motion="reveal">
+        <div class="max-w-3xl">
+          <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.blog.eyebrow}</p>
+          <h2 class="mt-4 text-3xl font-bold tracking-tight md:text-5xl">{copy.blog.title}</h2>
+          <p class="mt-5 text-lg leading-8 text-muted-foreground">{copy.blog.description}</p>
+        </div>
+        <a href={localizedPath(locale, '/blog/')} class="inline-flex min-h-11 items-center rounded-md border border-border px-5 py-3 text-sm font-semibold transition hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          {copy.hero.blogCta}
+        </a>
+      </div>
+      <div class="mt-10 grid gap-5 md:grid-cols-2">
+        {latestPosts.map((post) => (
+          <article class="rounded-md border border-border/70 bg-card/60 p-6 transition hover:-translate-y-1 hover:border-accent/80" data-motion="reveal">
+            <p class="text-sm text-muted-foreground">{formatDate(post.data.publishedAt, locale)} · {post.data.topic}</p>
+            <h3 class="mt-3 text-2xl font-bold tracking-tight">
+              <a href={localizedPath(locale, `/blog/${post.data.slug}/`)} class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{post.data.title}</a>
+            </h3>
+            <p class="mt-3 leading-7 text-muted-foreground">{post.data.summary}</p>
+            <a href={localizedPath(locale, `/blog/${post.data.slug}/`)} class="mt-6 inline-flex text-sm font-semibold text-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              {copy.blog.readMore}
+            </a>
+          </article>
+        ))}
       </div>
     </div>
   </section>
 </main>
 
-<footer id="contact" class="py-12 px-6 md:p-12 text-center text-muted-foreground">
-  <div class="flex flex-wrap justify-center gap-8 mb-8">
-    <a href={person.sameAs[0]} target="_blank" rel="noopener noreferrer" class="text-foreground hover:text-accent transition-colors">LinkedIn</a>
-    <a href={person.sameAs[1]} target="_blank" rel="noopener noreferrer" class="text-foreground hover:text-accent transition-colors">GitHub</a>
-    <a href={`mailto:${person.email}`} class="text-foreground hover:text-accent transition-colors">{copy.contact}</a>
+<footer id="contact" class="border-t border-border/70 px-6 py-16 text-muted-foreground md:px-12 lg:px-24">
+  <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_auto]">
+    <div class="max-w-3xl" data-motion="reveal">
+      <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.contact.eyebrow}</p>
+      <h2 class="mt-4 text-3xl font-bold tracking-tight text-foreground md:text-5xl">{copy.contact.title}</h2>
+      <p class="mt-5 text-lg leading-8">{copy.contact.description}</p>
+    </div>
+    <div class="flex flex-col items-start gap-3 lg:items-end lg:justify-end" data-motion="reveal">
+      <a href={contactHref} class="inline-flex min-h-11 items-center rounded-md bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{copy.contact.primary}</a>
+      <div class="flex gap-5 text-sm">
+        <a href={person.sameAs[0]} target="_blank" rel="noopener noreferrer" class="text-foreground hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{copy.contact.linkedin}</a>
+        <a href={person.sameAs[1]} target="_blank" rel="noopener noreferrer" class="text-foreground hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{copy.contact.github}</a>
+      </div>
+    </div>
   </div>
-  <p class="text-sm">&copy; {new Date().getFullYear()} {copy.copyright}</p>
+  <p class="mx-auto mt-12 max-w-7xl text-sm">&copy; {new Date().getFullYear()} {copy.copyright}</p>
 </footer>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduceMotion) {
+    const revealItems = document.querySelectorAll<HTMLElement>('[data-motion="reveal"]');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.16, rootMargin: '0px 0px -8% 0px' },
+    );
+
+    revealItems.forEach((item) => {
+      if (item.getBoundingClientRect().top < window.innerHeight * 0.95) {
+        item.classList.add('is-visible');
+      } else {
+        observer.observe(item);
+      }
+    });
+    document.documentElement.classList.add('motion-ready');
+
+    const portrait = document.querySelector<HTMLElement>('.motion-portrait');
+    if (portrait && window.matchMedia('(min-width: 768px)').matches) {
+      window.addEventListener('mousemove', (event) => {
+        const x = (event.clientX / window.innerWidth - 0.5) * 14;
+        const y = (event.clientY / window.innerHeight - 0.5) * 10;
+        portrait.style.transform = `translate3d(${x}px, ${y}px, 0) scaleX(-1)`;
+      }, { passive: true });
+    }
+  }
+</script>
 
 <AIAdvisorIsland client:load labels={advisorLabels} locale={locale} endpoint="/api/portfolio-advisor" />
