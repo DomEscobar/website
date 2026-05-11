@@ -60,10 +60,10 @@ export const portfolioCopy = {
       description: 'Keine reine Tool-Liste, sondern die Arbeitsbereiche, in denen ich Wert stifte.',
     },
     blog: {
-      eyebrow: 'SEO/GEO Blog',
-      title: 'AI-first Engineering Blog',
+      eyebrow: 'Blog',
+      title: 'Artikel über OpenClaw, Hermes und AI-first Workflows',
       description:
-        'Praxisnahe Artikel über KI, Softwarearchitektur, Growth Engineering und Inhalte für Menschen und generative Engines.',
+        'Praxisnahe Beiträge über Agenten, Automatisierung, Softwarearchitektur und konkrete Workflows statt Personal Branding.',
       readMore: 'Artikel lesen',
       latest: 'Neueste Artikel',
       summary: 'Kurzantwort',
@@ -79,10 +79,9 @@ export const portfolioCopy = {
     },
     contact: {
       eyebrow: 'Kontakt',
-      title: 'Lassen Sie uns aus einer komplexen Idee ein klares System machen.',
-      description:
-        'Für AI-first Produkte, Architekturfragen, Automatisierung oder moderne Web-Plattformen: eine kurze E-Mail reicht als Startpunkt.',
-      primary: 'Projekt per E-Mail anfragen',
+      title: 'Kontakt',
+      description: 'Wenn ein Artikel Fragen auslöst oder ein Thema vertieft werden soll, reicht eine kurze Nachricht.',
+      primary: 'E-Mail schreiben',
       linkedin: 'LinkedIn',
       github: 'GitHub',
     },
@@ -147,10 +146,10 @@ export const portfolioCopy = {
       description: 'Less a raw tool list, more the areas where I create leverage.',
     },
     blog: {
-      eyebrow: 'SEO/GEO Blog',
-      title: 'AI-first Engineering Blog',
+      eyebrow: 'Blog',
+      title: 'Notes on OpenClaw, Hermes, and AI-first workflows',
       description:
-        'Practical articles about AI, software architecture, growth engineering, and content that works for humans and generative engines.',
+        'Practical writing about agents, automation, software architecture, and real workflows instead of personal branding.',
       readMore: 'Read article',
       latest: 'Latest Articles',
       summary: 'Short Answer',
@@ -166,10 +165,9 @@ export const portfolioCopy = {
     },
     contact: {
       eyebrow: 'Contact',
-      title: 'Let’s turn a complex idea into a clear system.',
-      description:
-        'For AI-first products, architecture questions, automation, or modern web platforms: a short email is enough to start.',
-      primary: 'Send a project email',
+      title: 'Contact',
+      description: 'If an article sparks a question or you want a topic explored in more depth, send a short note.',
+      primary: 'Send an email',
       linkedin: 'LinkedIn',
       github: 'GitHub',
     },

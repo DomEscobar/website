@@ -1,8 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
-import AIAdvisorIsland from '@/components/react/AIAdvisorIsland';
-import { formatDate, localizedPath, person, type Locale } from '@/lib/site';
-import { brands, capabilityGroups, funFacts, portfolioCopy } from '@/lib/portfolio-content';
+import Navbar from '@/components/portfolio/Navbar.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { formatDate, localizedPath, type Locale } from '@/lib/site';
+import { portfolioCopy } from '@/lib/portfolio-content';
 
 interface Props {
   locale: Locale;
@@ -10,215 +11,74 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = portfolioCopy[locale];
-const contactHref = `mailto:${person.email}?subject=${encodeURIComponent(
-  locale === 'de' ? 'Projektanfrage an Hücki' : 'Project inquiry for Hücki',
-)}`;
-const latestPosts = (await getCollection('blog'))
+const allPosts = (await getCollection('blog'))
   .filter((post) => post.data.language === locale && !post.data.draft)
-  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
-  .slice(0, 2);
-const advisorLabels =
-  locale === 'de'
-    ? {
-        button: 'Portfolio-Verbesserungen vorschlagen',
-        title: 'KI-basierte Portfolio-Analyse',
-        description: 'Vorschläge zur Verbesserung von Inhalt und Design Ihres Portfolios.',
-        suggestions: 'Vorgeschlagene Verbesserungen',
-        rationale: 'Begründung',
-        close: 'Schließen',
-        loading: 'Analyse läuft',
-        errorTitle: 'Analyse fehlgeschlagen',
-        errorDescription: 'Die KI-Analyse konnte nicht abgeschlossen werden. Bitte versuchen Sie es später erneut.',
-      }
-    : {
-        button: 'Suggest Portfolio Improvements',
-        title: 'AI-Powered Portfolio Analysis',
-        description: 'Suggestions to improve the content and design of your portfolio.',
-        suggestions: 'Suggested Improvements',
-        rationale: 'Rationale',
-        close: 'Close',
-        loading: 'Analyzing',
-        errorTitle: 'Analysis Failed',
-        errorDescription: 'The AI analysis could not be completed. Please try again later.',
-      };
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+
+const topics = [...new Set(allPosts.map((post) => post.data.topic))];
 ---
 
-<header id="home" class="relative isolate min-h-[92vh] overflow-hidden border-b border-border/70 px-6 pt-28 md:px-12 lg:px-24">
-  <div class="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_20%_20%,hsl(var(--accent)/0.16),transparent_32%),linear-gradient(115deg,hsl(var(--background))_0%,hsl(var(--background))_50%,hsl(var(--card))_100%)]"></div>
-  <div class="absolute inset-y-0 right-0 -z-10 hidden w-[42%] justify-end overflow-hidden md:flex">
-    <img
-      src="/me.png"
-      alt={copy.hero.portraitAlt}
-      class="motion-portrait h-[76%] w-auto max-w-none -scale-x-100 self-end object-contain object-left opacity-25 grayscale saturate-50 contrast-110 brightness-75 mix-blend-luminosity [mask-image:linear-gradient(90deg,transparent,black_42%,black_58%,transparent)]"
-      fetchpriority="high"
-    />
-  </div>
-  <div class="mx-auto grid min-h-[calc(92vh-7rem)] max-w-7xl items-center gap-12 py-16 lg:grid-cols-[1.05fr_0.95fr]">
-    <div class="relative z-10 max-w-4xl" data-motion="reveal">
-      <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">{copy.hero.eyebrow}</p>
+<BaseLayout locale={locale} title={copy.blog.title} description={copy.blog.description} path="/">
+  <Navbar locale={locale} />
+
+  <header class="relative isolate overflow-hidden border-b border-border/70 px-6 pt-28 pb-20 md:px-12 md:pt-36 md:pb-28 lg:px-24">
+    <div class="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_20%_20%,hsl(var(--accent)/0.16),transparent_32%),linear-gradient(115deg,hsl(var(--background))_0%,hsl(var(--background))_50%,hsl(var(--card))_100%)]"></div>
+    <div class="mx-auto max-w-7xl">
+      <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">{copy.blog.eyebrow}</p>
       <h1 class="mt-6 max-w-5xl text-5xl font-bold leading-[0.95] tracking-tight text-foreground md:text-7xl lg:text-8xl">
-        {copy.hero.title}
+        {copy.blog.title}
       </h1>
       <p class="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground md:text-xl">
-        {copy.hero.subtitle}
+        {copy.blog.description}
       </p>
-      <div class="mt-9 flex flex-wrap gap-3">
-        <a href={contactHref} class="inline-flex min-h-11 items-center rounded-md bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground shadow-[0_0_35px_hsl(var(--accent)/0.18)] transition hover:-translate-y-0.5 hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-          {copy.hero.primaryCta}
-        </a>
-        <a href={localizedPath(locale, '/blog/')} class="inline-flex min-h-11 items-center rounded-md px-2 py-3 text-sm font-semibold text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-          {copy.hero.blogCta}
-        </a>
-      </div>
     </div>
-  </div>
-  <div class="mx-auto grid max-w-7xl grid-cols-2 border-t border-border/70 bg-background/55 backdrop-blur md:grid-cols-4">
-    {copy.proof.map((item) => (
-      <div class="border-b border-r border-border/70 p-5 last:border-r-0 md:border-b-0" data-motion="reveal">
-        <p class="text-2xl font-bold text-foreground">{item.value}</p>
-        <p class="mt-1 text-sm leading-5 text-muted-foreground">{item.label}</p>
-      </div>
-    ))}
-  </div>
-</header>
+  </header>
 
-<main id="main-content" class="w-full">
-  <section id="about" class="px-6 py-20 md:px-12 md:py-28 lg:px-24">
-    <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-      <div data-motion="reveal">
-        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.about.eyebrow}</p>
-        <h2 class="mt-4 text-3xl font-bold tracking-tight md:text-5xl">{copy.about.title}</h2>
-      </div>
-      <div class="space-y-6 text-lg leading-8 text-muted-foreground" data-motion="reveal">
-        <p>{copy.about.p1}</p>
-        <p>{copy.about.p2}</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="px-6 py-20 md:px-12 md:py-28 lg:px-24">
-    <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-      <div data-motion="reveal">
-        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.approach.eyebrow}</p>
-        <h2 class="mt-4 text-3xl font-bold tracking-tight md:text-5xl">{copy.approach.title}</h2>
-        <p class="mt-5 text-lg leading-8 text-muted-foreground">{copy.approach.text}</p>
-      </div>
-      <div class="grid content-start gap-4" data-motion="reveal">
-        {copy.approach.items.map((item, index) => (
-          <div class="rounded-md border border-border/70 bg-card/70 p-5">
-            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-accent">0{index + 1}</p>
-            <p class="mt-3 text-xl font-semibold">{item}</p>
-          </div>
+  <main class="w-full">
+    <!-- Topic filter -->
+    <nav class="border-b border-border/70 px-6 py-5 md:px-12 lg:px-24">
+      <div class="mx-auto flex max-w-7xl flex-wrap gap-2">
+        <a href={localizedPath(locale, '/blog/')}
+          class="rounded-full border border-border bg-accent/10 px-4 py-1.5 text-sm font-medium text-accent transition hover:bg-accent/20">
+          {locale === 'de' ? 'Alle' : 'All'}
+        </a>
+        {topics.map((topic) => (
+          <a href={localizedPath(locale, '/blog/') + `?topic=${encodeURIComponent(topic)}`}
+            class="rounded-full border border-border px-4 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent/60 hover:text-foreground">
+            {topic}
+          </a>
         ))}
       </div>
-    </div>
-  </section>
+    </nav>
 
-  <section id="brands" class="border-y border-border/70 bg-background px-6 py-20 md:px-12 md:py-28">
-    <div class="mx-auto max-w-7xl">
-      <div class="max-w-3xl" data-motion="reveal">
-        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.brands.eyebrow}</p>
-        <h2 class="mt-4 text-3xl font-bold tracking-tight md:text-5xl">{copy.brands.title}</h2>
-        <p class="mt-5 text-lg leading-8 text-muted-foreground">{copy.brands.description}</p>
-      </div>
-      <div class="mt-12 grid gap-4 md:grid-cols-2">
-        {
-          brands.map((brand) => (
-            <article class="rounded-md border border-border/70 bg-card/60 p-6 transition hover:border-accent/80" data-motion="reveal">
-              <p class="text-xs font-semibold uppercase tracking-[0.22em] text-accent">{brand.focus[locale]}</p>
-              <h3 class="mt-4 text-2xl font-bold">{brand.name}</h3>
-              <p class="mt-2 text-sm font-medium text-foreground/80">{brand.role[locale]}</p>
-              <p class="mt-4 leading-7 text-muted-foreground">{brand.description[locale]}</p>
-            </article>
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <section id="skills" class="px-6 py-20 md:px-12 md:py-28 lg:px-24">
-    <div class="mx-auto max-w-7xl">
-      <div class="max-w-3xl" data-motion="reveal">
-        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.skills.eyebrow}</p>
-        <h2 class="mt-4 text-3xl font-bold tracking-tight md:text-5xl">{copy.skills.title}</h2>
-        <p class="mt-5 text-lg leading-8 text-muted-foreground">{copy.skills.description}</p>
-      </div>
-      <div class="mt-12 grid gap-5 md:grid-cols-2">
-        {capabilityGroups[locale].map((group) => (
-          <article class="rounded-md border border-border/70 bg-card/60 p-6" data-motion="reveal">
-            <h3 class="text-xl font-bold">{group.title}</h3>
-            <p class="mt-3 leading-7 text-muted-foreground">{group.description}</p>
-            <div class="mt-6 flex flex-wrap gap-2">
-              {group.skills.map((skill) => (
-                <span class="skill-pill rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground/80">{skill}</span>
-              ))}
+    <!-- All posts -->
+    <section class="px-6 py-16 md:px-12 md:py-24 lg:px-24">
+      <div class="mx-auto max-w-7xl space-y-6">
+        {allPosts.map((post, index) => (
+          <article class={`rounded-md border border-border/70 bg-card/60 p-6 transition hover:-translate-y-0.5 hover:border-accent/80 ${index === 0 ? 'md:p-8' : ''}`} data-motion="reveal">
+            <div class="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+              <time datetime={post.data.publishedAt.toISOString()}>{formatDate(post.data.publishedAt, locale)}</time>
+              <span>·</span>
+              <span class="text-accent">{post.data.topic}</span>
             </div>
-          </article>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="border-y border-border/70 bg-card/35 px-6 py-20 md:px-12 md:py-24">
-    <div class="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.75fr_1.25fr]">
-      <div data-motion="reveal">
-        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.personality.eyebrow}</p>
-        <h2 class="mt-4 text-3xl font-bold tracking-tight">{copy.personality.title}</h2>
-        <p class="mt-4 leading-7 text-muted-foreground">{copy.personality.description}</p>
-      </div>
-      <div class="grid gap-4 md:grid-cols-3">
-        {funFacts[locale].map((fact) => <p class="rounded-md border border-border/70 bg-background/80 p-5 leading-7 text-foreground/85" data-motion="reveal">{fact}</p>)}
-      </div>
-    </div>
-  </section>
-
-  <section class="px-6 py-20 md:px-12 md:py-28 lg:px-24">
-    <div class="mx-auto max-w-7xl">
-      <div class="flex flex-col gap-5 md:flex-row md:items-end md:justify-between" data-motion="reveal">
-        <div class="max-w-3xl">
-          <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.blog.eyebrow}</p>
-          <h2 class="mt-4 text-3xl font-bold tracking-tight md:text-5xl">{copy.blog.title}</h2>
-          <p class="mt-5 text-lg leading-8 text-muted-foreground">{copy.blog.description}</p>
-        </div>
-        <a href={localizedPath(locale, '/blog/')} class="inline-flex min-h-11 items-center rounded-md border border-border px-5 py-3 text-sm font-semibold transition hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-          {copy.hero.blogCta}
-        </a>
-      </div>
-      <div class="mt-10 grid gap-5 md:grid-cols-2">
-        {latestPosts.map((post) => (
-          <article class="rounded-md border border-border/70 bg-card/60 p-6 transition hover:-translate-y-1 hover:border-accent/80" data-motion="reveal">
-            <p class="text-sm text-muted-foreground">{formatDate(post.data.publishedAt, locale)} · {post.data.topic}</p>
-            <h3 class="mt-3 text-2xl font-bold tracking-tight">
+            <h2 class={`mt-3 font-bold tracking-tight ${index === 0 ? 'text-3xl md:text-4xl' : 'text-2xl'}`}>
               <a href={localizedPath(locale, `/blog/${post.data.slug}/`)} class="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{post.data.title}</a>
-            </h3>
-            <p class="mt-3 leading-7 text-muted-foreground">{post.data.summary}</p>
-            <a href={localizedPath(locale, `/blog/${post.data.slug}/`)} class="mt-6 inline-flex text-sm font-semibold text-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-              {copy.blog.readMore}
+            </h2>
+            <p class="mt-3 max-w-3xl leading-7 text-muted-foreground">{post.data.summary}</p>
+            <a href={localizedPath(locale, `/blog/${post.data.slug}/`)} class="mt-5 inline-flex text-sm font-semibold text-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+              {copy.blog.readMore} →
             </a>
           </article>
         ))}
       </div>
-    </div>
-  </section>
-</main>
+    </section>
 
-<footer id="contact" class="border-t border-border/70 px-6 py-16 text-muted-foreground md:px-12 lg:px-24">
-  <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_auto]">
-    <div class="max-w-3xl" data-motion="reveal">
-      <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{copy.contact.eyebrow}</p>
-      <h2 class="mt-4 text-3xl font-bold tracking-tight text-foreground md:text-5xl">{copy.contact.title}</h2>
-      <p class="mt-5 text-lg leading-8">{copy.contact.description}</p>
-    </div>
-    <div class="flex flex-col items-start gap-3 lg:items-end lg:justify-end" data-motion="reveal">
-      <a href={contactHref} class="inline-flex min-h-11 items-center rounded-md bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{copy.contact.primary}</a>
-      <div class="flex gap-5 text-sm">
-        <a href={person.sameAs[0]} target="_blank" rel="noopener noreferrer" class="text-foreground hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{copy.contact.linkedin}</a>
-        <a href={person.sameAs[1]} target="_blank" rel="noopener noreferrer" class="text-foreground hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{copy.contact.github}</a>
-      </div>
-    </div>
-  </div>
-  <p class="mx-auto mt-12 max-w-7xl text-sm">&copy; {new Date().getFullYear()} {copy.copyright}</p>
-</footer>
+  </main>
+
+  <footer class="border-t border-border/70 px-6 py-8 md:px-12 lg:px-24">
+    <p class="mx-auto max-w-7xl text-sm text-muted-foreground">&copy; {new Date().getFullYear()} {copy.copyright}</p>
+  </footer>
+</BaseLayout>
 
 <script>
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -245,16 +105,5 @@ const advisorLabels =
       }
     });
     document.documentElement.classList.add('motion-ready');
-
-    const portrait = document.querySelector<HTMLElement>('.motion-portrait');
-    if (portrait && window.matchMedia('(min-width: 768px)').matches) {
-      window.addEventListener('mousemove', (event) => {
-        const x = (event.clientX / window.innerWidth - 0.5) * 14;
-        const y = (event.clientY / window.innerHeight - 0.5) * 10;
-        portrait.style.transform = `translate3d(${x}px, ${y}px, 0) scaleX(-1)`;
-      }, { passive: true });
-    }
   }
 </script>
-
-<AIAdvisorIsland client:load labels={advisorLabels} locale={locale} endpoint="/api/portfolio-advisor" />

@@ -1,0 +1,131 @@
+---
+title: "Wie Hermes Agent die eigene Arbeit bewertet und 3x schneller wird"
+description: "Hermes Agent kann die eigene Ausgabe bewerten, Schwächen erkennen und Skills von Grund auf neu schreiben. So funktioniert der Self-Improvement-Loop und wie man ihn einrichtet."
+language: "de"
+slug: "hermes-selbstverbessernder-agent"
+canonicalSlug: "hermes-self-improving-agent"
+publishedAt: "2026-05-11"
+updatedAt: "2026-05-11"
+author: "Dominic Hückmann"
+tags: ["Hermes Agent", "KI-Agenten", "Self-Improvement", "Nous Research"]
+topic: "KI-Agenten-Workflows"
+summary: "Hermes Agent führt Aufgaben nicht nur aus — es bewertet die eigene Ausgabe, erkennt Ineffizienzen und schreibt seine Skills um. Nach zwei Runden Self-Review berichten Nutzer von 3x schnellerer Ausführung und 80% geringeren API-Kosten. Dieser Beitrag erklärt den Loop: wie er funktioniert, wie man ihn startet und worauf man achten muss."
+heroImage: "/dominic-h.png"
+draft: false
+featured: true
+faqs:
+  - question: "Was bedeutet Self-Improvement bei Hermes Agent?"
+    answer: "Hermes kann abgeschlossene Aufgaben bewerten, Ineffizienzen erkennen und seine Skills oder Prompts so umschreiben, dass die nächste Ausführung schneller, günstiger und besser wird."
+  - question: "Brauche ich eine spezielle Konfiguration für Self-Improvement?"
+    answer: "Nein. Self-Improvement ist in Hermes' Skill-System eingebaut. Man startet es, indem man Hermes bittet, einen zuvor erstellten oder ausgeführten Skill zu reviewen und zu verbessern."
+  - question: "Wie viel kann Self-Improvement tatsächlich sparen?"
+    answer: "Aus der Community werden 3x schnellere Ausführung und bis zu 80% Kostenreduktion nach zwei Review-Runden berichtet — die Ergebnisse hängen jedoch von Aufgabe und Modell ab."
+---
+
+## Die Schleife, die alles verändert
+
+Die meisten KI-Agenten arbeiten im One-Shot-Modus. Aufgabe rein, Ergebnis raus, fertig. Beim nächsten Mal fangen sie wieder bei null an. Gleiche Fehler. Gleiche Umwege. Gleicher Token-Verbrauch.
+
+Hermes Agent funktioniert anders. Es kann die eigene Ausgabe nehmen, kritisieren und den Ansatz von Grund auf neu aufbauen. Kein Prompt-Tuning — sondern ein neuer Skill, eine neue Strategie, und am Ende ein spürbar besseres Ergebnis.
+
+Das virale Beispiel aus der Community: nach zwei Self-Review-Runden war ein Skill 3x schneller und verbrauchte 80% weniger API-Kosten. Das ist kein marginaler Gewinn. Das ist der Unterschied zwischen einem Tool, das man ausprobiert, und einem, das man täglich nutzt.
+
+## Wie der Self-Improvement-Loop wirklich funktioniert
+
+Keine Magie. Es ist ein strukturierter Review-Zyklus, den man steuern kann.
+
+**Runde 1: Ausführen und erfassen.** Den Skill oder die Aufgabe normal ausführen. Hermes erzeugt die Ausgabe und protokolliert, was es getan hat — welche Schritte, welche Suchen, was generiert wurde, wie viele Token verbraucht wurden.
+
+**Runde 2: Review.** Hermes bitten, die eigene Ausgabe zu bewerten. Das Review deckt drei Dimensionen ab:
+
+- **Geschwindigkeit:** Welche Schritte dauerten am längsten? Gab es redundante Suchen oder unnötige Tool-Aufrufe?
+- **Qualität:** Fehlt etwas Wichtiges im Ergebnis? Gab es halluzinierte Details oder oberflächliche Analyse?
+- **Kosten:** Wo flossen die meisten Token? Könnte das gleiche Ergebnis mit weniger oder kürzeren LLM-Calls erreicht werden?
+
+**Runde 3: Neuaufbau.** Hermes schreibt den Skill basierend auf den Erkenntnissen um. Hier passieren die echten Verbesserungen. Es könnte:
+
+- Eine breite Websuche durch einen gezielten API-Call ersetzen
+- Zwischenergebnisse cachen statt sie neu zu berechnen
+- Den Prompt so umstrukturieren, dass ein Call statt drei reicht
+- Ganze Schritte überspringen, die sich als unnötig erwiesen haben
+
+Der entscheidende Punkt: Hermes optimiert nicht nur den Prompt-Text. Es ändert die *Strategie* — welche Tools, in welcher Reihenfolge, mit welchen Fallbacks.
+
+## Schritt für Schritt einrichten
+
+Keine speziellen Plugins oder Konfiguration nötig. Der Self-Improvement-Loop nutzt Hermes' eingebautes Skill-System.
+
+**1. Einen Skill für die Aufgabe erstellen.** Einen Skill schreiben, der den Workflow abdeckt. Muss nicht perfekt sein — genau das ist der Punkt. Eine grobe erste Version reicht.
+
+**2. Mit einer echten Aufgabe ausführen.** Etwas wählen, das man tatsächlich braucht, kein Spielzeug-Beispiel. Echte Aufgaben decken echte Ineffizienzen auf.
+
+**3. Review anfordern.** Nach Abschluss des Skills:
+
+> Review den Skill, den du gerade ausgeführt hast. Identifiziere die langsamsten Schritte, die teuerste Token-Nutzung und alles am Output, das besser sein könnte. Schreibe den Skill dann um, um alle drei Punkte zu adressieren.
+
+**4. Die verbesserte Version ausführen.** Die gleiche Aufgabe mit dem umgeschriebenen Skill laufen lassen. Ergebnisse vergleichen.
+
+**5. Bei Bedarf wiederholen.** Die meisten Verbesserungen kommen in den ersten zwei Runden. Danach treten schnell abnehmende Erträge ein.
+
+## Was funktioniert — und was nicht
+
+**Funktioniert gut für:**
+- Recherche- und Synthese-Aufgaben, bei denen der Agent die Vollständigkeit messen kann
+- Multi-Step-Workflows mit klaren Erfolgskriterien
+- Skills, die redundante API-Calls machen oder die gleiche Quelle zweimal durchsuchen
+- Jede Aufgabe, bei der „besser" als schneller, günstiger oder genauer definiert werden kann
+
+**Hilft wenig bei:**
+- Einmalaufgaben, die man nie wieder ausführt
+- Kreativarbeit, bei der Qualität subjektiv ist
+- Aufgaben, deren Engpass extern liegt (Warten auf eine API-Antwort beispielsweise)
+- Skills, die schon nahe am Optimum sind — das Review bestätigt nur, was bereits funktioniert
+
+## Die Token-Kostenfalle
+
+Self-Improvement kostet Token. Die Review- und Rewrite-Schritte verbrauchen LLM-Calls wie die ursprüngliche Aufgabe. Wenn ein Skill $0,10 pro Lauf kostet und das Review $0,30, muss man den verbesserten Skill mindestens drei- oder viermal ausführen, um auf null zu kommen.
+
+Vor dem Loopen rechnen. Bei Skills, die man wöchentlich oder täglich nutzt, amortisiert sich das schnell. Bei Einmalaufgaben das Review überspringen.
+
+Außerdem: ein günstigeres Modell für den Review-Schritt nutzen. Hermes unterstützt mehrere Provider. Den eigentlichen Skill mit einem leistungsstarken Modell ausführen, das Review aber von einem schnelleren, günstigeren erledigen lassen. Das Review braucht keine kreative Brillanz — es braucht ehrliche Bewertung.
+
+## Community-Patterns, die sich lohnen
+
+Die r/hermesagent-Community betreibt diesen Loop seit einigen Monaten. Einige Muster tauchen immer wieder auf:
+
+**Profil-Trennung.** Nicht ein Profil für alles nutzen. Separate Profile für Recherche, Coding und Kommunikation. Self-Improvement funktioniert am besten, wenn der Skill einen engen Scope hat. Ein Recherche-Skill, der auch noch E-Mails schreiben soll, verbessert sich langsamer als ein reiner Recherche-Skill.
+
+**Contract-First-Skills.** Vor dem Skill-Bau einen kurzen Vertrag schreiben — welche Inputs, welche Outputs, was zählt als Erfolg. Der Vertrag gibt Hermes etwas Konkretes, gegen das es bewerten kann. Ein Nutzer auf r/ClaudeAI fand, dass ein Contract-basierter Ansatz die Kosten um 54% senkte — bevor überhaupt ein Self-Improvement-Lauf stattfand.
+
+**Die Zwei-Runden-Regel.** Nach zwei Self-Review-Zyklen aufhören. Weitere Runden bringen kleinere Verbesserungen bei höheren Token-Kosten. Wenn der Skill nach zwei Runden nicht gut genug ist, liegt das Problem wahrscheinlich in der Strategie, nicht in der Ausführung. Mit einem anderen Ansatz neu anfangen.
+
+**Cross-Agent-Review.** Einen Agent den Skill bauen lassen und einen anderen das Review durchführen. Gleiches Framework, andere Session, frische Perspektive. Das vermeidet den Blind Spot, bei dem ein Agent die eigene Arbeit besser bewertet als ein unabhängiger Prüfer.
+
+## Im Vergleich: OpenClaws Ansatz
+
+OpenClaw und Hermes lösen das Verbesserungsproblem unterschiedlich. OpenClaw verlässt sich darauf, dass der Nutzer Ineffizienzen bemerkt und Skills, Prompts oder AGENTS.md manuell anpasst. Der Agent reviewt sich nicht selbst — man reviewt ihn und sagt ihm, was sich ändern soll.
+
+Hermes baut das Review in den Loop ein. Der Agent kann die eigene Bewertung initiieren und den Skill umschreiben. Das ist schneller bei repetitiven Workflows, bedeutet aber auch, dass man den Token-Zähler im Auge behalten muss. Ein Agent, der sich dreimal bei einer Aufgabe umschreibt, die nicht optimiert werden musste, ist schlechter als gar kein Self-Improvement.
+
+Die besten Setups, die Nutzer berichten, nutzen beide: Hermes als Strategist, der Skills reviewt und verbessert, OpenClaw als Executor, der die verfeinerten Workflows ausführt. Unterschiedliche Stärken, unterschiedliche Rollen.
+
+## Heute Abend starten
+
+Wer bereits Hermes nutzt, kann das hier ausprobieren:
+
+1. Den am häufigsten genutzten Skill wählen
+2. Mit einer echten Aufgabe ausführen
+3. Hermes bitten, auf Geschwindigkeit, Kosten und Qualität zu reviewen
+4. Den Skill umschreiben lassen
+5. Die gleiche Aufgabe nochmal ausführen und vergleichen
+
+Der gesamte Zyklus dauert vielleicht 15 Minuten. Und wenn der verbesserte Skill nur 30 Sekunden pro Lauf spart, ist man nach einer Woche täglicher Nutzung im Plus.
+
+Das ist keine Theorie. Das ist die tatsächliche Mathe, die Leute berichten.
+
+## Quellen und weiterführende Hinweise
+
+- [One month with Hermes Agent — what I wish I knew earlier](https://reddit.com/r/hermesagent/comments/1t29ogw/) (r/hermesagent, 392 Upvotes)
+- [Hermes Agent: The Open-Source Self-Improving AI Agent](https://reddit.com/r/WebAfterAI/comments/1sx4748/) (r/WebAfterAI, 347 Upvotes)
+- [Claude Code cheat sheet after 6 months of daily use](https://reddit.com/r/ClaudeAI/comments/1sv852q/) (r/ClaudeAI, 1.002 Upvotes)
+- [Nous Research Hermes Agent auf GitHub](https://github.com/NousResearch/hermes-agent)

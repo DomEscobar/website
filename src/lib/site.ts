@@ -21,14 +21,14 @@ export const person = {
 
 export const seoDefaults = {
   de: {
-    title: 'Hücki | Senior Software Developer & AI Architect',
+    title: 'Hücki Blog | OpenClaw, Hermes und AI-first Workflows',
     description:
-      'Portfolio und Blog von Dominic Hückmann: Softwarearchitektur, Fullstack-Entwicklung, KI-first Workflows, GenAI und praktische Engineering-Erfahrung.',
+      'Blog über OpenClaw, Hermes, Softwarearchitektur, Automatisierung und praktische AI-first Workflows.',
   },
   en: {
-    title: 'Hücki | Senior Software Developer & AI Architect',
+    title: 'Hücki Blog | OpenClaw, Hermes, and AI-first Workflows',
     description:
-      'Portfolio and blog by Dominic Hückmann: software architecture, full-stack development, AI-first workflows, GenAI, and practical engineering experience.',
+      'Blog about OpenClaw, Hermes, software architecture, automation, and practical AI-first workflows.',
   },
 } satisfies Record<Locale, { title: string; description: string }>;
 
