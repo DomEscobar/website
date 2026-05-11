@@ -24,7 +24,8 @@ const topics = [...new Set(allPosts.map((post) => post.data.topic))];
   <header class="relative isolate overflow-hidden border-b border-border/70 px-6 pt-28 pb-20 md:px-12 md:pt-36 md:pb-28 lg:px-24">
     <div class="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_20%_20%,hsl(var(--accent)/0.16),transparent_32%),linear-gradient(115deg,hsl(var(--background))_0%,hsl(var(--background))_50%,hsl(var(--card))_100%)]"></div>
     <div class="mx-auto max-w-7xl">
-      <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">{copy.blog.eyebrow}</p>
+      <p class="max-w-3xl text-base leading-7 text-muted-foreground md:text-lg">{copy.blog.intro}</p>
+      <p class="mt-8 text-sm font-semibold uppercase tracking-[0.28em] text-accent">{copy.blog.eyebrow}</p>
       <h1 class="mt-6 max-w-5xl text-5xl font-bold leading-[0.95] tracking-tight text-foreground md:text-7xl lg:text-8xl">
         {copy.blog.title}
       </h1>

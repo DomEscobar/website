@@ -61,9 +61,10 @@ export const portfolioCopy = {
     },
     blog: {
       eyebrow: 'Blog',
+      intro: 'Ich bin Dominic Hückmann, Softwareentwickler und AI-Architekt. Hier schreibe ich kurz und praxisnah über OpenClaw, Hermes und AI-first Workflows.',
       title: 'Artikel über OpenClaw, Hermes und AI-first Workflows',
       description:
-        'Praxisnahe Beiträge über Agenten, Automatisierung, Softwarearchitektur und konkrete Workflows statt Personal Branding.',
+        'Praxisnahe Beiträge über Agenten, Automatisierung und Softwarearchitektur.',
       readMore: 'Artikel lesen',
       latest: 'Neueste Artikel',
       summary: 'Kurzantwort',
@@ -147,9 +148,10 @@ export const portfolioCopy = {
     },
     blog: {
       eyebrow: 'Blog',
+      intro: 'I’m Dominic Hückmann, a software developer and AI architect. This is where I write short, practical notes about OpenClaw, Hermes, and AI-first workflows.',
       title: 'Notes on OpenClaw, Hermes, and AI-first workflows',
       description:
-        'Practical writing about agents, automation, software architecture, and real workflows instead of personal branding.',
+        'Practical writing about agents, automation, and software architecture.',
       readMore: 'Read article',
       latest: 'Latest Articles',
       summary: 'Short Answer',
