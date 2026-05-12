@@ -27,11 +27,11 @@ const navItems = [{ href: blogHref, label: copy.nav.blog }];
           <a href={item.href} class="text-sm font-medium text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{item.label}</a>
         ))}
       </div>
-      <div class="flex items-center gap-2">
+      <div class="hidden items-center gap-2 md:flex">
         <a href={switchHref} class="rounded-md border border-border px-3 py-2 text-sm font-semibold uppercase transition hover:border-accent hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{switchLabel}</a>
         <details class="group relative md:hidden">
-          <summary class="flex min-h-10 cursor-pointer list-none items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-foreground transition hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-            {copy.nav.menu}
+          <summary class="flex min-h-10 min-w-10 cursor-pointer list-none items-center justify-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-foreground transition hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={copy.nav.menu}>
+            <span aria-hidden="true">☰</span>
           </summary>
           <div class="absolute right-0 mt-3 w-56 rounded-md border border-border bg-card p-2 shadow-2xl">
             {navItems.map((item) => (

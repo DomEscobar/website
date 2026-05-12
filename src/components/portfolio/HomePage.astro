@@ -22,14 +22,14 @@ const topics = [...new Set(allPosts.map((post) => post.data.topic))];
   <Navbar locale={locale} />
 
   <header class="relative isolate overflow-hidden border-b border-border/70 px-6 pt-28 pb-16 md:px-12 md:pt-36 md:pb-24 lg:px-24">
-    <div class="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_18%_12%,hsl(var(--accent)/0.22),transparent_28%),radial-gradient(circle_at_82%_26%,hsl(var(--foreground)/0.10),transparent_24%),linear-gradient(115deg,hsl(var(--background))_0%,hsl(var(--background))_48%,hsl(var(--card))_100%)]"></div>
-    <div class="absolute inset-0 -z-10 opacity-[0.13] [background-image:linear-gradient(hsl(var(--foreground))_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground))_1px,transparent_1px)] [background-size:38px_38px]"></div>
-    <div class="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
-      <div>
+    <div class="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_18%_18%,hsl(var(--accent)/0.18),transparent_30%),radial-gradient(circle_at_88%_64%,hsl(var(--accent)/0.10),transparent_24%),linear-gradient(135deg,hsl(var(--background))_0%,hsl(var(--background))_58%,hsl(var(--card))_100%)]"></div>
+    <div class="absolute right-[-12rem] top-20 -z-10 h-[28rem] w-[28rem] rounded-full bg-accent/10 blur-3xl"></div>
+    <div class="mx-auto grid max-w-7xl min-w-0 items-center gap-12 lg:grid-cols-[minmax(0,1fr)_24rem]">
+      <div class="min-w-0">
         <h1 class="max-w-5xl text-6xl font-bold leading-[0.9] tracking-tight text-foreground md:text-8xl lg:text-9xl">
           {copy.blog.title}
         </h1>
-        <p class="mt-7 max-w-2xl text-xl leading-8 text-muted-foreground md:text-2xl md:leading-9">{copy.blog.intro}</p>
+        <p class="mt-7 max-w-xl text-lg leading-8 text-muted-foreground md:text-2xl md:leading-9">{copy.blog.intro}</p>
         <div class="mt-8 flex flex-wrap items-center gap-3">
           <a href={localizedPath(locale, '/blog/')} class="inline-flex min-h-11 items-center rounded-full bg-accent px-5 text-sm font-semibold text-accent-foreground shadow-[0_0_30px_hsl(var(--accent)/0.22)] transition hover:-translate-y-0.5 hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{locale === 'de' ? 'Blog lesen' : 'Read blog'}</a>
           <a href={person.sameAs[1]} target="_blank" rel="noreferrer" class="inline-flex min-h-11 items-center rounded-full border border-border bg-card/80 px-5 text-sm font-semibold text-foreground backdrop-blur transition hover:-translate-y-0.5 hover:border-accent/70 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">GitHub</a>
@@ -56,15 +56,15 @@ const topics = [...new Set(allPosts.map((post) => post.data.topic))];
 
   <main class="w-full">
     <!-- Topic filter -->
-    <nav class="border-b border-border/70 px-6 py-5 md:px-12 lg:px-24">
-      <div class="mx-auto flex max-w-7xl flex-wrap gap-2">
+    <nav class="overflow-hidden border-b border-border/70 px-6 py-5 md:px-12 lg:px-24">
+      <div class="mx-auto flex max-w-7xl gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <a href={localizedPath(locale, '/blog/')}
-          class="rounded-full border border-border bg-accent/10 px-4 py-1.5 text-sm font-medium text-accent transition hover:bg-accent/20">
+          class="shrink-0 rounded-full border border-border bg-accent/10 px-4 py-1.5 text-sm font-medium text-accent transition hover:bg-accent/20">
           {locale === 'de' ? 'Alle' : 'All'}
         </a>
         {topics.map((topic) => (
           <a href={localizedPath(locale, '/blog/') + `?topic=${encodeURIComponent(topic)}`}
-            class="rounded-full border border-border px-4 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent/60 hover:text-foreground">
+            class="shrink-0 rounded-full border border-border px-4 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-accent/60 hover:text-foreground">
             {topic}
           </a>
         ))}

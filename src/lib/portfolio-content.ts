@@ -8,7 +8,7 @@ export const portfolioCopy = {
       blog: 'Blog',
       skills: 'Expertise',
       contact: 'Kontakt',
-      menu: 'Menü öffnen',
+      menu: 'Menü',
     },
     hero: {
       eyebrow: 'Dominic Hückmann · Hücki',
@@ -95,7 +95,7 @@ export const portfolioCopy = {
       blog: 'Blog',
       skills: 'Expertise',
       contact: 'Contact',
-      menu: 'Open menu',
+      menu: 'Menu',
     },
     hero: {
       eyebrow: 'Dominic Hückmann · Hücki',
