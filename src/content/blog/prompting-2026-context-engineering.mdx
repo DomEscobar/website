@@ -1,0 +1,226 @@
+---
+title: "Prompting ist tot. Context zählt."
+description: "Moderne Prompts sind keine Zaubersprüche mehr. Gute KI-Workflows bestehen aus Kontext, Tools, Schemas und Evals."
+language: "de"
+slug: "prompting-2026-context-engineering"
+canonicalSlug: "prompting-2026-context-engineering-en"
+publishedAt: "2026-05-12"
+updatedAt: "2026-05-12"
+author: "Dominic Hückmann"
+tags: ["Prompt Engineering", "Context Engineering", "AI Agents", "KI-Workflows"]
+topic: "AI-first Engineering"
+summary: "2026 geht es nicht mehr um den einen magischen Prompt. Der bessere Ansatz: Kontext wählen, Tools und Schemas definieren, Agent-Regeln setzen und mit Evals prüfen."
+heroImage: "/dominic-h.png"
+draft: false
+featured: true
+faqs:
+  - question: "Ist Prompt Engineering 2026 wirklich tot?"
+    answer: "Nein, aber es ist erwachsen geworden. Der Fokus verschiebt sich von cleveren Formulierungen zu Context Engineering, Tool-Design, strukturierten Outputs und Evals."
+  - question: "Was ist Context Engineering?"
+    answer: "Context Engineering bedeutet, bewusst zu entscheiden, welche Informationen, Tools, Beispiele, Erinnerungen und Regeln ins Modellfenster gehören — und welche nicht."
+  - question: "Was ist der schnellste praktische Einstieg?"
+    answer: "Starte mit einem klaren Task Contract: Rolle, Aufgabe, Kontext, Constraints, Output-Format, Erfolgskriterien und Verhalten bei Unsicherheit."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+
+## Kurz erklärt
+
+Der alte Prompting-Vibe war:
+
+> “Sag dem Modell den perfekten Satz.”
+
+Der 2026-Vibe ist:
+
+> “Baue ein kleines System, das dem Modell genau den richtigen Kontext gibt.”
+
+<FlowGraphic
+  title="Der moderne Prompt-Stack"
+  steps={['Task Contract', 'High-signal Kontext', 'Tools + Schemas', 'Agent-Regeln', 'Evals + Traces']}
+/>
+
+<KeyPoints
+  title="Was sich geändert hat"
+  items={[
+    'Prompting ist weniger Copywriting, mehr Produkt- und Systemdesign.',
+    'Der Kontext ist Teil des Prompts: Docs, Tools, Memory, Beispiele, State.',
+    'Für wiederholbare Workflows brauchst du Schemas und Tests, nicht mehr Adjektive.',
+    'Reasoning-Modelle sollte man nicht mehr blind zu sichtbarem Chain-of-Thought zwingen.',
+  ]}
+/>
+
+## Die neue Formel
+
+```txt
+klarer Task Contract
++ wenig, aber guter Kontext
++ explizite Tools / Schemas / Beispiele
++ Regeln für Agent-Verhalten
++ Evals zur Kontrolle
+= verlässlichere KI
+```
+
+<CompareGrid
+  title="2020 vs. 2026"
+  leftLabel="Altes Prompting"
+  rightLabel="Modernes Prompting"
+  rows={[
+    { left: 'Ein perfekter Mega-Prompt.', right: 'Mehrere kleine Schritte mit klaren Gates.' },
+    { left: '“Think step by step.”', right: 'Model-native reasoning effort + kurze Begründung.' },
+    { left: 'Bitte JSON ausgeben.', right: 'Schema, Validator, Retry bei ungültigem Output.' },
+    { left: 'Viele Regeln in einem Textblock.', right: 'Kontext, Tools und Beispiele sauber getrennt.' },
+  ]}
+/>
+
+## Der Task Contract
+
+Wenn du nur eine Sache übernimmst, nimm diese Struktur:
+
+```txt
+<role>
+Du bist ein präziser Assistent für [Domain].
+</role>
+
+<context>
+Relevante Fakten, Quellen, Constraints.
+</context>
+
+<task>
+Tue X für Y Zielgruppe.
+</task>
+
+<requirements>
+- Nutze nur die bereitgestellten Quellen.
+- Trenne Fakten von Empfehlungen.
+- Wenn etwas fehlt, sag was fehlt.
+</requirements>
+
+<output_format>
+1. Kurzantwort
+2. Evidenz
+3. Empfehlung
+4. Caveats
+</output_format>
+```
+
+Warum das funktioniert:
+
+- weniger Verwechslung zwischen Daten und Anweisung
+- leichter wartbar
+- besser testbar
+- einfacher in Agenten und Tools zu übertragen
+
+## Context Engineering statt Prompt-Magie
+
+Context Engineering heißt: Du kuratierst das, was das Modell sieht.
+
+<KeyPoints
+  title="Kontext ist mehr als Text"
+  items={[
+    'Systemregeln: Was darf das Modell, was nicht?',
+    'Tools: Welche Aktionen sind möglich?',
+    'Schemas: Wie muss die Antwort aussehen?',
+    'Memory: Was ist relevant — und was ist alter Müll?',
+    'Beispiele: Was sieht gut aus? Was ist ein Edge Case?',
+    'Quellen: Was darf als Fakt benutzt werden?',
+  ]}
+/>
+
+## Agenten brauchen andere Prompts
+
+Ein Agent braucht nicht nur eine Aufgabe. Er braucht Betriebsregeln.
+
+```txt
+Goal: [objective]
+
+Tools:
+- read: inspect files
+- edit: change files
+- test: verify behavior
+
+Rules:
+- Read before editing.
+- Use the smallest useful next action.
+- Verify before claiming success.
+- Stop when success criteria are met.
+- If blocked, report the exact blocker.
+
+Success criteria:
+- build passes
+- changed files listed
+- no unverified claims
+```
+
+<DoDont
+  title="Agent-Regeln"
+  doLabel="Machen"
+  dontLabel="Lassen"
+  doItems={[
+    'Tool-Nutzung klar beschreiben',
+    'Stop-Regeln definieren',
+    'riskante Aktionen genehmigen lassen',
+    'Verifikation als Pflicht einbauen',
+  ]}
+  dontItems={[
+    'Agenten ohne Grenzen laufen lassen',
+    'retrieved Docs als vertrauenswürdige Anweisungen behandeln',
+    'alles in einem riesigen Prompt verstecken',
+  ]}
+/>
+
+## Der unterschätzte Teil: Evals
+
+Für echte Workflows reicht “sieht gut aus” nicht.
+
+```txt
+gewünschtes Verhalten definieren
+→ Testfälle bauen
+→ Agent laufen lassen
+→ Fehler anschauen
+→ Prompt / Kontext / Tools patchen
+→ wiederholen
+```
+
+Ein guter Judge bewertet **nur eine Dimension**:
+
+```txt
+Bewerte nur: Quellen-Treue
+Rubrik:
+0 = nicht belegt
+1 = teilweise belegt
+2 = korrekt belegt
+3 = korrekt + exakt zitiert
+
+Gib zurück:
+- score
+- Belegstelle
+- kurzer Grund
+- unknown: true/false
+```
+
+## Quick rules
+
+<KeyPoints
+  title="Die 2026-Regeln"
+  items={[
+    'Schreibe keine Mega-Prompts, baue kleine Pipelines.',
+    'Nutze Beispiele für Ton, Format und Edge Cases.',
+    'Nutze Schemas, wenn Output weiterverarbeitet wird.',
+    'Label untrusted content explizit.',
+    'Erzwinge kein sichtbares Chain-of-Thought bei modernen Reasoning-Modellen.',
+    'Teste Prompts wie Produktlogik, nicht wie Poesie.',
+  ]}
+/>
+
+## Quellen
+
+- [Anthropic: Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
+- [LangChain: The rise of context engineering](https://blog.langchain.com/the-rise-of-context-engineering/)
+- [OpenAI GPT-5 prompting guide](https://developers.openai.com/cookbook/examples/gpt-5/gpt-5_prompting_guide)
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
+- [Google Gemini prompting strategies](https://ai.google.dev/gemini-api/docs/prompting-strategies)
+- [Microsoft prompt engineering](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/prompt-engineering)
+- [DSPy docs](https://dspy.ai/)

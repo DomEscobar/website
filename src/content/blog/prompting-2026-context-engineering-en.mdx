@@ -1,0 +1,224 @@
+---
+title: "Prompting Is Dead. Context Wins."
+description: "Modern prompts are no longer magic phrases. Reliable AI workflows use context, tools, schemas, and evals."
+language: "en"
+slug: "prompting-2026-context-engineering-en"
+canonicalSlug: "prompting-2026-context-engineering"
+publishedAt: "2026-05-12"
+updatedAt: "2026-05-12"
+author: "Dominic Hückmann"
+tags: ["Prompt Engineering", "Context Engineering", "AI Agents", "AI Workflows"]
+topic: "AI-first Engineering"
+summary: "In 2026, good prompting is not about one magic sentence. The better approach is to curate context, define tools and schemas, set agent rules, and verify behavior with evals."
+heroImage: "/dominic-h.png"
+draft: false
+featured: true
+faqs:
+  - question: "Is prompt engineering really dead in 2026?"
+    answer: "No, but it has matured. The focus shifted from clever wording to context engineering, tool design, structured outputs, and evals."
+  - question: "What is context engineering?"
+    answer: "Context engineering means deliberately choosing which information, tools, examples, memory, and rules the model sees — and which it does not."
+  - question: "What is the fastest practical starting point?"
+    answer: "Start with a task contract: role, task, context, constraints, output format, success criteria, and failure behavior."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+
+## Short answer
+
+Old prompting was:
+
+> “Find the perfect sentence.”
+
+2026 prompting is:
+
+> “Build a small system that gives the model the right context.”
+
+<FlowGraphic
+  title="The modern prompt stack"
+  steps={['Task contract', 'High-signal context', 'Tools + schemas', 'Agent rules', 'Evals + traces']}
+/>
+
+<KeyPoints
+  title="What changed"
+  items={[
+    'Prompting is less copywriting and more product/system design.',
+    'Context is part of the prompt: docs, tools, memory, examples, state.',
+    'Repeatable workflows need schemas and tests, not more adjectives.',
+    'Modern reasoning models should not be pushed to expose chain-of-thought by default.',
+  ]}
+/>
+
+## The new formula
+
+```txt
+clear task contract
++ small but strong context
++ explicit tools / schemas / examples
++ agent behavior rules
++ evals to verify behavior
+= more reliable AI
+```
+
+<CompareGrid
+  title="2020 vs. 2026"
+  leftLabel="Old prompting"
+  rightLabel="Modern prompting"
+  rows={[
+    { left: 'One perfect mega-prompt.', right: 'Small pipeline with clear quality gates.' },
+    { left: '“Think step by step.”', right: 'Native reasoning effort + brief visible rationale.' },
+    { left: 'Please output JSON.', right: 'Schema, validator, retry on invalid output.' },
+    { left: 'Huge rule dump.', right: 'Context, tools, and examples separated clearly.' },
+  ]}
+/>
+
+## The task contract
+
+If you steal one thing, steal this structure:
+
+```txt
+<role>
+You are a precise assistant for [domain].
+</role>
+
+<context>
+Relevant facts, sources, constraints.
+</context>
+
+<task>
+Do X for Y audience.
+</task>
+
+<requirements>
+- Use only provided sources for factual claims.
+- Separate facts from recommendations.
+- If something is missing, say what is missing.
+</requirements>
+
+<output_format>
+1. Short answer
+2. Evidence
+3. Recommendation
+4. Caveats
+</output_format>
+```
+
+Why it works:
+
+- less confusion between data and instructions
+- easier to maintain
+- easier to test
+- easier to move into agents and tools
+
+## Context engineering instead of prompt magic
+
+Context engineering means curating what the model sees.
+
+<KeyPoints
+  title="Context is more than text"
+  items={[
+    'System rules: what is allowed and forbidden?',
+    'Tools: what actions are possible?',
+    'Schemas: what shape must the answer have?',
+    'Memory: what matters — and what is stale junk?',
+    'Examples: what does good look like? What is an edge case?',
+    'Sources: what can be used as evidence?',
+  ]}
+/>
+
+## Agents need different prompts
+
+An agent does not only need a task. It needs operating rules.
+
+```txt
+Goal: [objective]
+
+Tools:
+- read: inspect files
+- edit: change files
+- test: verify behavior
+
+Rules:
+- Read before editing.
+- Use the smallest useful next action.
+- Verify before claiming success.
+- Stop when success criteria are met.
+- If blocked, report the exact blocker.
+
+Success criteria:
+- build passes
+- changed files listed
+- no unverified claims
+```
+
+<DoDont
+  title="Agent rules"
+  doItems={[
+    'describe tool use clearly',
+    'define stop conditions',
+    'require approval for risky actions',
+    'make verification mandatory',
+  ]}
+  dontItems={[
+    'let agents run without boundaries',
+    'treat retrieved docs as trusted instructions',
+    'hide everything inside one huge prompt',
+  ]}
+/>
+
+## The underrated part: evals
+
+For real workflows, “looks good” is not enough.
+
+```txt
+define desired behavior
+→ create test cases
+→ run the agent
+→ inspect failures
+→ patch prompt / context / tools
+→ repeat
+```
+
+A good judge grades **one dimension only**:
+
+```txt
+Grade only: source faithfulness
+Rubric:
+0 = unsupported
+1 = partially supported
+2 = correctly supported
+3 = correct + exact quote
+
+Return:
+- score
+- evidence quote
+- brief reason
+- unknown: true/false
+```
+
+## Quick rules
+
+<KeyPoints
+  title="The 2026 rules"
+  items={[
+    'Do not write mega-prompts. Build small pipelines.',
+    'Use examples for tone, format, and edge cases.',
+    'Use schemas when output feeds another system.',
+    'Label untrusted content explicitly.',
+    'Do not force visible chain-of-thought from modern reasoning models.',
+    'Test prompts like product logic, not poetry.',
+  ]}
+/>
+
+## Sources
+
+- [Anthropic: Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
+- [LangChain: The rise of context engineering](https://blog.langchain.com/the-rise-of-context-engineering/)
+- [OpenAI GPT-5 prompting guide](https://developers.openai.com/cookbook/examples/gpt-5/gpt-5_prompting_guide)
+- [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
+- [Google Gemini prompting strategies](https://ai.google.dev/gemini-api/docs/prompting-strategies)
+- [Microsoft prompt engineering](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/prompt-engineering)
+- [DSPy docs](https://dspy.ai/)
