@@ -106,102 +106,88 @@
     transition: transform 600ms ease;
   }
 
-  .agent-orbit {
+  .hero-card-stack {
     position: relative;
-    width: min(22rem, 78vw);
-    aspect-ratio: 1;
+    width: min(22rem, 82vw);
+    height: 18rem;
+    perspective: 900px;
     transform-style: preserve-3d;
-    transform: rotateX(58deg) rotateZ(-18deg);
-    filter: drop-shadow(0 28px 44px hsl(var(--accent) / 0.16));
+    filter: drop-shadow(0 28px 48px hsl(var(--accent) / 0.15));
   }
 
-  .agent-orbit__ring,
-  .agent-orbit__core,
-  .agent-orbit__node {
+  .hero-card-stack::before {
+    content: '';
+    position: absolute;
+    inset: 3.4rem 1.8rem 1.2rem 1.8rem;
+    border-radius: 9999px;
+    background: hsl(var(--accent) / 0.18);
+    filter: blur(34px);
+    transform: rotateX(64deg) translateY(5.5rem);
+  }
+
+  .hero-card-stack__card {
     position: absolute;
     left: 50%;
     top: 50%;
+    display: flex;
+    min-height: 6.4rem;
+    width: 15.5rem;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid hsl(var(--border) / 0.9);
+    border-radius: 1.35rem;
+    background:
+      linear-gradient(145deg, hsl(var(--card) / 0.95), hsl(var(--background) / 0.72)),
+      radial-gradient(circle at 16% 20%, hsl(var(--accent) / 0.20), transparent 34%);
+    padding: 1.1rem 1.2rem;
+    box-shadow:
+      inset 0 1px 0 hsl(var(--foreground) / 0.07),
+      0 24px 60px hsl(var(--foreground) / 0.10);
     transform-style: preserve-3d;
+    transition:
+      transform 500ms ease,
+      border-color 500ms ease;
   }
 
-  .agent-orbit__ring {
-    border: 1px solid hsl(var(--accent) / 0.34);
-    border-radius: 9999px;
-    box-shadow:
-      inset 0 0 38px hsl(var(--accent) / 0.08),
-      0 0 70px hsl(var(--accent) / 0.14);
-  }
-
-  .agent-orbit__ring--outer {
-    width: 100%;
-    height: 100%;
-    transform: translate(-50%, -50%);
-    animation: orbit-spin 18s linear infinite;
-  }
-
-  .agent-orbit__ring--inner {
-    width: 58%;
-    height: 58%;
-    transform: translate(-50%, -50%) rotateZ(42deg);
-    border-color: hsl(var(--foreground) / 0.16);
-  }
-
-  .agent-orbit__core {
-    display: grid;
-    width: 5.6rem;
-    height: 5.6rem;
-    place-items: center;
-    border-radius: 1.4rem;
-    background: linear-gradient(145deg, hsl(var(--card) / 0.92), hsl(var(--accent) / 0.18));
-    border: 1px solid hsl(var(--accent) / 0.44);
+  .hero-card-stack__card span {
     color: hsl(var(--foreground));
-    font-size: 1.1rem;
+    font-size: 1.45rem;
     font-weight: 800;
-    letter-spacing: 0.16em;
-    box-shadow:
-      0 0 0 1px hsl(var(--background) / 0.6),
-      0 24px 70px hsl(var(--accent) / 0.22);
-    transform: translate(-50%, -50%) translateZ(52px) rotateZ(18deg) rotateX(-58deg);
+    letter-spacing: -0.04em;
   }
 
-  .agent-orbit__node {
-    display: grid;
-    min-width: 4.4rem;
-    min-height: 2.45rem;
-    place-items: center;
-    border-radius: 9999px;
-    border: 1px solid hsl(var(--border));
-    background: hsl(var(--card) / 0.86);
+  .hero-card-stack__card small {
     color: hsl(var(--muted-foreground));
     font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    backdrop-filter: blur(14px);
-    box-shadow: 0 16px 34px hsl(var(--foreground) / 0.08);
-    transform: translate(-50%, -50%) translateZ(34px) rotateZ(18deg) rotateX(-58deg);
   }
 
-  .agent-orbit__node--top {
-    top: 3%;
+  .hero-card-stack__card--front {
+    transform: translate(-62%, -2%) rotateX(58deg) rotateZ(-9deg) translateZ(74px);
+    border-color: hsl(var(--accent) / 0.46);
   }
 
-  .agent-orbit__node--right {
-    left: 97%;
+  .hero-card-stack__card--middle {
+    transform: translate(-44%, -44%) rotateX(58deg) rotateZ(-9deg) translateZ(38px);
   }
 
-  .agent-orbit__node--bottom {
-    top: 97%;
+  .hero-card-stack__card--back {
+    transform: translate(-26%, -86%) rotateX(58deg) rotateZ(-9deg) translateZ(2px);
+    opacity: 0.82;
   }
 
-  .agent-orbit__node--left {
-    left: 3%;
+  .hero-card-stack:hover .hero-card-stack__card--front {
+    transform: translate(-66%, 2%) rotateX(58deg) rotateZ(-11deg) translateZ(88px);
   }
 
-  @keyframes orbit-spin {
-    to {
-      transform: translate(-50%, -50%) rotateZ(360deg);
-    }
+  .hero-card-stack:hover .hero-card-stack__card--middle {
+    transform: translate(-44%, -46%) rotateX(58deg) rotateZ(-7deg) translateZ(44px);
+  }
+
+  .hero-card-stack:hover .hero-card-stack__card--back {
+    transform: translate(-22%, -92%) rotateX(58deg) rotateZ(-5deg) translateZ(6px);
   }
 }
 

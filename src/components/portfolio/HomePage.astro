@@ -37,14 +37,19 @@ const topics = [...new Set(allPosts.map((post) => post.data.topic))];
         </div>
       </div>
 
-      <div class="agent-orbit mx-auto" aria-hidden="true">
-        <div class="agent-orbit__ring agent-orbit__ring--outer"></div>
-        <div class="agent-orbit__ring agent-orbit__ring--inner"></div>
-        <div class="agent-orbit__core">AI</div>
-        <div class="agent-orbit__node agent-orbit__node--top">notes</div>
-        <div class="agent-orbit__node agent-orbit__node--right">agents</div>
-        <div class="agent-orbit__node agent-orbit__node--bottom">code</div>
-        <div class="agent-orbit__node agent-orbit__node--left">ideas</div>
+      <div class="hero-card-stack mx-auto" aria-hidden="true">
+        <div class="hero-card-stack__card hero-card-stack__card--back">
+          <span>notes</span>
+          <small>field logs</small>
+        </div>
+        <div class="hero-card-stack__card hero-card-stack__card--middle">
+          <span>agents</span>
+          <small>workflows</small>
+        </div>
+        <div class="hero-card-stack__card hero-card-stack__card--front">
+          <span>code</span>
+          <small>experiments</small>
+        </div>
       </div>
     </div>
   </header>
