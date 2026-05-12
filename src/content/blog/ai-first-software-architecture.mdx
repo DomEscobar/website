@@ -1,43 +1,119 @@
 ---
-title: "AI-first Software Architecture: Faster Decisions Without Losing Engineering Control"
-description: "A practical introduction to AI-first software architecture with decision records, testable assumptions, and GEO-friendly documentation."
+title: "AI-first Architecture: Faster Decisions, Still in Control"
+description: "A short visual workflow for using AI in architecture decisions: context, options, review, ADR. Less essay, more structure."
 language: "en"
 slug: "ai-first-software-architecture"
 canonicalSlug: "ki-first-softwarearchitektur"
 publishedAt: "2026-04-29"
-updatedAt: "2026-04-29"
+updatedAt: "2026-05-12"
 author: "Dominic Hückmann"
 tags: ["AI", "Software Architecture", "GEO", "Engineering"]
 topic: "AI-first Engineering"
-summary: "AI-first software architecture uses AI as a force multiplier for analysis, option generation, documentation, and quality checks. The key is to keep constraints explicit, decisions verifiable, and content structured enough for both humans and generative search systems."
+summary: "AI-first architecture does not mean the model decides. It means AI generates options, finds risks, compresses context, and the team makes a traceable decision."
 heroImage: "/dominic-h.png"
 draft: false
 featured: true
 faqs:
   - question: "What does AI-first mean in software architecture?"
-    answer: "AI-first means using AI systematically during analysis, design, review, and documentation while keeping architectural accountability with humans."
+    answer: "AI is used systematically for analysis, option generation, review, and documentation while accountability stays with the team."
   - question: "Can AI-first architecture improve SEO and GEO?"
-    answer: "Yes. Clear definitions, summaries, sources, and structured entities help search engines and generative engines understand and cite the content."
+    answer: "Yes. Clear definitions, short answers, sources, and structured entities are easier to understand and cite."
 ---
 
-## AI-first is not autopilot
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
 
-AI-first architecture starts with better questions. A model can propose options, group risks, and reveal missing constraints. The team still owns the decision: which quality attributes matter, which data is sensitive, and which choices are reversible?
+## Short answer
 
-## A practical workflow
+AI-first architecture is a **decision workflow**. AI helps the thinking. Humans own the decision.
 
-A reliable AI-first architecture workflow has four steps:
+<FlowGraphic
+  title="Architecture flow"
+  steps={['Gather context', 'Generate options', 'Review risks', 'Decide', 'Write ADR']}
+/>
 
-1. Gather context: goals, constraints, existing systems, and non-goals.
-2. Generate options: at least two viable approaches with tradeoffs.
-3. Review decisions: security, performance, maintainability, cost, and team capability.
-4. Document the result: short ADRs, clear terms, sources, and follow-up work.
+<KeyPoints
+  title="What AI is good at"
+  items={[
+    'surfacing missing constraints',
+    'sketching multiple architecture options fast',
+    'sorting tradeoffs by security, cost, performance, and maintainability',
+    'drafting short ADRs and clear summaries',
+  ]}
+/>
 
-## Why generative engines can understand it
+## Not autopilot
 
-Generative engines benefit from unambiguous content. Use short answers, explicit definitions, consistent entities, and clear relationships between person, expertise, topic, and project.
+AI can suggest. It does not automatically know:
 
-## Sources and further reading
+- political constraints
+- legacy pain
+- team skills
+- real data risks
+- budget and operations
+
+<CompareGrid
+  title="Bad vs. useful usage"
+  leftLabel="AI as autopilot"
+  rightLabel="AI as architecture tool"
+  rows={[
+    { left: 'Model decides the architecture.', right: 'Model gives options, team decides.' },
+    { left: 'One proposal, start building.', right: 'Compare at least two viable options.' },
+    { left: 'Risks stay hidden in chat.', right: 'Risks become visible in the ADR.' },
+    { left: 'Documentation later.', right: 'Summary is created during the process.' },
+  ]}
+/>
+
+## Minimal prompt
+
+```txt
+Analyze this architecture decision.
+
+Context:
+- goal:
+- constraints:
+- non-goals:
+- existing systems:
+
+Return:
+1. two options
+2. key tradeoffs
+3. risks
+4. recommendation
+5. short ADR version
+```
+
+## GEO benefit
+
+Generative engines like content that is easy to cite:
+
+<KeyPoints
+  title="GEO-friendly structure"
+  items={[
+    'one clear definition per topic',
+    'short answers instead of long intros',
+    'consistent entities: person, project, expertise, technology',
+    'sources and decisions separated clearly',
+  ]}
+/>
+
+<DoDont
+  title="Rules"
+  doItems={[
+    'use AI for options and review',
+    'store every decision as a short ADR',
+    'check security and data flows explicitly',
+  ]}
+  dontItems={[
+    'accept model answers unreviewed',
+    'forget constraints in the prompt',
+    'leave decisions only inside chat history',
+  ]}
+/>
+
+## Sources
 
 - Astro Content Collections for typed content
 - Schema.org `BlogPosting`, `Person`, and `FAQPage`

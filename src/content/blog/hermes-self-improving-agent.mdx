@@ -1,131 +1,131 @@
 ---
-title: "How Hermes Agent Reviews Its Own Work and Gets 3x Faster"
-description: "Hermes Agent can evaluate its own output, identify weaknesses, and rewrite its skills from scratch. Here's how the self-improvement loop works and how to set it up."
+title: "Hermes Agent: Self-Review Instead of One-Shot Output"
+description: "A short visual guide to the Hermes self-improvement loop: run, review, rewrite, and test the skill again."
 language: "en"
 slug: "hermes-self-improving-agent"
 canonicalSlug: "hermes-selbstverbessernder-agent"
 publishedAt: "2026-05-11"
-updatedAt: "2026-05-11"
+updatedAt: "2026-05-12"
 author: "Dominic Hückmann"
 tags: ["Hermes Agent", "AI Agents", "Self-Improvement", "Nous Research"]
 topic: "AI Agent Workflows"
-summary: "Hermes Agent doesn't just run tasks — it reviews its own output, spots what's slow or wasteful, and rewrites its skills to do better. In two rounds of self-review, one user cut execution time by 3x and API costs by 80%. This post walks through the loop: how it works, how to trigger it, and what to watch out for."
+summary: "Hermes gets interesting when an agent does not only produce output, but reviews the run: execute, measure, critique, rewrite the skill, and test again. The loop pays off mainly for repeatable workflows."
 heroImage: "/dominic-h.png"
 draft: false
 featured: true
 faqs:
   - question: "What does self-improvement mean for Hermes Agent?"
-    answer: "Hermes can evaluate its own completed tasks, identify inefficiencies, and rewrite its skills or prompts to produce better results with less time and cost on the next run."
-  - question: "Do I need special configuration to enable self-improvement?"
-    answer: "No. Self-improvement is built into Hermes' skill system. You trigger it by asking Hermes to review and improve a skill it previously created or executed."
-  - question: "How much can self-improvement actually save?"
-    answer: "Community reports show 3x speed improvements and up to 80% cost reduction after two rounds of self-review, though results depend on the task and model."
+    answer: "Hermes can review completed tasks, spot inefficient steps, and improve skills or prompts for the next run."
+  - question: "Do I need special configuration?"
+    answer: "No. Use the skill system: run the task, request a review, rewrite the skill, and test it again."
+  - question: "When is it worth it?"
+    answer: "When the workflow repeats. For one-off tasks, the review can cost more than it saves."
 ---
 
-## The loop that changes everything
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
 
-Most AI agents are one-shot. You give them a task, they produce output, and that's it. Next time you ask the same thing, they start from zero. Same mistakes. Same roundabout approaches. Same token burn.
+## Short answer
 
-Hermes Agent works differently. It can take its own output, critique it, and rebuild the approach from scratch. Not tweak a prompt — actually rewrite the skill, change the strategy, and come back faster.
+Hermes is not magic autopilot. The useful part is the **review loop**: the agent inspects its own run and rebuilds the workflow.
 
-The viral example from the community: after two self-review rounds, one user's skill became 3x faster and cut API costs by 80%. That's not a marginal improvement. That's the difference between a tool you experiment with and one you run daily.
+<MetricStrip
+  metrics={[
+    { value: '3x', label: 'faster in one community example after two review rounds' },
+    { value: '-80%', label: 'API cost reduction in the same example' },
+    { value: '2', label: 'review rounds are usually enough' },
+  ]}
+/>
 
-## How the self-improvement loop actually works
+<FlowGraphic
+  title="Self-improvement loop"
+  note="structured cycle, not prompt magic"
+  steps={['Run task', 'Inspect logs + output', 'Score speed / cost / quality', 'Rewrite skill', 'Test same task again']}
+/>
 
-The process isn't magic. It's a structured review cycle that you can trigger and control.
+<KeyPoints
+  title="What actually changes"
+  items={[
+    'Hermes optimizes the strategy, not just the wording.',
+    'Slow steps, redundant searches, and expensive token paths become visible.',
+    'The improved skill is worth it only if you reuse it.',
+    'Humans still approve risky decisions.',
+  ]}
+/>
 
-**Round 1: Execute and capture.** Run the skill or task as normal. Hermes produces output and logs what it did — which steps it took, what it searched, what it generated, and how many tokens it spent.
+## The 5-minute loop
 
-**Round 2: Review.** Ask Hermes to evaluate its own output. The review covers three dimensions:
+1. Pick a skill you actually use.
+2. Run it on a real task.
+3. Ask Hermes to review speed, cost, and output quality.
+4. Let it rewrite the skill.
+5. Run the same task again and compare.
 
-- **Speed:** Which steps took the longest? Were there redundant searches or unnecessary tool calls?
-- **Quality:** Did the output miss anything important? Were there hallucinated details or shallow analysis?
-- **Cost:** Where did the most tokens go? Could the same result be achieved with fewer or shorter LLM calls?
+<CompareGrid
+  title="Before / after"
+  leftLabel="One-shot agent"
+  rightLabel="Review loop"
+  rows={[
+    { left: 'Task in, answer out, done.', right: 'Task → answer → critique → better skill.' },
+    { left: 'Same mistakes next time.', right: 'Mistakes become rules or steps.' },
+    { left: 'Token cost stays hidden.', right: 'Expensive steps get cut.' },
+    { left: 'Prompt gets slightly nicer.', right: 'Workflow, tools, and order can change.' },
+  ]}
+/>
 
-**Round 3: Rebuild.** Hermes rewrites the skill based on what it learned. This is where the real gains happen. It might:
+## Review prompt
 
-- Replace a broad web search with a targeted API call
-- Cache intermediate results instead of recomputing them
-- Restructure the prompt to get better output in one pass instead of three
-- Skip entire steps that turned out to be unnecessary
+```txt
+Review the skill you just ran.
+Find:
+1. slowest steps
+2. most expensive token usage
+3. weak parts of the output
 
-The key insight: Hermes doesn't just optimize the prompt text. It changes the *strategy* — which tools to use, in what order, with what fallbacks.
+Rewrite the skill so it becomes faster,
+cheaper, and more reliable.
+```
 
-## Setting it up step by step
+<DoDont
+  title="When to use it"
+  doItems={[
+    'repetitive research or coding workflows',
+    'tasks with measurable success: faster, cheaper, more accurate',
+    'skills with multiple tool calls or repeated searches',
+  ]}
+  dontItems={[
+    'one-off tasks',
+    'purely subjective creative work',
+    'risky actions without human approval',
+  ]}
+/>
 
-You don't need any special plugins or configuration. The self-improvement loop uses Hermes' built-in skill system.
+## Token math
 
-**1. Create a skill for your task.** Write a skill that covers the workflow you want to improve. It doesn't have to be perfect — that's the point. A rough first version is enough.
+Self-review also spends tokens. Simple rule:
 
-**2. Run it on a real task.** Pick something you actually need done, not a toy example. Real tasks expose real inefficiencies.
+> If the workflow will not repeat, do not optimize it.
 
-**3. Ask for the review.** After the skill completes, tell Hermes:
+If a run costs €0.10 and the review costs €0.30, you need future runs before the rewrite pays off. Daily skill: yes. One-off experiment: no.
 
-> Review the skill you just ran. Identify the slowest steps, the most expensive token usage, and any output that could be better. Then rewrite the skill to address all three.
+## Community patterns
 
-**4. Run the improved version.** Execute the same task with the rewritten skill. Compare the results.
+<KeyPoints
+  title="Practical rules"
+  items={[
+    'One skill = one narrow scope. Do not mix research, coding, and communication.',
+    'Write a tiny contract first: input, output, success criteria.',
+    'Stop after two review rounds.',
+    'Use a cheaper model for review when possible.',
+  ]}
+/>
 
-**5. Repeat if needed.** Most gains come in the first two rounds. Diminishing returns hit fast after that.
+## Sources
 
-## What makes it work (and what doesn't)
-
-**Works well for:**
-- Research and synthesis tasks where the agent can measure output completeness
-- Multi-step workflows with clear success criteria
-- Skills that make redundant API calls or search the same source twice
-- Any task where you can define "better" as faster, cheaper, or more accurate
-
-**Doesn't help much for:**
-- One-off tasks you'll never run again
-- Creative work where quality is subjective
-- Tasks where the bottleneck is external (waiting for an API response, for example)
-- Skills that are already close to optimal — the review just confirms what's working
-
-## The token cost trap
-
-Self-improvement costs tokens. The review and rewrite steps consume LLM calls just like the original task. If your skill costs $0.10 per run and the review costs $0.30, you need to run the improved skill at least three or four times to break even.
-
-Do the math before you loop. For skills you run weekly or daily, the payback is fast. For one-off tasks, skip the review.
-
-Also: use a cheaper model for the review step. Hermes supports multiple providers. Run the actual skill with a capable model, but have the review done by a faster, cheaper one. The review doesn't need creative brilliance — it needs honest evaluation.
-
-## Community patterns worth stealing
-
-The r/hermesagent community has been running this loop for a few months now. A few patterns keep showing up:
-
-**Profile separation.** Don't use one profile for everything. Create separate profiles for research, coding, and communication. Self-improvement works best when the skill has a narrow scope. A research skill that also tries to write emails will improve slower than a pure research skill.
-
-**Contract-first skills.** Write a brief contract before building the skill — what inputs it takes, what outputs it produces, what counts as success. The contract gives Hermes something concrete to evaluate against. One user on r/ClaudeAI found that a contract-based approach cut costs by 54% before any self-improvement even started.
-
-**The two-round rule.** Stop after two self-review cycles. More rounds produce smaller gains and cost more tokens. If the skill isn't good enough after two rounds, the problem is probably the strategy, not the execution. Start over with a different approach.
-
-**Cross-agent review.** Have one agent build the skill and a different one review it. Same framework, different session, fresh eyes. This avoids the blind spot where an agent rates its own work higher than an independent reviewer would.
-
-## How this compares to OpenClaw's approach
-
-OpenClaw and Hermes solve the improvement problem differently. OpenClaw relies on the user to notice inefficiencies and manually adjust skills, prompts, or AGENTS.md. The agent doesn't review itself — you review it and tell it what to change.
-
-Hermes builds the review into the loop. The agent can initiate its own evaluation and rewrite. That's faster for repetitive workflows, but it also means you need to watch the token meter. An agent rewriting itself three times on a task that wasn't worth optimizing is worse than no self-improvement at all.
-
-The best setups people report use both: Hermes as the strategist that reviews and improves skills, OpenClaw as the executor that runs the refined workflows. Different strengths, different roles.
-
-## Getting started tonight
-
-If you're already running Hermes, try this:
-
-1. Pick the skill you use most often
-2. Run it on a real task
-3. Ask Hermes to review it for speed, cost, and quality
-4. Let it rewrite the skill
-5. Run the same task again and compare
-
-The whole cycle takes maybe 15 minutes. And if the improved skill saves you even 30 seconds per run, you'll be ahead after a week of daily use.
-
-That's not a hypothetical. That's the actual math people are reporting.
-
-## Sources and further reading
-
-- [One month with Hermes Agent — what I wish I knew earlier](https://reddit.com/r/hermesagent/comments/1t29ogw/) (r/hermesagent, 392 upvotes)
-- [Hermes Agent: The Open-Source Self-Improving AI Agent](https://reddit.com/r/WebAfterAI/comments/1sx4748/) (r/WebAfterAI, 347 upvotes)
-- [Claude Code cheat sheet after 6 months of daily use](https://reddit.com/r/ClaudeAI/comments/1sv852q/) (r/ClaudeAI, 1,002 upvotes)
+- [One month with Hermes Agent — what I wish I knew earlier](https://reddit.com/r/hermesagent/comments/1t29ogw/)
+- [Hermes Agent: The Open-Source Self-Improving AI Agent](https://reddit.com/r/WebAfterAI/comments/1sx4748/)
+- [Claude Code cheat sheet after 6 months of daily use](https://reddit.com/r/ClaudeAI/comments/1sv852q/)
 - [Nous Research Hermes Agent on GitHub](https://github.com/NousResearch/hermes-agent)

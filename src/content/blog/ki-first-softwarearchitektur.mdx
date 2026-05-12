@@ -1,43 +1,121 @@
 ---
-title: "KI-first Softwarearchitektur: Wie Teams schneller zu belastbaren Entscheidungen kommen"
-description: "Ein praxisnaher Einstieg in AI-first Softwarearchitektur mit klaren Entscheidungsprotokollen, überprüfbaren Annahmen und GEO-freundlicher Dokumentation."
+title: "AI-first Architektur: schneller entscheiden, sauber bleiben"
+description: "Ein kurzer, visueller Workflow für Architekturentscheidungen mit KI: Kontext, Optionen, Review, ADR. Weniger Bla bla, mehr Struktur."
 language: "de"
 slug: "ki-first-softwarearchitektur"
 canonicalSlug: "ai-first-software-architecture"
 publishedAt: "2026-04-29"
-updatedAt: "2026-04-29"
+updatedAt: "2026-05-12"
 author: "Dominic Hückmann"
 tags: ["KI", "Softwarearchitektur", "GEO", "Engineering"]
 topic: "AI-first Engineering"
-summary: "AI-first Softwarearchitektur nutzt KI nicht als Ersatz für Architekturarbeit, sondern als Beschleuniger für Analyse, Variantenvergleich, Dokumentation und Qualitätssicherung. Entscheidend sind klare Constraints, überprüfbare Entscheidungen und Inhalte, die auch für generative Suchsysteme eindeutig zitierbar sind."
+summary: "AI-first Architektur heißt nicht: Modell entscheidet. Es heißt: KI erzeugt Optionen, findet Risiken, verdichtet Kontext — das Team entscheidet und dokumentiert nachvollziehbar."
 heroImage: "/dominic-h.png"
 draft: false
 featured: true
 faqs:
   - question: "Was bedeutet AI-first in der Softwarearchitektur?"
-    answer: "AI-first bedeutet, KI systematisch in Analyse, Entwurf, Review und Dokumentation einzubinden, während Architekturentscheidungen weiterhin nachvollziehbar von Menschen verantwortet werden."
+    answer: "KI wird systematisch für Analyse, Varianten, Review und Dokumentation genutzt. Die Verantwortung bleibt beim Team."
   - question: "Hilft AI-first auch bei SEO und GEO?"
-    answer: "Ja. Wenn Entscheidungen, Begriffe, Quellen und Zusammenfassungen sauber strukturiert sind, können Suchmaschinen und generative Engines Inhalte besser verstehen und zitieren."
+    answer: "Ja. Klare Definitionen, kurze Antworten, Quellen und strukturierte Entitäten sind leichter zitierbar."
 ---
 
-## Warum AI-first kein Autopilot ist
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
 
-AI-first Architektur beginnt mit besseren Fragen. Ein Modell kann Varianten aufzeigen, Risiken clustern und fehlende Constraints sichtbar machen. Die Verantwortung bleibt aber beim Team: Welche Qualitätsattribute zählen, welche Daten sind sensibel, welche Entscheidungen sind reversibel?
+## Kurz erklärt
 
-## Ein praktischer Arbeitsmodus
+AI-first Architektur ist ein **Entscheidungs-Workflow**. KI hilft beim Denken. Menschen verantworten die Entscheidung.
 
-Ein belastbarer AI-first Prozess besteht aus vier Schritten:
+<FlowGraphic
+  title="Architecture flow"
+  steps={['Kontext sammeln', 'Optionen erzeugen', 'Risiken prüfen', 'Entscheiden', 'ADR schreiben']}
+/>
 
-1. Kontext sammeln: Ziele, Constraints, vorhandene Systeme, Nicht-Ziele.
-2. Varianten erzeugen: mindestens zwei tragfähige Optionen mit Tradeoffs.
-3. Entscheidungen prüfen: Security, Performance, Wartbarkeit, Kosten und Team-Fähigkeiten.
-4. Ergebnis dokumentieren: kurze ADRs, klare Begriffe, Quellen und Folgeaufgaben.
+<KeyPoints
+  title="Was AI gut macht"
+  items={[
+    'fehlende Constraints sichtbar machen',
+    'mehrere Architekturvarianten schnell skizzieren',
+    'Tradeoffs nach Security, Kosten, Performance und Wartbarkeit sortieren',
+    'kurze ADRs und klare Zusammenfassungen vorbereiten',
+  ]}
+/>
 
-## Was generative Engines daran mögen
+## Nicht Autopilot
 
-Generative Engines bevorzugen Inhalte, die eindeutig sind. Das bedeutet: kurze Antworten, nachvollziehbare Definitionen, konsistente Entitäten und klare Bezüge zwischen Person, Expertise, Thema und Projekt.
+KI darf Vorschläge machen. Aber sie kennt nicht automatisch:
 
-## Quellen und weiterführende Hinweise
+- politische Constraints
+- Legacy-Schmerz
+- Team-Skills
+- echte Datenrisiken
+- Budget und Betrieb
+
+<CompareGrid
+  title="Falscher vs. guter Einsatz"
+  leftLabel="AI als Autopilot"
+  rightLabel="AI als Architektur-Werkzeug"
+  rows={[
+    { left: 'Modell entscheidet die Architektur.', right: 'Modell liefert Optionen, Team entscheidet.' },
+    { left: 'Ein Vorschlag, sofort bauen.', right: 'Mindestens zwei Varianten vergleichen.' },
+    { left: 'Risiken bleiben im Chat versteckt.', right: 'Risiken landen sichtbar im ADR.' },
+    { left: 'Dokumentation später.', right: 'Zusammenfassung direkt aus dem Prozess.' },
+  ]}
+/>
+
+## Minimaler Prompt
+
+```txt
+Analysiere diese Architekturentscheidung.
+
+Kontext:
+- Ziel:
+- Constraints:
+- Nicht-Ziele:
+- bestehende Systeme:
+
+Liefere:
+1. zwei Optionen
+2. wichtigste Tradeoffs
+3. Risiken
+4. Empfehlung
+5. kurze ADR-Fassung
+```
+
+## GEO-Nutzen
+
+Generative Engines mögen Inhalte, die leicht zitierbar sind:
+
+<KeyPoints
+  title="GEO-friendly Struktur"
+  items={[
+    'eine klare Definition pro Thema',
+    'kurze Antworten statt langer Einleitungen',
+    'konsistente Begriffe: Person, Projekt, Expertise, Technologie',
+    'Quellen und Entscheidungen sichtbar trennen',
+  ]}
+/>
+
+<DoDont
+  title="Regeln"
+  doLabel="Machen"
+  dontLabel="Lassen"
+  doItems={[
+    'KI für Varianten und Review nutzen',
+    'jede Entscheidung als kurze ADR speichern',
+    'Security und Datenflüsse explizit prüfen',
+  ]}
+  dontItems={[
+    'Modellantworten ungeprüft übernehmen',
+    'Constraints im Prompt vergessen',
+    'Entscheidungen nur im Chatverlauf lassen',
+  ]}
+/>
+
+## Quellen
 
 - Astro Content Collections für typsichere Inhalte
 - Schema.org `BlogPosting`, `Person` und `FAQPage`

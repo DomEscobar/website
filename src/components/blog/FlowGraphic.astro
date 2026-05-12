@@ -1,0 +1,27 @@
+---
+interface Props {
+  title?: string;
+  steps: string[];
+  note?: string;
+}
+
+const { title = 'Flow', steps, note } = Astro.props;
+---
+
+<section class="not-prose my-8 rounded-2xl border border-border/70 bg-[radial-gradient(circle_at_18%_10%,hsl(var(--accent)/0.14),transparent_34%),hsl(var(--card)/0.72)] p-5 shadow-sm md:p-6">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 class="text-sm font-bold uppercase tracking-[0.22em] text-accent">{title}</h2>
+    {note && <p class="text-xs font-medium text-muted-foreground">{note}</p>}
+  </div>
+  <ol class="mt-5 grid gap-3 md:grid-cols-[repeat(var(--step-count),minmax(0,1fr))]" style={`--step-count: ${steps.length}`}>
+    {steps.map((step, index) => (
+      <li class="relative rounded-xl border border-border/70 bg-background/70 p-4">
+        <div class="text-xs font-bold text-accent">{String(index + 1).padStart(2, '0')}</div>
+        <div class="mt-2 text-base font-semibold tracking-tight text-foreground">{step}</div>
+        {index < steps.length - 1 && (
+          <span class="absolute -right-3 top-1/2 hidden h-px w-6 bg-accent/70 md:block" aria-hidden="true"></span>
+        )}
+      </li>
+    ))}
+  </ol>
+</section>
