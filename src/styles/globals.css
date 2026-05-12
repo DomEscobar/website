@@ -105,6 +105,48 @@
   .motion-portrait {
     transition: transform 600ms ease;
   }
+
+  .hero-orbit::before,
+  .hero-orbit::after {
+    content: '';
+    position: absolute;
+    inset: auto;
+    border-radius: 9999px;
+    pointer-events: none;
+  }
+
+  .hero-orbit::before {
+    width: 15rem;
+    height: 15rem;
+    right: -4.5rem;
+    bottom: -5rem;
+    border: 1px solid hsl(var(--accent) / 0.32);
+    box-shadow:
+      inset 0 0 42px hsl(var(--accent) / 0.10),
+      0 0 70px hsl(var(--accent) / 0.12);
+  }
+
+  .hero-orbit::after {
+    width: 7rem;
+    height: 7rem;
+    right: 3.8rem;
+    bottom: 2.1rem;
+    background:
+      radial-gradient(circle at 35% 30%, hsl(var(--accent) / 0.95), transparent 10%),
+      radial-gradient(circle, hsl(var(--foreground) / 0.09), transparent 62%);
+    animation: hero-float 8s ease-in-out infinite;
+  }
+
+  @keyframes hero-float {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+
+    50% {
+      transform: translate3d(-10px, -14px, 0) rotate(7deg);
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

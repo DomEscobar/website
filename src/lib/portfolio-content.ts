@@ -65,6 +65,8 @@ export const portfolioCopy = {
       title: 'Artikel über OpenClaw, Hermes und AI-first Workflows',
       description:
         'Praxisnahe Beiträge über Agenten, Automatisierung und Softwarearchitektur.',
+      customerExperience:
+        'Kund:innen erleben die Zusammenarbeit als schnell, klar und hands-on: weniger Abstimmungsschleifen, sichtbar bessere Interfaces und Software, die im Alltag wirklich entlastet.',
       readMore: 'Artikel lesen',
       latest: 'Neueste Artikel',
       summary: 'Kurzantwort',
@@ -152,6 +154,8 @@ export const portfolioCopy = {
       title: 'Notes on OpenClaw, Hermes, and AI-first workflows',
       description:
         'Practical writing about agents, automation, and software architecture.',
+      customerExperience:
+        'Customers describe the work as fast, clear, and hands-on: fewer alignment loops, visibly better interfaces, and software that removes real day-to-day friction.',
       readMore: 'Read article',
       latest: 'Latest Articles',
       summary: 'Short Answer',
