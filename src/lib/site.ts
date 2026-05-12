@@ -9,7 +9,7 @@ export const siteUrl =
 
 export const person = {
   name: 'Dominic Hückmann',
-  displayName: 'Hücki',
+  displayName: 'huecki',
   jobTitle: 'Senior Software Developer & AI Architect',
   email: 'd.hueckmann@googlemail.com',
   image: '/dominic-h.png',
@@ -21,12 +21,12 @@ export const person = {
 
 export const seoDefaults = {
   de: {
-    title: 'Hücki Blog | OpenClaw, Hermes und AI-first Workflows',
+    title: 'huecki | OpenClaw, Hermes und AI-first Workflows',
     description:
       'Blog über OpenClaw, Hermes, Softwarearchitektur, Automatisierung und praktische AI-first Workflows.',
   },
   en: {
-    title: 'Hücki Blog | OpenClaw, Hermes, and AI-first Workflows',
+    title: 'huecki | OpenClaw, Hermes, and AI-first Workflows',
     description:
       'Blog about OpenClaw, Hermes, software architecture, automation, and practical AI-first workflows.',
   },
@@ -81,7 +81,7 @@ export function baseJsonLd() {
     {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
-      name: 'Hücki',
+      name: 'huecki',
       url: siteUrl,
       inLanguage: ['de-DE', 'en-US'],
       author: {

@@ -61,12 +61,10 @@ export const portfolioCopy = {
     },
     blog: {
       eyebrow: 'Blog',
-      intro: 'Ich bin Dominic Hückmann, Softwareentwickler und AI-Architekt. Hier schreibe ich kurz und praxisnah über OpenClaw, Hermes und AI-first Workflows.',
-      title: 'Artikel über OpenClaw, Hermes und AI-first Workflows',
+      intro: 'Software, AI agents, messy notes and the occasional useful idea.',
+      title: 'huecki',
       description:
         'Praxisnahe Beiträge über Agenten, Automatisierung und Softwarearchitektur.',
-      customerExperience:
-        'Kund:innen erleben die Zusammenarbeit als schnell, klar und hands-on: weniger Abstimmungsschleifen, sichtbar bessere Interfaces und Software, die im Alltag wirklich entlastet.',
       readMore: 'Artikel lesen',
       latest: 'Neueste Artikel',
       summary: 'Kurzantwort',
@@ -88,7 +86,7 @@ export const portfolioCopy = {
       linkedin: 'LinkedIn',
       github: 'GitHub',
     },
-    copyright: 'Hücki. Alle Rechte vorbehalten.',
+    copyright: 'huecki. Alle Rechte vorbehalten.',
   },
   en: {
     nav: {
@@ -150,12 +148,10 @@ export const portfolioCopy = {
     },
     blog: {
       eyebrow: 'Blog',
-      intro: 'I’m Dominic Hückmann, a software developer and AI architect. This is where I write short, practical notes about OpenClaw, Hermes, and AI-first workflows.',
-      title: 'Notes on OpenClaw, Hermes, and AI-first workflows',
+      intro: 'Software, AI agents, messy notes and the occasional useful idea.',
+      title: 'huecki',
       description:
         'Practical writing about agents, automation, and software architecture.',
-      customerExperience:
-        'Customers describe the work as fast, clear, and hands-on: fewer alignment loops, visibly better interfaces, and software that removes real day-to-day friction.',
       readMore: 'Read article',
       latest: 'Latest Articles',
       summary: 'Short Answer',
@@ -177,7 +173,7 @@ export const portfolioCopy = {
       linkedin: 'LinkedIn',
       github: 'GitHub',
     },
-    copyright: 'Hücki. All rights reserved.',
+    copyright: 'huecki. All rights reserved.',
   },
 } satisfies Record<Locale, {
   nav: Record<string, string>;

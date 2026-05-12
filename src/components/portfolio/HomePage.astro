@@ -24,31 +24,28 @@ const topics = [...new Set(allPosts.map((post) => post.data.topic))];
   <header class="relative isolate overflow-hidden border-b border-border/70 px-6 pt-28 pb-16 md:px-12 md:pt-36 md:pb-24 lg:px-24">
     <div class="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_18%_12%,hsl(var(--accent)/0.22),transparent_28%),radial-gradient(circle_at_82%_26%,hsl(var(--foreground)/0.10),transparent_24%),linear-gradient(115deg,hsl(var(--background))_0%,hsl(var(--background))_48%,hsl(var(--card))_100%)]"></div>
     <div class="absolute inset-0 -z-10 opacity-[0.13] [background-image:linear-gradient(hsl(var(--foreground))_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground))_1px,transparent_1px)] [background-size:38px_38px]"></div>
-    <div class="mx-auto grid max-w-7xl items-end gap-10 lg:grid-cols-[minmax(0,1fr)_24rem]">
+    <div class="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
       <div>
-        <p class="inline-flex rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-accent shadow-[0_0_40px_hsl(var(--accent)/0.18)]">{copy.blog.eyebrow}</p>
-        <h1 class="mt-6 max-w-5xl text-5xl font-bold leading-[0.94] tracking-tight text-foreground md:text-7xl lg:text-8xl">
+        <h1 class="max-w-5xl text-6xl font-bold leading-[0.9] tracking-tight text-foreground md:text-8xl lg:text-9xl">
           {copy.blog.title}
         </h1>
-        <p class="mt-6 max-w-3xl text-base leading-7 text-muted-foreground md:text-lg">{copy.blog.intro}</p>
-        <div class="mt-7 flex flex-wrap items-center gap-3">
-          <a href={person.sameAs[0]} target="_blank" rel="noreferrer" class="inline-flex min-h-11 items-center rounded-full border border-border bg-card/80 px-5 text-sm font-semibold text-foreground shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-accent/70 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">LinkedIn</a>
-          <a href={person.sameAs[1]} target="_blank" rel="noreferrer" class="inline-flex min-h-11 items-center rounded-full border border-border bg-card/80 px-5 text-sm font-semibold text-foreground shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-accent/70 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">GitHub</a>
+        <p class="mt-7 max-w-2xl text-xl leading-8 text-muted-foreground md:text-2xl md:leading-9">{copy.blog.intro}</p>
+        <div class="mt-8 flex flex-wrap items-center gap-3">
+          <a href={localizedPath(locale, '/blog/')} class="inline-flex min-h-11 items-center rounded-full bg-accent px-5 text-sm font-semibold text-accent-foreground shadow-[0_0_30px_hsl(var(--accent)/0.22)] transition hover:-translate-y-0.5 hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{locale === 'de' ? 'Blog lesen' : 'Read blog'}</a>
+          <a href={person.sameAs[1]} target="_blank" rel="noreferrer" class="inline-flex min-h-11 items-center rounded-full border border-border bg-card/80 px-5 text-sm font-semibold text-foreground backdrop-blur transition hover:-translate-y-0.5 hover:border-accent/70 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">GitHub</a>
+          <a href={person.sameAs[0]} target="_blank" rel="noreferrer" class="inline-flex min-h-11 items-center rounded-full border border-border bg-card/80 px-5 text-sm font-semibold text-foreground backdrop-blur transition hover:-translate-y-0.5 hover:border-accent/70 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">LinkedIn</a>
         </div>
       </div>
 
-      <aside class="hero-orbit relative overflow-hidden rounded-[2rem] border border-border/80 bg-card/75 p-6 shadow-2xl shadow-accent/10 backdrop-blur" aria-label={locale === 'de' ? 'Kundenerfahrung' : 'Customer experience'}>
-        <div class="absolute right-6 top-6 h-3 w-3 rounded-full bg-accent shadow-[0_0_28px_hsl(var(--accent))]"></div>
-        <div class="relative z-10">
-          <p class="text-xs font-semibold uppercase tracking-[0.26em] text-accent">{locale === 'de' ? 'Customer UX' : 'Customer UX'}</p>
-          <p class="mt-5 text-xl font-semibold leading-8 tracking-tight text-foreground">“{copy.blog.customerExperience}”</p>
-          <div class="mt-6 flex gap-2 text-xs font-semibold text-muted-foreground">
-            <span class="rounded-full bg-background/80 px-3 py-1">UX/UI</span>
-            <span class="rounded-full bg-background/80 px-3 py-1">AI-first</span>
-            <span class="rounded-full bg-background/80 px-3 py-1">Delivery</span>
-          </div>
-        </div>
-      </aside>
+      <div class="agent-orbit mx-auto" aria-hidden="true">
+        <div class="agent-orbit__ring agent-orbit__ring--outer"></div>
+        <div class="agent-orbit__ring agent-orbit__ring--inner"></div>
+        <div class="agent-orbit__core">AI</div>
+        <div class="agent-orbit__node agent-orbit__node--top">notes</div>
+        <div class="agent-orbit__node agent-orbit__node--right">agents</div>
+        <div class="agent-orbit__node agent-orbit__node--bottom">code</div>
+        <div class="agent-orbit__node agent-orbit__node--left">ideas</div>
+      </div>
     </div>
   </header>
 
