@@ -29,13 +29,18 @@ import DoDont from '@/components/blog/DoDont.astro';
 
 ## Short answer
 
-Old prompting was:
+Prompting did not disappear. It moved up a level: away from magic sentences and toward small systems made of context, tools, and tests.
 
-> “Find the perfect sentence.”
-
-2026 prompting is:
-
-> “Build a small system that gives the model the right context.”
+<CompareGrid
+  title="The shift"
+  leftLabel="Old prompting vibe"
+  rightLabel="2026 vibe"
+  rows={[
+    { left: 'Find the perfect sentence.', right: 'Assemble the right context.' },
+    { left: 'Stuff more detail into one prompt.', right: 'Remove what the model should not see.' },
+    { left: 'Read the answer and hope.', right: 'Check output with schemas, tests, and evals.' },
+  ]}
+/>
 
 <FlowGraphic
   title="The modern prompt stack"

@@ -29,13 +29,18 @@ import DoDont from '@/components/blog/DoDont.astro';
 
 ## Kurz erklärt
 
-Der alte Prompting-Vibe war:
+Prompting ist nicht verschwunden. Es hat nur die Ebene gewechselt: weg vom Zaubersatz, hin zu einem kleinen System aus Kontext, Tools und Tests.
 
-> “Sag dem Modell den perfekten Satz.”
-
-Der 2026-Vibe ist:
-
-> “Baue ein kleines System, das dem Modell genau den richtigen Kontext gibt.”
+<CompareGrid
+  title="Der Shift"
+  leftLabel="Alter Prompting-Vibe"
+  rightLabel="2026-Vibe"
+  rows={[
+    { left: 'Den perfekten Satz finden.', right: 'Den richtigen Kontext zusammenstellen.' },
+    { left: 'Mehr Details in einen Prompt stopfen.', right: 'Unwichtiges bewusst weglassen.' },
+    { left: 'Antwort lesen und hoffen.', right: 'Output mit Schema, Tests und Evals prüfen.' },
+  ]}
+/>
 
 <FlowGraphic
   title="Der moderne Prompt-Stack"
