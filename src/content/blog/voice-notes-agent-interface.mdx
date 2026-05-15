@@ -1,0 +1,171 @@
+---
+title: "Voice notes are the best interface for small agent jobs"
+description: "A practical workflow for using voice notes as an agent remote control: transcribe locally, route safely, answer briefly — without trying to run your whole workday by voice."
+language: "en"
+slug: "voice-notes-agent-interface"
+canonicalSlug: "sprachnachrichten-agenten-interface"
+publishedAt: "2026-05-15"
+updatedAt: "2026-05-15"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Voice Interface", "Automation", "Open Source", "Personal AI"]
+topic: "Personal AI Workflows"
+summary: "Voice is not good for everything. But for small agent jobs it is brutally useful: dictate a task while moving, transcribe it locally, let your existing agent handle it, and get only a short answer back."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Should I run my entire workday through voice?"
+    answer: "No. Voice is strongest for small, bounded agent jobs: status checks, idea capture, triage, reminders, and short decisions."
+  - question: "Do I need paid voice APIs for this?"
+    answer: "Not necessarily. A practical stack is local transcription with faster-whisper, an existing agent workflow, and a simple TTS reply, for example through Edge TTS."
+  - question: "When is text better than voice?"
+    answer: "Use text for code, logs, long specifications, sensitive approvals, and anything that needs exact wording or careful review."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## The short version
+
+Voice is not a good interface for everything.
+
+Nobody should try to dictate a full pull request, tax case, or API design into a three-minute voice message. That gets messy fast. But for small agent jobs, voice is almost unfairly practical.
+
+You are walking somewhere. You have an idea. Or you want to know whether a server is on fire. Or you want your agent to scan the inbox only for real blockers. Typing on a phone is often too slow for that. A 15-second voice note is enough.
+
+<MetricStrip
+  metrics={[
+    { value: '15s', label: 'good size for one voice-agent job' },
+    { value: '1', label: 'task per voice note, not five half-requests' },
+    { value: '3', label: 'maximum answer length in bullets' },
+  ]}
+/>
+
+## The useful stack
+
+The interesting idea is not “talk to ChatGPT”. The interesting idea is: use a normal messenger as the input, transcribe locally, and hand the task to your existing agent.
+
+<FlowGraphic
+  title="Voice-agent loop"
+  note="small, mobile, reviewable"
+  steps={['Voice note', 'Local transcription', 'Agent router', 'Tool / check / draft', 'Short reply']}
+/>
+
+A simple setup looks like this:
+
+- Telegram or Signal receives the voice note.
+- `faster-whisper` turns it into text locally.
+- A router decides: note, status check, research, triage, or approval needed?
+- The agent uses its normal tools.
+- Edge TTS or a text reply sends the result back.
+
+The point: voice is only the entry point. The real work still happens inside your agent system, with rules, memory, logs, and approval gates.
+
+My favorite starting point is therefore not “build me a voice AI”. It is much smaller:
+
+```txt
+/voice-inbox
+  incoming.ogg
+  transcript.txt
+  route.json
+  result.md
+```
+
+Every voice note first becomes a tiny ticket. The ticket gets a type, for example `capture`, `check`, `triage`, or `needs_approval`. Only then may an agent do anything. That keeps the system inspectable: later you can see what was actually said, which route was chosen, and why an action was stopped.
+
+That is boring infrastructure. Exactly the kind that makes voice usable.
+
+<CompareGrid
+  title="Typing vs. speaking"
+  leftLabel="Mobile chat"
+  rightLabel="Voice note"
+  rows={[
+    { left: 'Good for precise names, links, code, and long requirements.', right: 'Good while moving, for quick checks and idea capture.' },
+    { left: 'Slow when you are walking or only have one hand free.', right: 'Fast as long as the task stays small.' },
+    { left: 'Easier to review before risky actions.', right: 'Needs strict rules for risk and clarification.' },
+  ]}
+/>
+
+## The rule: one job, one result
+
+Voice gets bad as soon as it becomes a meeting. The agent does not need a monologue. It needs a small request with a clear boundary.
+
+Good voice jobs:
+
+- “Check the last deploy logs and only tell me whether anything is critical.”
+- “Save this idea for the next blog scan.”
+- “Triage my unread emails and list only real blockers.”
+- “What is the next small step in project X?”
+
+Bad voice jobs:
+
+- “Build this whole feature.”
+- “Read all logs and fix everything.”
+- “Send a reply to the customer.”
+- “Decide whether I should buy this.”
+
+<DoDont
+  title="Use voice correctly"
+  doLabel="Use it for"
+  dontLabel="Do not use it for"
+  doItems={[
+    'Status checks with short answers',
+    'Capturing ideas and tasks while moving',
+    'Triage without external action',
+    'Small routines with known tools',
+  ]}
+  dontItems={[
+    'Code, stack traces, and long specs',
+    'Money, contracts, or messages without review',
+    'Ambiguous tasks with many hidden constraints',
+    'Noisy places or private content in public',
+  ]}
+/>
+
+## Steal this: the voice contract
+
+Copy this as the system rule before every transcribed voice note:
+
+```txt
+Voice command rules for my assistant:
+1. Treat this as one task only.
+2. If the request is risky, summarize and ask before acting.
+3. Reply with max 3 bullets.
+4. If you need code, logs, links, or long exact text, ask me to switch to text.
+5. Never send external messages, spend money, delete data, or publish without explicit approval.
+
+Task: [transcribed voice note]
+```
+
+That sounds strict. That is why it works.
+
+Voice is fast. Agents are fast. Two fast things together need brakes, not more excitement.
+
+<KeyPoints
+  title="My practical rule of thumb"
+  items={[
+    'Voice is a remote-control button, not a replacement for precise work.',
+    'The best output is short enough to understand while walking.',
+    'Risky actions should automatically fall into review mode.',
+    'If the agent needs exact data, it should ask you to switch from audio to text.',
+  ]}
+/>
+
+## Why this is useful
+
+Many personal-AI demos fail not because of the model, but because of the interface. At a laptop, chat is fine. In real life, the laptop is often not there.
+
+Voice notes close exactly that gap: not for large work, but for the small moments that would otherwise disappear.
+
+The perfect voice agent is therefore not especially chatty. It listens briefly, recognizes the job, stops when risk appears, and replies concisely.
+
+That is not spectacular. It is better: usable.
+
+## Sources
+
+- [I Built a Voice-Controlled AI Assistant on My Phone — No APIs Required — Rost Glukhov](https://medium.com/practical-llm-systems/i-built-a-voice-controlled-ai-assistant-on-my-phone-no-apis-required-0fc0b3d99b13)
+- [faster-whisper on GitHub](https://github.com/SYSTRAN/faster-whisper)
+- [Edge TTS on GitHub](https://github.com/rany2/edge-tts)
