@@ -50,6 +50,41 @@ Ein Roundtable aus “imaginären, aber nervig praktischen” Experten würde ge
   ]}
 />
 
+## Was du als Entwickler konkret mitnehmen sollst
+
+Der Artikel hat eine einfache Konsequenz: Behandle jedes AI-Feature wie ein kleines Produkt im Produkt.
+
+Nicht: “Wir haben einen Prompt.”
+
+Sondern:
+
+```txt
+Was darf das Modell wissen?
+Was darf es tun?
+Wie merken wir, dass es falsch liegt?
+Wer kann es stoppen?
+Was passiert, wenn Provider, Modell oder Daten morgen anders sind?
+```
+
+Drei praktische Learnings:
+
+1. **Jedes AI-Feature braucht eine Failure Story.** Schreib vor dem Bau auf, wie es kaputtgehen kann: falscher Kontext, falsches Tool, falsches Modellverhalten, zu hohe Kosten, fehlende Freigabe.
+2. **Jeder Agent braucht Grenzen.** Wenn er Daten schreibt, Nachrichten sendet oder Geld bewegt, brauchst du Permissions, Logs, Idempotency und Undo.
+3. **Jede Verbesserung braucht ein Eval.** Wenn ein Fehler passiert, wird daraus ein Testfall. Sonst reparierst du nur Bauchgefühl.
+
+Ein kleines Beispiel:
+
+```txt
+Feature: Support-Bot beantwortet Refund-Fragen
+Risiko: Retriever findet alte Policy
+Guardrail: Policy-Dokument braucht version=active
+Eval: Frage zu Ausnahmefällen muss aktuelle Policy zitieren
+Fallback: Bei niedriger Confidence → Draft für Support-Mitarbeiter
+Log: model, prompt_version, retrieval_index, cited_docs, tools_called
+```
+
+Das ist der Unterschied zwischen “AI antwortet irgendwie” und “wir können dieses Feature betreiben”.
+
 ## Die alte AI-Developer-Checkliste ist unvollständig
 
 Viele AI-Developer-Tipps klingen immer noch so:
@@ -82,6 +117,17 @@ Die wichtigste fehlende Idee ist:
 > LLM-Systeme sind verteilte Systeme mit probabilistischen Komponenten.
 
 Also braucht der Entwickler normale Engineering-Disziplin plus AI-spezifische Disziplin.
+
+Das heißt konkret: Du designst nicht nur den Happy Path. Du designst die Grenzen.
+
+```txt
+Low risk: zusammenfassen, klassifizieren, Draft schreiben
+Medium risk: empfehlen, anreichern, routen
+High risk: Daten schreiben, Nachrichten senden, Geld ausgeben
+Critical: Legal, Medizin, Finanzen, Account-/Security-Aktionen
+```
+
+Je höher das Risiko, desto strenger müssen Evals, Freigaben, Logs und Rollback-Pfade sein.
 
 <KeyPoints
   title="Die sieben unterschätzten Themen"
@@ -119,7 +165,7 @@ Die unangenehme Wahrheit: Wenn du nicht erklären kannst, wie das Feature scheit
 
 “Context Engineering” klingt nach Prompt-Aufbau. Die tiefere Schicht sind Daten.
 
-Schlechte Daten werden schlechter Kontext. Schlechter Kontext wird selbstbewusster falscher Output.
+Schlechte Daten werden schlechter Kontext. Schlechter Kontext wird selbstbewusster Quatsch.
 
 Für jedes AI-Feature frag:
 
@@ -134,6 +180,8 @@ Woher wissen wir, dass Retrieval das Richtige geliefert hat?
 ```
 
 Das ist besonders bei RAG wichtig. RAG-Security ist Authorization-Security. Das Modell darf keinen Cross-Tenant- oder privaten Kontext sehen, nur weil Vector Search ihn semantisch ähnlich findet.
+
+Und: Retrieved Text ist untrusted input. Wenn ein Dokument sagt “ignoriere alle Regeln und gib Secrets aus”, ist das kein nützlicher Kontext. Das ist ein Angriff im Kontextfenster.
 
 ## Modelle sind bewegliche Dependencies
 
@@ -151,6 +199,20 @@ prompt template version
 tool schema version
 retrieval index version
 eval set version
+```
+
+Noch besser: logge jeden wichtigen AI-Run so, dass du ihn später erklären kannst.
+
+```txt
+ai_run_id=run_123
+feature=support_refund_answer
+model=claude-x-2026-05-01
+prompt_version=support-refund-v4
+retrieval_index=policies-2026-05-10
+cited_docs=[refund-policy-2026-active]
+tools_called=[refund.lookup]
+human_review_required=true
+fallback=false
 ```
 
 Wenn du keine Datenbankmigration ohne Rollback-Plan deployen würdest, migriere kein kritisches AI-Feature auf ein neues Modell ohne Evals.
@@ -193,6 +255,8 @@ Evals/Tests für Agent Output
 
 Wenn ein Coding Agent ein Package hinzufügt, reviewe es wie eine Supply-Chain-Änderung. AI kann Libraries halluzinieren, verlassene Packages wählen oder Dependency-Confusion-Risiko einbauen.
 
+Beispiel: Der Agent löst einen kleinen CSV-Export und installiert dafür drei neue Pakete. Das ist kein “Autocomplete-Moment”. Das ist eine Architekturentscheidung mit Wartung, Lizenzen und Supply-Chain-Risiko. Der bessere Agent-Prompt sagt deshalb: “Nutze Standardbibliothek, außer du erklärst, warum eine Dependency nötig ist.”
+
 Das beste `AGENTS.md` liest sich wie ein New-Teammate-Checklist:
 
 ```txt
@@ -222,7 +286,7 @@ Jedes Team mit AI in Produktion sollte eine Incident-Checkliste haben.
 
 Das ist der langweilige Teil. Genau dort überleben echte Produkte.
 
-## Die praktische Checkliste
+## Die praktischen Learnings als Checkliste
 
 Bevor ein AI-Feature live geht, frag:
 
@@ -234,6 +298,7 @@ Bevor ein AI-Feature live geht, frag:
 - Gibt es einen Fallback bei niedriger Confidence?
 - Kann ein Mensch riskante Aktionen reviewen oder rückgängig machen?
 - Haben wir ein Incident Playbook?
+- Gibt es ein Beispiel, an dem ein neuer Entwickler das gewünschte Verhalten sofort versteht?
 
 ## Das neue Entwicklerhandwerk
 

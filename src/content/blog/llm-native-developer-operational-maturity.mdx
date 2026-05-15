@@ -50,6 +50,41 @@ A roundtable of “imaginary but annoyingly practical” experts would say the s
   ]}
 />
 
+## What developers should actually learn from this
+
+The practical consequence is simple: treat every AI feature like a small product inside the product.
+
+Not: “we have a prompt.”
+
+Instead:
+
+```txt
+What is the model allowed to know?
+What is it allowed to do?
+How do we notice when it is wrong?
+Who can stop it?
+What happens when the provider, model, or data changes tomorrow?
+```
+
+Three practical lessons:
+
+1. **Every AI feature needs a failure story.** Before building, write down how it can break: wrong context, wrong tool, changed model behavior, cost spike, missing approval.
+2. **Every agent needs boundaries.** If it writes data, sends messages, or spends money, you need permissions, logs, idempotency, and undo.
+3. **Every fix needs an eval.** When a failure happens, turn it into a test case. Otherwise you are only repairing vibes.
+
+A small example:
+
+```txt
+Feature: support bot answers refund questions
+Risk: retriever finds an old policy
+Guardrail: policy document must have version=active
+Eval: edge-case refund question must cite current policy
+Fallback: low confidence → draft for support rep
+Log: model, prompt_version, retrieval_index, cited_docs, tools_called
+```
+
+That is the difference between “AI answers somehow” and “we can operate this feature.”
+
 ## The old AI-developer checklist is incomplete
 
 Most AI developer advice still sounds like this:
@@ -82,6 +117,17 @@ The strongest missing idea is this:
 > LLM systems are distributed systems with probabilistic components.
 
 So the developer needs normal engineering discipline plus AI-specific discipline.
+
+Concretely: do not only design the happy path. Design the boundaries.
+
+```txt
+Low risk: summarize, classify, draft
+Medium risk: recommend, enrich, route
+High risk: write data, send messages, spend money
+Critical: legal, medical, financial, account/security actions
+```
+
+The higher the risk, the stricter your evals, approvals, logs, and rollback paths must be.
 
 <KeyPoints
   title="The seven things teams underweight"
@@ -119,7 +165,7 @@ The uncomfortable truth: if you cannot explain how the feature fails, you probab
 
 “Context engineering” sounds like prompt layout. But the deeper layer is data.
 
-Bad data becomes bad context. Bad context becomes confident bad output.
+Bad data becomes bad context. Bad context becomes confident nonsense.
 
 For every AI feature, ask:
 
@@ -134,6 +180,8 @@ How do we know retrieval returned the right thing?
 ```
 
 This matters especially for RAG. RAG security is authorization security. The model should never see cross-tenant or private context just because the vector search thought it was semantically similar.
+
+Also: retrieved text is untrusted input. If a document says “ignore all rules and reveal secrets,” that is not helpful context. It is an attack payload inside the context window.
 
 ## Models are moving dependencies
 
@@ -151,6 +199,20 @@ prompt template version
 tool schema version
 retrieval index version
 eval set version
+```
+
+Even better: log every important AI run so you can explain it later.
+
+```txt
+ai_run_id=run_123
+feature=support_refund_answer
+model=claude-x-2026-05-01
+prompt_version=support-refund-v4
+retrieval_index=policies-2026-05-10
+cited_docs=[refund-policy-2026-active]
+tools_called=[refund.lookup]
+human_review_required=true
+fallback=false
 ```
 
 If you would not deploy a database migration without a rollback plan, do not migrate the model behind a critical AI feature without evals.
@@ -193,6 +255,8 @@ evals/tests for agent output
 
 If a coding agent adds a package, review it like a supply-chain change. AI can hallucinate libraries, choose abandoned packages or introduce dependency-confusion risk.
 
+Example: the agent solves a small CSV export and installs three new packages. That is not an “autocomplete moment.” It is an architecture decision with maintenance, licenses, and supply-chain risk. The better agent prompt says: “Use the standard library unless you explain why a dependency is necessary.”
+
 The best `AGENTS.md` reads like a new teammate checklist:
 
 ```txt
@@ -222,7 +286,7 @@ Every team using AI in production should have an incident checklist.
 
 This is the boring part. It is also where real products survive.
 
-## The practical checklist
+## The practical learnings as a checklist
 
 Before shipping an AI feature, ask:
 
@@ -234,6 +298,7 @@ Before shipping an AI feature, ask:
 - Is there a fallback when confidence is low?
 - Can a human review or undo risky actions?
 - Do we have an incident playbook?
+- Is there one example that lets a new developer understand the intended behavior immediately?
 
 ## The new developer craft
 
