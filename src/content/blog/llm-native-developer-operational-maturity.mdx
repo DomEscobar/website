@@ -1,0 +1,265 @@
+---
+title: "The LLM-native developer needs more than prompts"
+description: "A practical field note from an expert roundtable: modern AI developers need operational maturity — data lifecycle, model ops, evals, incident playbooks, human-AI UX, and coding-agent harnesses."
+language: "en"
+slug: "llm-native-developer-operational-maturity"
+canonicalSlug: "llm-native-entwickler-operational-maturity"
+publishedAt: "2026-05-15"
+updatedAt: "2026-05-15"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "LLM", "Software Architecture", "Agents", "Developer Workflow"]
+topic: "AI-first Engineering"
+summary: "The next developer skill is not writing clever prompts. It is building the operating system around LLMs: data quality, model versioning, evals, guardrails, incident response, review UX, and repo instructions agents can actually follow."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is an LLM-native developer?"
+    answer: "A developer who understands LLM behavior enough to design reliable software around it: context, tools, schemas, evals, observability, security, and human review."
+  - question: "Is prompt engineering still important?"
+    answer: "Yes, but it is only one part. The stronger skill is context engineering plus the harness around the model: validation, tools, evals, fallbacks, and operating procedures."
+  - question: "What do most teams miss when adopting coding agents?"
+    answer: "They focus on generation speed and underinvest in repo instructions, skill files, tool permissions, evals, review workflows, and incident playbooks."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## The short version
+
+Your AI feature works in the demo.
+
+Then a model update changes tool-call behavior. The retriever pulls last quarter’s refund policy. The support answer sounds confident. The user believes it.
+
+That is when you learn the real LLM-native developer skill is not prompting. It is operating AI software.
+
+Definition: an LLM-native developer is a software developer who knows enough about LLM behavior to design reliable systems around it: context, tools, schemas, evals, data quality, observability, security, model operations and human review.
+
+The real skill is building the boring operating layer around the model: clean data, scoped context, schemas, tool permissions, evals, logs, rollback paths and human approval where the model should not decide alone.
+
+A roundtable of “imaginary but annoyingly practical” experts would say the same thing: the foundation is no longer enough. You need operational maturity — basically: can this thing fail at 2am without everyone panicking?
+
+<MetricStrip
+  metrics={[
+    { value: '7', label: 'missing areas that separate demos from production AI' },
+    { value: '1', label: 'human still owns the final judgment' },
+    { value: '0', label: 'features that should ship without a rollback story' },
+  ]}
+/>
+
+## The old AI-developer checklist is incomplete
+
+Most AI developer advice still sounds like this:
+
+- learn tokens and context windows
+- write better prompts
+- use RAG
+- add tools
+- run evals
+- watch out for hallucinations
+
+All true. Also not enough.
+
+Because the hard part starts after the demo works.
+
+The model changes. The prompt changes. The data changes. The retriever pulls a stale document. The agent calls the wrong tool. A support answer sounds confident and misses a policy exception. A coding assistant writes a beautiful patch that quietly breaks an edge case.
+
+That is the actual job now.
+
+<FlowGraphic
+  title="LLM-native maturity loop"
+  note="beyond prompt → answer"
+  steps={['Data lifecycle', 'Context + tools', 'Validation + evals', 'Human review UX', 'Monitoring + incidents']}
+/>
+
+## What the roundtable said was missing
+
+The strongest missing idea is this:
+
+> LLM systems are distributed systems with probabilistic components.
+
+So the developer needs normal engineering discipline plus AI-specific discipline.
+
+<KeyPoints
+  title="The seven things teams underweight"
+  items={[
+    'Data lifecycle: source quality, permissions, retention, redaction, deletion, embedding/index freshness.',
+    'Risk tiers: prototype, internal tool, customer-facing feature, external action, regulated workflow.',
+    'Model/provider ops: version drift, fallback providers, rate limits, pricing changes, migration evals.',
+    'Human-AI UX: drafts, approvals, citations, diff views, undo, visible tool logs.',
+    'AI incident response: quality drops, prompt injection attempts, cost spikes, retrieval leaks.',
+    'Team operating model: who owns AGENTS.md, skills, prompts, evals, permissions, and stale rules.',
+    'Legal/privacy/IP basics: generated code, licenses, PII, vendor retention, audit trails.',
+  ]}
+/>
+
+## The missing mental model: operational maturity
+
+A prototype can be loose. A production AI feature cannot.
+
+<CompareGrid
+  title="Demo AI vs. production AI"
+  leftLabel="Demo mindset"
+  rightLabel="Production mindset"
+  rows={[
+    { left: 'Prompt works on three examples.', right: 'Eval set catches regressions and known failure modes.' },
+    { left: 'Vector DB has some docs.', right: 'Retriever enforces permissions, metadata, freshness, and deletion.' },
+    { left: 'Tool calling is enabled.', right: 'Tools have schemas, risk tiers, approval gates, and audit logs.' },
+    { left: 'Model name is hardcoded.', right: 'Provider/model/version are logged, evaluated, and migratable.' },
+    { left: 'User sees final answer.', right: 'User can inspect sources, edit drafts, approve actions, and undo.' },
+  ]}
+/>
+
+The uncomfortable truth: if you cannot explain how the feature fails, you probably cannot operate it.
+
+## Data lifecycle is the real context engineering
+
+“Context engineering” sounds like prompt layout. But the deeper layer is data.
+
+Bad data becomes bad context. Bad context becomes confident bad output.
+
+For every AI feature, ask:
+
+```txt
+Where does the data come from?
+Who is allowed to see it?
+How fresh is it?
+How is it chunked?
+How is it redacted?
+How does deletion propagate into embeddings and indexes?
+How do we know retrieval returned the right thing?
+```
+
+This matters especially for RAG. RAG security is authorization security. The model should never see cross-tenant or private context just because the vector search thought it was semantically similar.
+
+## Models are moving dependencies
+
+Developers are used to package versions changing. LLMs are the same, except fuzzier.
+
+Model behavior changes. Tool-calling behavior differs by provider. Structured-output reliability differs by model. Prices and rate limits change. Context windows grow, but long-context reliability is still not magic.
+
+So log the dependency:
+
+```txt
+provider
+model
+version / snapshot if available
+prompt template version
+tool schema version
+retrieval index version
+eval set version
+```
+
+If you would not deploy a database migration without a rollback plan, do not migrate the model behind a critical AI feature without evals.
+
+If an agent can take five steps, step three can fail. So you need run IDs, idempotency keys, pause/resume state, retry boundaries and an audit trail. Agent workflows are not chat sessions. They are stateful systems.
+
+## Coding agents need repo operating systems
+
+The coding-agent part is the same story in miniature.
+
+A serious repo needs more than “use Cursor/Claude/Copilot”. It needs a harness:
+
+```txt
+AGENTS.md
+nested AGENTS.md for subprojects
+skills for repeated expert tasks
+prompt files for workflows
+tool permissions
+hooks for deterministic checks
+evals/tests for agent output
+```
+
+<DoDont
+  title="Coding-agent harness"
+  doLabel="Do"
+  dontLabel="Do not"
+  doItems={[
+    'Write short, testable AGENTS.md instructions',
+    'Create skills for repeated tasks like review, security, migrations',
+    'Allowlist safe test/build commands',
+    'Keep generated code behind human diff review',
+  ]}
+  dontItems={[
+    'Dump a 20-page architecture essay into every context',
+    'Let agents read secrets or run arbitrary network commands',
+    'Treat generated tests as proof without reading them',
+    'Let stale repo instructions survive forever',
+  ]}
+/>
+
+If a coding agent adds a package, review it like a supply-chain change. AI can hallucinate libraries, choose abandoned packages or introduce dependency-confusion risk.
+
+The best `AGENTS.md` reads like a new teammate checklist:
+
+```txt
+setup commands
+test commands
+architecture boundaries
+files not to edit
+security gotchas
+what proves success
+when to ask before acting
+```
+
+Not poetry. Not vibes. Operational instructions.
+
+## The AI incident playbook nobody writes
+
+Every team using AI in production should have an incident checklist.
+
+```txt
+1. Which prompt/model/tool/version changed?
+2. Did retrieval/index data change?
+3. Did provider behavior or rate limits change?
+4. Are traces showing cost, latency, or fallback spikes?
+5. Can we disable, downgrade, or route around the feature?
+6. Which failed case becomes a new eval?
+```
+
+This is the boring part. It is also where real products survive.
+
+## The practical checklist
+
+Before shipping an AI feature, ask:
+
+- Is the data allowed, fresh and deletable?
+- Is the model/provider/version logged?
+- Is the output schema validated?
+- Are tool calls permissioned and audited?
+- Are evals covering known failures?
+- Is there a fallback when confidence is low?
+- Can a human review or undo risky actions?
+- Do we have an incident playbook?
+
+## The new developer craft
+
+The best modern developer is not just a faster typist with an AI autocomplete.
+
+They are part architect, part reviewer, part eval designer, part data plumber, part incident responder, part UX designer for uncertainty.
+
+That sounds like more work. It is. But it is also the leverage.
+
+The model creates options and volume. The harness turns that into software. The human owns judgment.
+
+<KeyPoints
+  title="My rule of thumb"
+  items={[
+    'If the AI can act, it needs permissions and logs.',
+    'If the AI can answer users, it needs evals and fallbacks.',
+    'If the AI uses private data, retrieval is an auth problem.',
+    'If a coding agent edits the repo, AGENTS.md and tests are part of the product.',
+  ]}
+/>
+
+## Sources / further reading
+
+- [AGENTS.md open format](https://agents.md/)
+- [Anthropic: Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
+- [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
+- [Model Context Protocol](https://modelcontextprotocol.io/introduction)
+- Internal research artifact: `LLM_NATIVE_DEVELOPER_GUIDE_2026.md` and roundtable review in `/root/FutureOfDev`

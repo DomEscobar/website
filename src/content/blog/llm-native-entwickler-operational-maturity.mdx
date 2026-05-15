@@ -1,0 +1,265 @@
+---
+title: "LLM-native Entwickler brauchen mehr als gute Prompts"
+description: "Eine praktische Notiz aus einem Experten-Roundtable: moderne AI-Entwicklung braucht Operational Maturity — Datenlebenszyklus, Model Ops, Evals, Incident Playbooks, Human-AI UX und Coding-Agent-Harnesses."
+language: "de"
+slug: "llm-native-entwickler-operational-maturity"
+canonicalSlug: "llm-native-developer-operational-maturity"
+publishedAt: "2026-05-15"
+updatedAt: "2026-05-15"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "LLM", "Softwarearchitektur", "Agents", "Developer Workflow"]
+topic: "AI-first Engineering"
+summary: "Die nächste Entwicklerfähigkeit ist nicht der cleverste Prompt. Es ist das Betriebssystem um LLMs herum: Datenqualität, Model-Versioning, Evals, Guardrails, Incident Response, Review-UX und Repo-Anweisungen, denen Agents wirklich folgen können."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Was ist ein LLM-native Entwickler?"
+    answer: "Ein Entwickler, der LLM-Verhalten gut genug versteht, um zuverlässige Software darum herum zu bauen: Kontext, Tools, Schemas, Evals, Observability, Security und menschliches Review."
+  - question: "Ist Prompt Engineering noch wichtig?"
+    answer: "Ja, aber es ist nur ein Teil. Wichtiger ist Context Engineering plus der Harness um das Modell: Validierung, Tools, Evals, Fallbacks und Betriebsprozesse."
+  - question: "Was übersehen Teams bei Coding Agents am häufigsten?"
+    answer: "Sie fokussieren sich auf Generierungsgeschwindigkeit und investieren zu wenig in Repo-Anweisungen, Skill-Dateien, Tool-Permissions, Evals, Review-Workflows und Incident Playbooks."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## Die kurze Version
+
+Dein AI-Feature funktioniert in der Demo.
+
+Dann ändert ein Model Update das Tool-Calling-Verhalten. Der Retriever zieht die Refund Policy vom letzten Quartal. Die Support-Antwort klingt sicher. Der User glaubt ihr.
+
+Genau dann lernst du: Die eigentliche LLM-native Entwicklerfähigkeit ist nicht Prompting. Es ist AI-Software betreiben.
+
+Definition: Ein LLM-native Entwickler ist ein Softwareentwickler, der LLM-Verhalten gut genug versteht, um zuverlässige Systeme darum herum zu bauen: Kontext, Tools, Schemas, Evals, Datenqualität, Observability, Security, Model Operations und menschliches Review.
+
+Die eigentliche Fähigkeit ist das langweilige Betriebssystem um das Modell herum: saubere Daten, enger Kontext, Schemas, Tool-Permissions, Evals, Logs, Rollback-Pfade und menschliche Freigabe dort, wo das Modell nicht allein entscheiden sollte.
+
+Ein Roundtable aus “imaginären, aber nervig praktischen” Experten würde genau das sagen: Die Grundlagen reichen nicht mehr. Du brauchst Operational Maturity — also: kann das Ding nachts um 2 kaputtgehen, ohne dass alle panisch werden?
+
+<MetricStrip
+  metrics={[
+    { value: '7', label: 'fehlende Bereiche zwischen Demo und Produktion' },
+    { value: '1', label: 'Mensch bleibt Eigentümer der finalen Entscheidung' },
+    { value: '0', label: 'Features, die ohne Rollback-Story live gehen sollten' },
+  ]}
+/>
+
+## Die alte AI-Developer-Checkliste ist unvollständig
+
+Viele AI-Developer-Tipps klingen immer noch so:
+
+- Tokens und Context Windows verstehen
+- bessere Prompts schreiben
+- RAG nutzen
+- Tools anbinden
+- Evals bauen
+- Halluzinationen beachten
+
+Alles richtig. Aber nicht genug.
+
+Denn der schwierige Teil beginnt, nachdem die Demo funktioniert.
+
+Das Modell ändert sich. Der Prompt ändert sich. Die Daten ändern sich. Der Retriever zieht ein veraltetes Dokument. Der Agent ruft das falsche Tool. Eine Support-Antwort klingt sicher und übersieht eine Policy-Ausnahme. Ein Coding Assistant schreibt einen hübschen Patch, der leise einen Edge Case bricht.
+
+Das ist jetzt der eigentliche Job.
+
+<FlowGraphic
+  title="LLM-native maturity loop"
+  note="mehr als Prompt → Antwort"
+  steps={['Datenlebenszyklus', 'Kontext + Tools', 'Validierung + Evals', 'Human Review UX', 'Monitoring + Incidents']}
+/>
+
+## Was im Roundtable gefehlt hat
+
+Die wichtigste fehlende Idee ist:
+
+> LLM-Systeme sind verteilte Systeme mit probabilistischen Komponenten.
+
+Also braucht der Entwickler normale Engineering-Disziplin plus AI-spezifische Disziplin.
+
+<KeyPoints
+  title="Die sieben unterschätzten Themen"
+  items={[
+    'Datenlebenszyklus: Quellenqualität, Rechte, Retention, Redaction, Löschung, Embedding-/Index-Frische.',
+    'Risikostufen: Prototyp, internes Tool, kundenorientiertes Feature, externe Aktion, regulierter Workflow.',
+    'Model/Provider Ops: Version Drift, Fallback Provider, Rate Limits, Preisänderungen, Migration-Evals.',
+    'Human-AI UX: Drafts, Freigaben, Quellen, Diff Views, Undo, sichtbare Tool Logs.',
+    'AI Incident Response: Qualitätsabfälle, Prompt-Injection-Versuche, Kostenspikes, Retrieval-Leaks.',
+    'Team Operating Model: Wer besitzt AGENTS.md, Skills, Prompts, Evals, Permissions und stale Rules?',
+    'Legal/Privacy/IP Basics: generierter Code, Lizenzen, PII, Vendor Retention, Audit Trails.',
+  ]}
+/>
+
+## Das fehlende Mental Model: Operational Maturity
+
+Ein Prototyp darf locker sein. Ein produktives AI-Feature nicht.
+
+<CompareGrid
+  title="Demo AI vs. Production AI"
+  leftLabel="Demo-Denke"
+  rightLabel="Produktions-Denke"
+  rows={[
+    { left: 'Prompt funktioniert bei drei Beispielen.', right: 'Eval-Set erkennt Regressionen und bekannte Failure Modes.' },
+    { left: 'Vector DB enthält ein paar Dokumente.', right: 'Retriever erzwingt Permissions, Metadata, Freshness und Löschung.' },
+    { left: 'Tool Calling ist aktiviert.', right: 'Tools haben Schemas, Risikostufen, Approval Gates und Audit Logs.' },
+    { left: 'Modelname ist hart codiert.', right: 'Provider/Model/Version werden geloggt, evaluiert und migrierbar gehalten.' },
+    { left: 'User sieht finale Antwort.', right: 'User kann Quellen prüfen, Drafts editieren, Aktionen freigeben und undo nutzen.' },
+  ]}
+/>
+
+Die unangenehme Wahrheit: Wenn du nicht erklären kannst, wie das Feature scheitert, kannst du es wahrscheinlich nicht betreiben.
+
+## Datenlebenszyklus ist das echte Context Engineering
+
+“Context Engineering” klingt nach Prompt-Aufbau. Die tiefere Schicht sind Daten.
+
+Schlechte Daten werden schlechter Kontext. Schlechter Kontext wird selbstbewusster falscher Output.
+
+Für jedes AI-Feature frag:
+
+```txt
+Woher kommen die Daten?
+Wer darf sie sehen?
+Wie frisch sind sie?
+Wie werden sie chunked?
+Wie werden sie redacted?
+Wie propagiert Löschung in Embeddings und Indexes?
+Woher wissen wir, dass Retrieval das Richtige geliefert hat?
+```
+
+Das ist besonders bei RAG wichtig. RAG-Security ist Authorization-Security. Das Modell darf keinen Cross-Tenant- oder privaten Kontext sehen, nur weil Vector Search ihn semantisch ähnlich findet.
+
+## Modelle sind bewegliche Dependencies
+
+Entwickler kennen Paketversionen. LLMs sind ähnlich, nur unschärfer.
+
+Modelle ändern Verhalten. Tool-Calling unterscheidet sich je Provider. Structured Output ist je Modell unterschiedlich zuverlässig. Preise und Rate Limits ändern sich. Context Windows wachsen, aber Long-Context-Zuverlässigkeit ist trotzdem keine Magie.
+
+Also logge die Dependency:
+
+```txt
+provider
+model
+version / snapshot wenn verfügbar
+prompt template version
+tool schema version
+retrieval index version
+eval set version
+```
+
+Wenn du keine Datenbankmigration ohne Rollback-Plan deployen würdest, migriere kein kritisches AI-Feature auf ein neues Modell ohne Evals.
+
+Wenn ein Agent fünf Schritte ausführen kann, kann Schritt drei scheitern. Also brauchst du Run IDs, Idempotency Keys, Pause/Resume-State, Retry-Grenzen und Audit Trail. Agent Workflows sind keine Chat-Sessions. Sie sind stateful Systeme.
+
+## Coding Agents brauchen Repo-Betriebssysteme
+
+Beim Coding-Agent-Teil ist es dieselbe Geschichte in klein.
+
+Ein ernsthaftes Repo braucht mehr als “nutz Cursor/Claude/Copilot”. Es braucht einen Harness:
+
+```txt
+AGENTS.md
+nested AGENTS.md für Subprojekte
+Skills für wiederholte Expertenaufgaben
+Prompt Files für Workflows
+Tool Permissions
+Hooks für deterministische Checks
+Evals/Tests für Agent Output
+```
+
+<DoDont
+  title="Coding-Agent-Harness"
+  doLabel="Machen"
+  dontLabel="Nicht machen"
+  doItems={[
+    'Kurze, testbare AGENTS.md-Anweisungen schreiben',
+    'Skills für wiederholte Aufgaben wie Review, Security, Migrationen anlegen',
+    'Sichere Test-/Build-Kommandos allowlisten',
+    'Generierten Code immer durch menschliches Diff Review schicken',
+  ]}
+  dontItems={[
+    '20 Seiten Architektur-Essay in jeden Kontext kippen',
+    'Agents Secrets lesen oder beliebige Network Commands ausführen lassen',
+    'Generierte Tests ungeprüft als Beweis akzeptieren',
+    'Stale Repo-Anweisungen ewig leben lassen',
+  ]}
+/>
+
+Wenn ein Coding Agent ein Package hinzufügt, reviewe es wie eine Supply-Chain-Änderung. AI kann Libraries halluzinieren, verlassene Packages wählen oder Dependency-Confusion-Risiko einbauen.
+
+Das beste `AGENTS.md` liest sich wie ein New-Teammate-Checklist:
+
+```txt
+setup commands
+test commands
+architecture boundaries
+files not to edit
+security gotchas
+what proves success
+when to ask before acting
+```
+
+Keine Poesie. Keine Vibes. Betriebsanweisungen.
+
+## Das AI-Incident-Playbook, das kaum jemand schreibt
+
+Jedes Team mit AI in Produktion sollte eine Incident-Checkliste haben.
+
+```txt
+1. Welcher Prompt / welches Modell / Tool / Version hat sich geändert?
+2. Haben sich Retrieval- oder Index-Daten geändert?
+3. Gab es Provider-Verhalten, Rate-Limit- oder Preisänderungen?
+4. Zeigen Traces Kosten-, Latenz- oder Fallback-Spikes?
+5. Können wir das Feature abschalten, downgraden oder umleiten?
+6. Welcher Failure Case wird ein neuer Eval?
+```
+
+Das ist der langweilige Teil. Genau dort überleben echte Produkte.
+
+## Die praktische Checkliste
+
+Bevor ein AI-Feature live geht, frag:
+
+- Sind die Daten erlaubt, frisch und löschbar?
+- Werden Model/Provider/Version geloggt?
+- Wird das Output-Schema validiert?
+- Sind Tool Calls permissioned und auditiert?
+- Decken Evals bekannte Fehler ab?
+- Gibt es einen Fallback bei niedriger Confidence?
+- Kann ein Mensch riskante Aktionen reviewen oder rückgängig machen?
+- Haben wir ein Incident Playbook?
+
+## Das neue Entwicklerhandwerk
+
+Der beste moderne Entwickler ist nicht nur ein schnellerer Tippler mit AI-Autocomplete.
+
+Er ist ein bisschen Architekt, Reviewer, Eval-Designer, Datenklempner, Incident Responder und UX-Designer für Unsicherheit.
+
+Das klingt nach mehr Arbeit. Ist es auch. Aber genau dort liegt der Hebel.
+
+Das Modell erzeugt Optionen und Volumen. Der Harness macht daraus Software. Der Mensch besitzt das Urteil.
+
+<KeyPoints
+  title="Meine Daumenregel"
+  items={[
+    'Wenn AI handeln kann, braucht sie Permissions und Logs.',
+    'Wenn AI Usern antwortet, braucht sie Evals und Fallbacks.',
+    'Wenn AI private Daten nutzt, ist Retrieval ein Auth-Problem.',
+    'Wenn ein Coding Agent das Repo editiert, sind AGENTS.md und Tests Teil des Produkts.',
+  ]}
+/>
+
+## Quellen / weiter lesen
+
+- [AGENTS.md Open Format](https://agents.md/)
+- [Anthropic: Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)
+- [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)
+- [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework)
+- [Model Context Protocol](https://modelcontextprotocol.io/introduction)
+- Internes Research-Artefakt: `LLM_NATIVE_DEVELOPER_GUIDE_2026.md` und Roundtable Review in `/root/FutureOfDev`
