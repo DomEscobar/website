@@ -2,7 +2,7 @@ export type Buildprint = {
   slug: string;
   title: string;
   creator: string;
-  category: 'Product OS' | 'Agent' | 'Integration' | 'Quality';
+  category: 'Product OS' | 'Agent' | 'Integration' | 'Quality' | 'Feature';
   stack: string[];
   difficulty: 'Small' | 'Medium' | 'Advanced';
   summary: string;
@@ -18,6 +18,24 @@ export type Buildprint = {
 };
 
 export const buildprints: Buildprint[] = [
+  {
+    slug: "auth-teams-rbac-os",
+    title: "Auth, Teams & RBAC OS",
+    creator: "Agent Buildprint",
+    category: "Feature",
+    stack: ["Auth", "Teams", "RBAC", "Multi-tenant SaaS", "Audit logs"],
+    difficulty: "Advanced",
+    summary: "Secure team accounts, memberships, roles, permissions, invites, audit logs, and tenant isolation around an existing auth provider.",
+    promise: "Add Auth, Teams & RBAC without letting an agent rip out existing auth, fake frontend-only permissions, or miss tenant isolation.",
+    imageTone: "from-violet-400/20 via-fuchsia-400/10 to-cyan-500/20",
+    includes: ["Auth forensics", "Tenant boundary map", "Permission engine", "Invite lifecycle", "Audit log"],
+    risks: ["Frontend-only authorization", "Cross-tenant data leaks", "Self-escalation or last-owner loss"],
+    files: ["BUILDPRINT.md", "SPEC.md", "CONTRACTS.md", "RBAC_MATRIX.md", "API_ROUTES.md", "UI_FLOWS.md", "TEST_MATRIX.md"],
+    checks: ["Phase 00 forensics must complete first", "Permission engine denies by default", "Every team-scoped route has direct API auth tests", "Invites and role changes emit redacted audit events"],
+    copyPrompt: "Use the Agent Buildprint: Auth, Teams & RBAC OS.\n\nBootstrap it with `agb start https://agent-buildprint.com/buildprints/auth-teams-rbac-os/package.json ./my-build` or inspect the GitHub folder. Follow BUILDPRINT.md as the authority spine. Do Phase 00 auth forensics and tenant research before coding. Reuse existing auth by default, enforce permissions server-side, and do not claim completion while any team-scoped route lacks direct authorization tests.",
+    githubUrl: "https://github.com/DomEscobar/agent-buildprint/tree/main/buildprints/auth-teams-rbac-os",
+    manifestUrl: "https://agent-buildprint.com/buildprints/auth-teams-rbac-os/package.json",
+  },
   {
     slug: "ai-influencer-os",
     title: "OpenClaw AI Influencer OS",
@@ -218,7 +236,7 @@ export const buildprints: Buildprint[] = [
   },
 ];
 
-export const categories = ['All', 'Product OS', 'Agent', 'Integration', 'Quality'] as const;
+export const categories = ['All', 'Product OS', 'Agent', 'Integration', 'Quality', 'Feature'] as const;
 
 export function getBuildprint(slug: string) {
   return buildprints.find((buildprint) => buildprint.slug === slug);
