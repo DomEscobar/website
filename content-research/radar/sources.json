@@ -1,0 +1,24 @@
+{
+  "arxivCategories": ["cs.AI", "cs.CL", "cs.LG", "cs.SE", "cs.CR", "cs.HC"],
+  "watchKeywords": [
+    "agent", "agents", "tool use", "workflow", "automation", "memory",
+    "long-horizon", "rag", "retrieval", "coding", "coding agent",
+    "browser agent", "evaluation", "benchmark", "security", "prompt injection",
+    "local llm", "inference", "context", "multimodal", "web execution",
+    "human-ai", "personal assistant", "orchestration", "state", "planning"
+  ],
+  "blocklistKeywords": [
+    "medical imaging", "protein", "molecule", "drug discovery", "segmentation",
+    "remote sensing", "graph neural", "theorem", "quantum", "wireless"
+  ],
+  "referenceCurators": [
+    { "name": "Hugging Face Papers", "url": "https://huggingface.co/papers", "cadence": "daily + weekly/monthly views" },
+    { "name": "AlphaSignal", "url": "https://www.alphasignal.ai/", "cadence": "daily" },
+    { "name": "TLDR AI", "url": "https://tldr.tech/ai", "cadence": "daily" },
+    { "name": "Latent Space / AINews", "url": "https://www.latent.space/", "cadence": "weekday roundups" },
+    { "name": "The Batch", "url": "https://www.deeplearning.ai/the-batch/", "cadence": "weekly" },
+    { "name": "Import AI", "url": "https://importai.substack.com/", "cadence": "roughly weekly / issue-based" },
+    { "name": "Ahead of AI", "url": "https://magazine.sebastianraschka.com/", "cadence": "slower deep explainers" },
+    { "name": "Ben's Bites", "url": "https://www.bensbites.com/", "cadence": "several times per week" }
+  ]
+}

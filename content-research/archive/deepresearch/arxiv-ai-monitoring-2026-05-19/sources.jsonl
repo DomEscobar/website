@@ -1,0 +1,19 @@
+{"url":"https://info.arxiv.org/help/api/user-manual.html","type":"primary","priority":"high","note":"Official arXiv API usage and query syntax"}
+{"url":"https://arxiv.org/list/cs.AI/recent","type":"primary","priority":"high","note":"Official recent cs.AI papers"}
+{"url":"https://arxiv.org/list/cs.CL/recent","type":"primary","priority":"high","note":"Official recent cs.CL papers"}
+{"url":"https://arxiv.org/list/cs.LG/recent","type":"primary","priority":"high","note":"Official recent cs.LG papers"}
+{"url":"https://rss.arxiv.org/rss/cs.AI","type":"primary","priority":"high","note":"Official arXiv RSS feed for cs.AI"}
+{"url":"https://paperswithcode.com/latest","type":"primary","priority":"high","note":"Papers with Code latest papers and code links"}
+{"url":"https://paperswithcode.com/sota","type":"primary","priority":"medium","note":"Papers with Code SOTA/task context"}
+{"url":"https://huggingface.co/papers","type":"primary","priority":"high","note":"Hugging Face daily paper curation"}
+{"url":"https://www.deeplearning.ai/the-batch/","type":"secondary","priority":"medium","note":"AI newsletter format and cadence inspiration"}
+{"url":"https://importai.substack.com/","type":"secondary","priority":"medium","note":"AI research/news newsletter inspiration"}
+{"url":"https://www.latent.space/","type":"secondary","priority":"medium","note":"AI engineering newsletter/podcast inspiration"}
+{"url":"https://magazine.sebastianraschka.com/","type":"secondary","priority":"medium","note":"Ahead of AI, practical AI research/engineering newsletter"}
+{"url":"https://www.bensbites.com/","type":"secondary","priority":"medium","note":"AI news/tool curation inspiration"}
+{"url":"https://tldr.tech/ai","type":"secondary","priority":"medium","note":"Short AI newsletter format inspiration"}
+{"url":"https://www.alphasignal.ai/","type":"secondary","priority":"medium","note":"AI research/engineering curation inspiration"}
+{"url":"https://arxiv-sanity-lite.com/","type":"secondary","priority":"medium","note":"arXiv discovery UI inspiration"}
+{"url":"https://www.semanticscholar.org/product/api","type":"primary","priority":"medium","note":"Semantic Scholar API for paper enrichment and citations"}
+{"url":"https://news.ycombinator.com/","type":"community","priority":"low","note":"Community signal/discussion discovery"}
+{"url":"https://www.reddit.com/r/LocalLLaMA/","type":"community","priority":"low","note":"Community signal for practical local AI workflows"}

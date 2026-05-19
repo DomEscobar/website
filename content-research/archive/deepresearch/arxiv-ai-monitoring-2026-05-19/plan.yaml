@@ -1,0 +1,33 @@
+topic: arxiv_ai_monitoring_blog_cadence_inspiration
+created: 2026-05-19
+research_questions:
+  - How can Huecki monitor arXiv and emerging AI workflow sources for blog ideas?
+  - What publication frequency is sustainable and useful without becoming shallow news reposting?
+  - Which existing sites/newsletters already curate AI papers/tools and what can Huecki learn from them?
+  - What should the pipeline, scoring, and post formats look like?
+source_policy:
+  primary:
+    - arXiv official docs/API/RSS/category pages
+    - Papers with Code official pages
+    - Hugging Face Papers official pages
+    - newsletter/about/archive pages for publication cadence and format
+  secondary:
+    - AI newsletters and blogs used as inspiration, not factual authority
+    - community sources such as Hacker News/Reddit for discovery only
+unknowns:
+  - exact deployment/runtime schedule for Huecki automation
+  - Dom's preferred manual approval tolerance
+  - whether the live site host issue is fixed
+planned_queries:
+  - arXiv API cs.AI cs.CL cs.LG latest papers RSS
+  - AI papers newsletter daily weekly examples
+  - Hugging Face Papers daily AI papers
+  - Papers with Code trending latest papers
+  - AlphaSignal AI newsletter papers cadence
+  - The Batch AI newsletter cadence
+  - Import AI newsletter archive
+  - Latent Space AI newsletter cadence
+outputs:
+  - report.md with recommendation
+  - evidence.jsonl with URL-backed claims
+  - sources.jsonl with ranked sources
