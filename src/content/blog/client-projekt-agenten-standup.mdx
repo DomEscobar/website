@@ -1,0 +1,155 @@
+---
+title: "gib jedem Kundenprojekt einen kleinen Agenten"
+description: "Ein praktischer Workflow für Freelancer und kleine Teams: ein isolierter Projekt-Agent, ein Preview-Rhythmus und ein täglicher Standup gegen Kontextverlust."
+language: "de"
+slug: "client-projekt-agenten-standup"
+canonicalSlug: "client-site-domain-agents"
+publishedAt: "2026-05-19"
+updatedAt: "2026-05-19"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Freelancing", "Client Work", "Automation", "Workflow Design"]
+topic: "AI Agent Workflows"
+summary: "Der nützliche Move ist nicht ein Mega-Assistent für alle Kunden. Gib jedem Kundenprojekt einen kleinen, isolierten Agenten mit eigener Erinnerung, Aufgabenliste, Preview-URL-Gewohnheit und langweiligem Daily Standup."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Was ist ein Kundenprojekt-Agent?"
+    answer: "Ein enger Agent für genau ein Projekt. Er hält Brand Notes, offene Aufgaben, Preview-Links, Entscheidungen und Freigaberegeln getrennt von allen anderen Kunden."
+  - question: "Sollte er Live-Websites automatisch ändern?"
+    answer: "Nein. Die sichere Version arbeitet preview-first: Branch oder Preview erstellen, Änderung zusammenfassen, Freigabe einholen und erst dann manuell oder über einen freigegebenen Release-Pfad shippen."
+  - question: "Was ist der einfachste erste Workflow?"
+    answer: "Starte mit einem read-only Daily Standup: shipped, pending, blocked, wartet auf Kunde, Risiken und die nächsten drei sicheren Aktionen."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## kurze Version
+
+Kundenarbeit bricht, wenn Kontext ausläuft.
+
+Nicht dramatisch. Eher nervig klein: die richtige Logo-Version liegt in einem Chat, die Kundenpräferenz in einer Mail, der Preview-Link ist irgendwo in Slack, und der Agent von heute weiß nicht, was gestern entschieden wurde.
+
+Also bau nicht eine riesige “Agency AI”. Bau einen kleinen Agenten pro Projekt.
+
+<MetricStrip
+  metrics={[
+    { value: '1', label: 'Agent pro Kundenprojekt' },
+    { value: '0', label: 'Live-Änderungen ohne Preview-Freigabe' },
+    { value: '6', label: 'Standup-Felder, die Kontext warm halten' },
+  ]}
+/>
+
+<FlowGraphic
+  title="Client-Site-Agent-Loop"
+  note="klein, isoliert, approval-first"
+  steps={['Discovery Notes', 'Projekt-Memory', 'Task Queue', 'Preview URL', 'Kundenfeedback', 'Daily Standup']}
+/>
+
+## der überraschend nützliche Teil
+
+Der Agent ist nicht nützlich, weil er schneller HTML schreibt.
+
+Er ist nützlich, weil er sich die langweilige Projektform merkt:
+
+- Brand-Regeln
+- was der Kunde schon abgelehnt hat
+- welche Seiten im Scope sind
+- die Preview-URL-Gewohnheit
+- die Release-Regel
+- wer was freigeben muss
+
+Dadurch wird aus dem Agenten kein “zufällig hilfreicher Praktikant”, sondern ein kleiner Projekt-Operator. Kein CEO. Kein Designer. Kein Account Manager. Nur das Ding, das über Nacht keine kleinen Bälle fallen lässt.
+
+<CompareGrid
+  title="Mega-Assistent vs. Projekt-Agent"
+  leftLabel="ein Assistent für alles"
+  rightLabel="ein Agent pro Projekt"
+  rows={[
+    { left: 'mischt Kunden, Stilregeln und alte Entscheidungen', right: 'hält einen Projektkontext sauber' },
+    { left: 'braucht jedes Mal eine lange Erinnerung', right: 'startet aus gespeicherten Brand Notes und offenen Aufgaben' },
+    { left: 'kann versehentlich zu breit handeln', right: 'hat ein enges Repo, eine Task Queue und eine Freigaberegel' },
+    { left: 'reportet Vibes', right: 'reportet shipped, pending, blocked, risks und next actions' },
+  ]}
+/>
+
+## kleiner Workflow zum Klauen
+
+Starte read-only. Wirklich.
+
+Gib dem Agenten einen Job: jeden Morgen den Kunden-Standup schreiben. Kein Publishing. Keine Mails. Keine Live-Edits.
+
+```txt
+Du bist der Projekt-Agent für [Kunde/Projekt].
+
+Nutze nur Notizen, Repo-Status, Task-Liste und Preview-Links aus diesem Projekt.
+Vermische keinen Kontext aus anderen Kundenprojekten.
+
+Erstelle den heutigen Standup:
+1. shipped seit dem letzten Standup
+2. pending work
+3. blocked oder wartet auf Kunde
+4. Risiken / unklare Annahmen
+5. Preview-Links, die Review brauchen
+6. die nächsten 3 sicheren Aktionen
+
+Regeln:
+- keine Live-Deploys
+- keine Kundennachrichten, außer als Entwurf zur Freigabe
+- wenn Kontext fehlt, sage genau, was fehlt
+```
+
+Dieser eine Prompt reicht, damit das System wertvoll wird, bevor es mächtig wird.
+
+## die Freigabegrenze ist das Produkt
+
+Die gefährliche Version ist offensichtlich: Ein Agent editiert still eine Kundenseite, pushed live und erklärt danach selbstbewusst das Falsche.
+
+Die nützliche Version ist langweilig:
+
+<DoDont
+  title="nutzen / vermeiden"
+  doLabel="nutzen für"
+  dontLabel="vermeiden"
+  doItems={[
+    'Daily Standups aus Commits, Tasks und Notizen',
+    'Preview-first Website-Änderungen',
+    'Kundenfeedback in Action Items zusammenfassen',
+    'Update-Nachrichten für menschliche Freigabe entwerfen',
+  ]}
+  dontItems={[
+    'kundenrelevante Änderungen automatisch live stellen',
+    'Kontext zwischen Kunden mischen',
+    'Geschmacks-, Scope- oder Preisentscheidungen allein treffen',
+    'so tun, als wären fehlende Anforderungen geklärt',
+  ]}
+/>
+
+<KeyPoints
+  title="Minimum Viable Project Agent"
+  items={[
+    'Ein Projektordner mit Notizen, Entscheidungen, Aufgaben und Links.',
+    'Eine Preview-URL-Regel: Änderungen werden gezeigt, bevor sie live gehen.',
+    'Ein Daily-Standup-Format, das ein Mensch in 30 Sekunden scannen kann.',
+    'Eine harte Freigabeliste für Live-Deploys, Pricing, Scope und Kundennachrichten.',
+  ]}
+/>
+
+## warum das besser ist als noch ein Dashboard
+
+Ein Dashboard wartet darauf, dass du es öffnest. Ein Projekt-Agent wacht auf, liest das Projekt und sagt dir, was Aufmerksamkeit braucht.
+
+Das ist der echte Hebel: nicht Kundenurteil ersetzen, sondern den Warm-up-Cost senken, wenn du wieder in ein Projekt einsteigst. Du kannst einen Tag weg sein und weißt trotzdem: was sich geändert hat, was blockiert ist, was Freigabe braucht und was der nächste sichere Schritt ist.
+
+Halte den Agenten klein. halte den Scope langweilig. mach Freigabe explizit.
+
+So wird Kundenarbeit schneller, ohne weird zu werden.
+
+## Quellen
+
+- [Two Client Sites in 3 Days: Agentive Context Engineering in Action — HTEK](https://htek.dev/articles/two-client-sites-three-days-agentive-context-engineering)
+- [I Repurposed a Coding Agent as a Life Assistant — HTEK](https://htek.dev/articles/coding-agent-as-life-assistant-nicu)

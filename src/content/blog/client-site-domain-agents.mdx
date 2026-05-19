@@ -1,0 +1,155 @@
+---
+title: "give every client project a tiny agent"
+description: "A practical way for freelancers and small teams to stop losing context: one isolated project agent, one preview workflow, one daily standup."
+language: "en"
+slug: "client-site-domain-agents"
+canonicalSlug: "client-projekt-agenten-standup"
+publishedAt: "2026-05-19"
+updatedAt: "2026-05-19"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Freelancing", "Client Work", "Automation", "Workflow Design"]
+topic: "AI Agent Workflows"
+summary: "The useful move is not one mega assistant for all client work. Give each client project a small, isolated agent with its own memory, tasks, preview URL habit, and boring daily standup."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is a client project agent?"
+    answer: "A narrow agent dedicated to one project. It keeps that project's brand notes, open tasks, preview links, decisions, and approval rules separate from every other client."
+  - question: "Should it change live client websites automatically?"
+    answer: "No. The safe version works preview-first: make a branch or preview, summarize the change, ask for approval, then ship manually or through an approved release path."
+  - question: "What is the easiest first workflow?"
+    answer: "Start with a read-only daily standup: shipped, pending, blocked, waiting for client, risks, and the next three safe actions."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## short answer
+
+client work breaks when context leaks.
+
+not in the dramatic way. in the tiny annoying way: the logo version lives in one chat, the client preference lives in an email, the preview link is buried in slack, and the agent you opened today has no idea what happened yesterday.
+
+so do not build one giant “agency ai”. build one tiny agent per project.
+
+<MetricStrip
+  metrics={[
+    { value: '1', label: 'agent per client project' },
+    { value: '0', label: 'live changes without preview approval' },
+    { value: '6', label: 'daily standup fields that keep context warm' },
+  ]}
+/>
+
+<FlowGraphic
+  title="client-site agent loop"
+  note="small, isolated, approval-first"
+  steps={['Discovery notes', 'Project memory', 'Task queue', 'Preview URL', 'Client feedback', 'Daily standup']}
+/>
+
+## the weirdly useful part
+
+The agent is not useful because it writes html faster.
+
+It is useful because it remembers the boring project shape:
+
+- brand rules
+- what the client already rejected
+- which pages are in scope
+- the preview URL habit
+- the release rule
+- who needs to approve what
+
+That turns the agent from “random helpful intern” into a small project operator. Not CEO. Not designer. Not account manager. Just the thing that keeps the project from dropping tiny balls overnight.
+
+<CompareGrid
+  title="mega assistant vs. project agent"
+  leftLabel="one assistant for everything"
+  rightLabel="one agent per project"
+  rows={[
+    { left: 'mixes clients, style rules, and stale decisions', right: 'keeps one project context clean' },
+    { left: 'needs a long reminder every time', right: 'starts from saved brand notes and open tasks' },
+    { left: 'can accidentally act too broadly', right: 'has a narrow repo, task queue, and approval rule' },
+    { left: 'reports vibes', right: 'reports shipped, pending, blocked, risks, and next actions' },
+  ]}
+/>
+
+## tiny workflow to steal
+
+Start read-only. Seriously.
+
+Give the agent one job: every morning, produce the client standup. No publishing. No emails. No live edits.
+
+```txt
+You are the project agent for [client/project].
+
+Use only this project's notes, repo status, task list, and preview links.
+Do not mix in other client context.
+
+Produce today's standup:
+1. shipped since last standup
+2. pending work
+3. blocked or waiting for client
+4. risks / unclear assumptions
+5. preview links that need review
+6. next 3 safe actions
+
+Rules:
+- no live deploys
+- no client messages unless drafted for approval
+- if context is missing, say exactly what is missing
+```
+
+That one prompt is enough to make the system valuable before it becomes powerful.
+
+## the approval boundary is the product
+
+The dangerous version is obvious: an agent quietly edits a client site, pushes live, and confidently explains the wrong thing.
+
+The useful version is boring:
+
+<DoDont
+  title="use / avoid"
+  doLabel="use it for"
+  dontLabel="avoid"
+  doItems={[
+    'daily standups from commits, tasks, and notes',
+    'preview-first website changes',
+    'summarizing client feedback into action items',
+    'drafting update messages for human approval',
+  ]}
+  dontItems={[
+    'auto-publishing client-facing changes',
+    'mixing context across clients',
+    'making taste or pricing decisions alone',
+    'pretending missing requirements are solved',
+  ]}
+/>
+
+<KeyPoints
+  title="minimum viable project agent"
+  items={[
+    'A project folder with notes, decisions, tasks, and links.',
+    'A preview URL rule: changes are shown before they are shipped.',
+    'A daily standup format the human can scan in 30 seconds.',
+    'A hard approval list for live deploys, pricing, scope, and client messages.',
+  ]}
+/>
+
+## why this is better than another dashboard
+
+A dashboard waits for you to open it. A project agent wakes up, reads the project, and tells you what needs attention.
+
+That is the real leverage: not replacing client judgment, but reducing the warm-up cost of re-entering a project. you can be away for a day and still know: what changed, what is blocked, what needs approval, and what the next safe move is.
+
+Keep the agent small. keep the scope boring. make approval explicit.
+
+That is how client work gets faster without becoming weird.
+
+## sources
+
+- [Two Client Sites in 3 Days: Agentive Context Engineering in Action — HTEK](https://htek.dev/articles/two-client-sites-three-days-agentive-context-engineering)
+- [I Repurposed a Coding Agent as a Life Assistant — HTEK](https://htek.dev/articles/coding-agent-as-life-assistant-nicu)
