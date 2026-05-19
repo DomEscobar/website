@@ -1,0 +1,97 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { buildprints, categories } from '@/lib/buildprints';
+
+export const prerender = true;
+const title = 'Agent Buildprint — construction plans for coding agents';
+const description = 'Browse AI-readable buildprints: architecture contracts, UI specs, backend plans, policies, tests, and prompts that coding agents can follow.';
+---
+
+<BaseLayout locale="en" title={title} description={description} path="/buildprints/">
+  <main class="min-h-screen bg-background text-foreground">
+    <section class="relative overflow-hidden border-b border-border/70">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--accent)/0.18),transparent_36%),radial-gradient(circle_at_80%_20%,rgba(99,102,241,0.18),transparent_28%)]"></div>
+      <div class="relative mx-auto max-w-7xl px-6 py-16 sm:py-24">
+        <div class="max-w-3xl">
+          <p class="mb-4 inline-flex rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-sm font-medium text-accent">agent-buildprint.com MVP</p>
+          <h1 class="text-4xl font-black tracking-tight sm:text-6xl">Construction plans for coding agents.</h1>
+          <p class="mt-6 text-lg leading-8 text-muted-foreground">Find reusable buildprints for product OSes, AI agents, integrations, quality harnesses, policies, and tests. Copy the prompt, open the package manifest, inspect the GitHub folder, or submit your own buildprint.</p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="#catalog" class="rounded-full bg-accent px-5 py-3 text-sm font-bold text-accent-foreground transition hover:scale-[1.02]">Browse buildprints</a>
+            <a href="/buildprints/submit" class="rounded-full border border-border bg-card px-5 py-3 text-sm font-bold transition hover:border-accent/60">Submit a buildprint</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="catalog" class="mx-auto max-w-7xl px-6 py-12">
+      <div class="mb-8 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
+        <div>
+          <h2 class="text-2xl font-bold">Buildprint registry</h2>
+          <p class="mt-2 text-muted-foreground">{buildprints.length} bootstrappable buildprints. Search by stack, category, creator, or use case.</p>
+        </div>
+        <input id="buildprint-search" type="search" placeholder="Search Stripe, RAG, agent, blog, shorts..." class="w-full rounded-2xl border border-border bg-card px-4 py-3 text-sm outline-none ring-accent/30 transition focus:ring-4 lg:w-96" />
+      </div>
+
+      <div class="mb-8 flex flex-wrap gap-2" id="category-filters">
+        {categories.map((category) => <button class="rounded-full border border-border bg-card px-4 py-2 text-sm text-muted-foreground transition hover:border-accent/60 hover:text-foreground data-[active=true]:border-accent data-[active=true]:bg-accent/10 data-[active=true]:text-accent" data-category={category} data-active={category === 'All'}>{category}</button>)}
+      </div>
+
+      <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3" id="buildprint-grid">
+        {buildprints.map((buildprint) => (
+          <article class="buildprint-card group overflow-hidden rounded-3xl border border-border bg-card/80 shadow-2xl shadow-black/10 transition hover:-translate-y-1 hover:border-accent/50" data-category={buildprint.category} data-search={`${buildprint.title} ${buildprint.creator} ${buildprint.category} ${buildprint.stack.join(' ')} ${buildprint.summary}`.toLowerCase()}>
+            <div class={`h-44 bg-gradient-to-br ${buildprint.imageTone} p-5`}>
+              <div class="grid h-full grid-cols-3 gap-3 rounded-2xl border border-white/10 bg-background/30 p-4 backdrop-blur">
+                <div class="rounded-xl bg-accent/25"></div>
+                <div class="rounded-xl border border-white/10 bg-card/70"></div>
+                <div class="rounded-xl border border-white/10 bg-card/70"></div>
+                <div class="col-span-2 rounded-xl border border-white/10 bg-card/70"></div>
+                <div class="rounded-xl bg-white/10"></div>
+              </div>
+            </div>
+            <div class="p-5">
+              <div class="mb-3 flex flex-wrap gap-2 text-xs">
+                <span class="rounded-full bg-accent/10 px-2.5 py-1 font-semibold text-accent">{buildprint.category}</span>
+                <span class="rounded-full bg-secondary px-2.5 py-1 text-muted-foreground">{buildprint.difficulty}</span>
+              </div>
+              <h3 class="text-xl font-bold">{buildprint.title}</h3>
+              <p class="mt-2 text-sm text-muted-foreground">{buildprint.summary}</p>
+              <div class="mt-4 flex flex-wrap gap-2">{buildprint.stack.slice(0, 4).map((tag) => <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">{tag}</span>)}</div>
+              <div class="mt-5 flex flex-wrap gap-3">
+                <a href={`/buildprints/${buildprint.slug}`} class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">View detail</a>
+                <a href={buildprint.manifestUrl} class="rounded-full border border-border px-4 py-2 text-sm font-bold">Manifest</a>
+                <button class="copy-card-prompt rounded-full border border-border px-4 py-2 text-sm font-bold" data-prompt={buildprint.copyPrompt}>Copy prompt</button>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+  <script>
+    const search = document.querySelector('#buildprint-search');
+    const cards = Array.from(document.querySelectorAll('.buildprint-card'));
+    const buttons = Array.from(document.querySelectorAll('#category-filters button'));
+    let activeCategory = 'All';
+    function applyFilters() {
+      const query = (search?.value || '').toLowerCase();
+      for (const card of cards) {
+        const matchesCategory = activeCategory === 'All' || card.dataset.category === activeCategory;
+        const matchesSearch = !query || card.dataset.search?.includes(query);
+        card.classList.toggle('hidden', !(matchesCategory && matchesSearch));
+      }
+    }
+    buttons.forEach((button) => button.addEventListener('click', () => {
+      activeCategory = button.dataset.category || 'All';
+      buttons.forEach((b) => b.dataset.active = String(b === button));
+      applyFilters();
+    }));
+    search?.addEventListener('input', applyFilters);
+    document.querySelectorAll('.copy-card-prompt').forEach((button) => button.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(button.dataset.prompt || '');
+      const old = button.textContent;
+      button.textContent = 'Copied';
+      setTimeout(() => button.textContent = old, 1200);
+    }));
+  </script>
+</BaseLayout>

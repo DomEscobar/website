@@ -1,0 +1,51 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+export const prerender = true;
+const title = 'Submit a Buildprint — Agent Buildprint';
+const description = 'Submit a buildprint repository for the Agent Buildprint registry.';
+---
+
+<BaseLayout locale="en" title={title} description={description} path="/buildprints/submit/">
+  <main class="min-h-screen bg-background px-6 py-16 text-foreground">
+    <section class="mx-auto max-w-4xl">
+      <a href="/buildprints" class="text-sm font-semibold text-accent">← Back to registry</a>
+      <h1 class="mt-6 text-4xl font-black tracking-tight sm:text-6xl">Submit a Buildprint</h1>
+      <p class="mt-6 text-lg leading-8 text-muted-foreground">Creators publish the construction plan, not just code: metadata, diagrams, architecture contracts, prompts, policies, and checks that coding agents can follow.</p>
+
+      <div class="mt-10 grid gap-5 md:grid-cols-2">
+        <div class="rounded-3xl border border-border bg-card p-6">
+          <h2 class="text-xl font-bold">Recommended: GitHub repo</h2>
+          <p class="mt-3 text-sm text-muted-foreground">Publish a public folder or repo, then submit the URL. The registry can validate and render it.</p>
+          <pre class="mt-5 overflow-x-auto rounded-2xl bg-background p-4 text-xs text-muted-foreground"><code>my-buildprint/
+  buildprint.yaml
+  README.md
+  card.png
+  diagrams/
+  prompts/
+  policies/
+  tests/
+  examples/</code></pre>
+        </div>
+        <div class="rounded-3xl border border-border bg-card p-6">
+          <h2 class="text-xl font-bold">Quality badges</h2>
+          <ul class="mt-4 space-y-2 text-sm text-muted-foreground">
+            <li>✓ Structure verified</li>
+            <li>✓ Copy prompt included</li>
+            <li>✓ Tests/checks included</li>
+            <li>✓ Security notes included</li>
+            <li>✓ Example implementation optional</li>
+          </ul>
+        </div>
+      </div>
+
+      <form class="mt-8 rounded-3xl border border-border bg-card p-6" name="buildprint-submission">
+        <label class="text-sm font-bold" for="repo">GitHub URL</label>
+        <input id="repo" class="mt-2 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none ring-accent/30 focus:ring-4" placeholder="https://github.com/you/your-buildprint" />
+        <label class="mt-5 block text-sm font-bold" for="notes">What does it help coding agents build?</label>
+        <textarea id="notes" class="mt-2 min-h-32 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none ring-accent/30 focus:ring-4" placeholder="Short summary, stack, risks covered, and why your buildprint is useful."></textarea>
+        <button type="button" class="mt-5 rounded-full bg-accent px-5 py-3 text-sm font-bold text-accent-foreground">Submission form placeholder</button>
+        <p class="mt-3 text-xs text-muted-foreground">MVP note: this is currently a static placeholder. Next step is wiring submissions to GitHub issues, email, or a database.</p>
+      </form>
+    </section>
+  </main>
+</BaseLayout>

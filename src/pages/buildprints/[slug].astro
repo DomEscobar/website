@@ -1,0 +1,84 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { buildprints, getBuildprint } from '@/lib/buildprints';
+
+export const prerender = true;
+export function getStaticPaths() {
+  return buildprints.map((buildprint) => ({ params: { slug: buildprint.slug } }));
+}
+const buildprint = getBuildprint(Astro.params.slug ?? '');
+if (!buildprint) return Astro.redirect('/buildprints/');
+const title = `${buildprint.title} — Agent Buildprint`;
+const description = buildprint.summary;
+---
+
+<BaseLayout locale="en" title={title} description={description} path={`/buildprints/${buildprint.slug}/`}>
+  <main class="min-h-screen bg-background text-foreground">
+    <section class="mx-auto grid max-w-7xl gap-8 px-6 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-20">
+      <div>
+        <a href="/buildprints" class="text-sm font-semibold text-accent">← Back to registry</a>
+        <div class="mt-6 flex flex-wrap gap-2 text-xs">
+          <span class="rounded-full bg-accent/10 px-3 py-1 font-semibold text-accent">{buildprint.category}</span>
+          <span class="rounded-full bg-secondary px-3 py-1 text-muted-foreground">{buildprint.difficulty}</span>
+          <span class="rounded-full bg-secondary px-3 py-1 text-muted-foreground">by {buildprint.creator}</span>
+        </div>
+        <h1 class="mt-5 text-4xl font-black tracking-tight sm:text-6xl">{buildprint.title}</h1>
+        <p class="mt-6 text-lg leading-8 text-muted-foreground">{buildprint.promise}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <button id="copy-main" class="rounded-full bg-accent px-5 py-3 text-sm font-bold text-accent-foreground">Copy build prompt</button>
+          <a href={buildprint.manifestUrl} class="rounded-full border border-border bg-card px-5 py-3 text-sm font-bold">Open package manifest</a>
+          <a href={buildprint.githubUrl} class="rounded-full border border-border bg-card px-5 py-3 text-sm font-bold">View GitHub folder</a>
+        </div>
+      </div>
+      <div class={`rounded-[2rem] border border-border bg-gradient-to-br ${buildprint.imageTone} p-6 shadow-2xl shadow-black/20`}>
+        <div class="rounded-3xl border border-white/10 bg-background/45 p-5 backdrop-blur">
+          <p class="mb-4 text-sm font-bold text-accent">Build map</p>
+          <div class="space-y-3">
+            {buildprint.includes.map((item, index) => (
+              <div class="flex items-center gap-3 rounded-2xl border border-border/70 bg-card/70 p-3">
+                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-accent/15 text-sm font-bold text-accent">{index + 1}</span>
+                <span class="text-sm font-medium">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto grid max-w-7xl gap-5 px-6 pb-16 lg:grid-cols-3">
+      <div class="rounded-3xl border border-border bg-card p-6">
+        <h2 class="text-lg font-bold">Files a creator provides</h2>
+        <ul class="mt-4 space-y-2 text-sm text-muted-foreground">{buildprint.files.map((file) => <li class="rounded-xl bg-secondary/60 px-3 py-2 font-mono">{file}</li>)}</ul>
+      </div>
+      <div class="rounded-3xl border border-border bg-card p-6">
+        <h2 class="text-lg font-bold">Inspections / checks</h2>
+        <ul class="mt-4 space-y-2 text-sm text-muted-foreground">{buildprint.checks.map((check) => <li>✓ {check}</li>)}</ul>
+      </div>
+      <div class="rounded-3xl border border-border bg-card p-6">
+        <h2 class="text-lg font-bold">Risks covered</h2>
+        <ul class="mt-4 space-y-2 text-sm text-muted-foreground">{buildprint.risks.map((risk) => <li>⚠ {risk}</li>)}</ul>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-6 pb-20">
+      <div class="rounded-3xl border border-border bg-card p-6">
+        <div class="mb-4 flex items-center justify-between gap-4">
+          <h2 class="text-lg font-bold">Copyable agent prompt</h2>
+          <a href={buildprint.manifestUrl} class="rounded-full border border-border px-4 py-2 text-sm font-bold">Manifest</a>
+          <button id="copy-secondary" class="rounded-full border border-border px-4 py-2 text-sm font-bold">Copy</button>
+        </div>
+        <pre class="overflow-x-auto whitespace-pre-wrap rounded-2xl bg-background p-5 text-sm text-muted-foreground"><code id="prompt-text">{buildprint.copyPrompt}</code></pre>
+      </div>
+    </section>
+  </main>
+  <script define:vars={{ prompt: buildprint.copyPrompt }}>
+    async function copyPrompt(button) {
+      await navigator.clipboard.writeText(prompt);
+      const old = button.textContent;
+      button.textContent = 'Copied';
+      setTimeout(() => button.textContent = old, 1200);
+    }
+    document.querySelector('#copy-main')?.addEventListener('click', (event) => copyPrompt(event.currentTarget));
+    document.querySelector('#copy-secondary')?.addEventListener('click', (event) => copyPrompt(event.currentTarget));
+  </script>
+</BaseLayout>
