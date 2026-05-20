@@ -1,0 +1,445 @@
+---
+title: "Agents Don’t Need Longer Prompts. They Need Harnesses."
+description: "A practical read of the Code as Agent Harness paper: reliable agents need executable state, sandboxes, tests, logs, permissions, memory, and verification loops — not just better prompts."
+language: "en"
+slug: "agents-dont-need-longer-prompts-they-need-harnesses"
+canonicalSlug: "agents-dont-need-longer-prompts-they-need-harnesses"
+publishedAt: "2026-05-20"
+updatedAt: "2026-05-20"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "AI Agents", "Agent Harness", "Coding Agents", "Evals", "Developer Workflow"]
+topic: "AI-first Engineering"
+summary: "The arXiv survey Code as Agent Harness names the next shift in agent engineering: code is not only what agents generate. It is becoming the executable, inspectable, stateful runtime that makes agents reliable."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is an agent harness?"
+    answer: "An agent harness is the executable system around a model: tools, memory, sandboxes, permissions, logs, tests, state, and verification loops that turn model output into controlled action."
+  - question: "Why are longer prompts not enough for reliable agents?"
+    answer: "Longer prompts can add context, but they do not enforce permissions, preserve state, run tests, catch regressions, or create auditable execution traces. Reliable agents need a harness around the model."
+  - question: "What should builders do differently?"
+    answer: "Treat plans as contracts, keep state outside chat, run agents in sandboxes, use deterministic verification, make permissions explicit, and evaluate harness changes with regression tests."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+
+Most agent demos fail in the same boring way.
+
+Not because the model is stupid.
+
+Not because the prompt was too short.
+
+Not because the agent needed one more “think step.”
+
+They fail because nothing around the agent is solid.
+
+The plan is a paragraph. The memory is a chat summary. The tool calls are loosely governed. The verification is vibes plus maybe a test command. The shared state between agents is whatever the next agent can reconstruct from context.
+
+That is not an agent system.
+
+That is a model surrounded by hope.
+
+A new survey paper, [**Code as Agent Harness**](https://arxiv.org/abs/2605.18747), gives a better frame. Code is no longer just what agents produce. Code is becoming the harness around them: the executable, inspectable, stateful substrate that lets agents reason, act, remember, verify, and coordinate.
+
+That sounds academic. It is not.
+
+It is exactly the difference between a toy agent demo and an agent that can safely work inside a real project.
+
+## The short version
+
+The paper’s useful claim is not “agents can write code.” We already know that.
+
+The sharper claim is this:
+
+> Code is becoming the operating substrate around agents.
+
+In the paper’s words, code is no longer only a target output. It increasingly serves as an operational substrate for agent reasoning, acting, environment modeling, and execution-based verification.
+
+That means the next agent moat is not only the model.
+
+It is the harness.
+
+<FlowGraphic
+  title="From prompt loop to harness loop"
+  note="the useful shift is from text output to controlled state transition"
+  steps={['Intent', 'Plan contract', 'Sandboxed execution', 'Observed state', 'Deterministic verification', 'Next action']}
+/>
+
+A prompt asks the model to behave.
+
+A harness makes behavior executable, inspectable, and harder to fake.
+
+## Code is no longer just the output
+
+The old mental model is simple:
+
+```txt
+human asks → model writes code
+```
+
+That model is already outdated.
+
+The new model looks more like this:
+
+```txt
+human intent
+  → plan
+  → tool call
+  → file change
+  → command output
+  → test result
+  → log trace
+  → permission decision
+  → next plan
+```
+
+The important thing is not the generated code alone. It is the entire stateful system around the model.
+
+The paper calls this **code as agent harness**. It organizes the idea into three layers:
+
+```txt
+CODE AS AGENT HARNESS
+│
+├── Harness interface
+│   ├── code for reasoning
+│   ├── code for acting
+│   └── code for environment modeling
+│
+├── Harness mechanisms
+│   ├── planning
+│   ├── memory and context
+│   ├── tool use
+│   ├── Plan-Execute-Verify control
+│   └── adaptive harness optimization
+│
+└── Scaling the harness
+    ├── multi-agent collaboration
+    ├── execution feedback
+    ├── shared state synchronization
+    └── harness-state convergence
+```
+
+That vocabulary matters because “agent” has become too vague. A chatbot with tools is called an agent. A workflow is called an agent. A browser macro is called an agent. A multi-process software system with memory, permissions, tests, and review is also called an agent.
+
+The harness lens separates the model from the runtime around it.
+
+## A harness turns a model into an operator
+
+A language model by itself is mostly stateless text prediction.
+
+A harness gives it contact with the world.
+
+<KeyPoints
+  title="What a harness adds"
+  items={[
+    'Execution: the agent can run code, commands, tools, browsers, workflows, or simulations.',
+    'State: progress can live in files, databases, traces, task graphs, tickets, logs, and memory stores.',
+    'Verification: outputs can be checked by tests, typecheckers, probes, evaluators, policies, or human review.',
+    'Governance: risky actions can require permissions, approvals, sandboxes, rollbacks, and audit trails.',
+  ]}
+/>
+
+That is why code is such a powerful harness medium. The paper emphasizes three properties:
+
+- **Executable:** it can run and produce observable results.
+- **Inspectable:** humans and agents can examine files, diffs, logs, schemas, traces, and test output.
+- **Stateful:** work can persist outside the model’s context window.
+
+This is the jump from “the model said a plausible thing” to “the system changed in a controlled way and we can inspect what happened.”
+
+That is also why pure prompt engineering eventually hits a wall.
+
+A longer prompt can tell the agent to be careful.
+
+A harness can deny the dangerous tool call.
+
+A longer prompt can tell the agent to run tests.
+
+A harness can make test output part of the completion gate.
+
+A longer prompt can tell the agent to remember context.
+
+A harness can store state in a durable artifact that every future agent reads.
+
+<CompareGrid
+  title="Prompt instruction vs. harness mechanism"
+  leftLabel="Prompt says"
+  rightLabel="Harness does"
+  rows={[
+    { left: '“Be careful.”', right: 'Scopes tools, blocks risky paths, records approvals.' },
+    { left: '“Remember this.”', right: 'Writes durable state to files, DBs, tickets, or memory.' },
+    { left: '“Run the tests.”', right: 'Requires checks before the task can be marked complete.' },
+    { left: '“Do not break existing behavior.”', right: 'Runs regression probes and compares outputs.' },
+    { left: '“Coordinate with the other agent.”', right: 'Uses shared task state, locks, handoffs, and traceability.' },
+  ]}
+/>
+
+## The useful loop is Plan, Execute, Verify
+
+The paper’s practical center is the **Plan-Execute-Verify** loop.
+
+This is not just another name for “think step by step.”
+
+The key insight is that planning should become a contract.
+
+A real plan should say:
+
+- which files matter;
+- which invariants must hold;
+- which commands will verify the work;
+- which actions are risky;
+- what rollback looks like;
+- what evidence is required before completion.
+
+That is very different from a private chain of thought.
+
+It is a pre-execution agreement with the harness.
+
+```txt
+PLAN
+  files, invariants, commands, rollback, risks
+
+EXECUTE
+  sandbox, tools, permissions, bounded state transition
+
+VERIFY
+  tests, logs, typecheck, runtime probes, evaluator
+```
+
+This is also why “just ask the agent to make a plan first” is not enough. If the plan stays in chat, it is soft context. If the plan becomes a task graph, checklist, command set, permission boundary, or acceptance gate, it becomes harness state.
+
+For coding agents, that distinction is everything.
+
+## Sandboxes turn suggestions into bounded actions
+
+Execution is where agents stop being cute.
+
+If an agent can edit files, run shell commands, install packages, open browsers, call APIs, deploy services, or message humans, then it is no longer merely generating text.
+
+It is performing state transitions.
+
+Those transitions need boundaries.
+
+The paper frames sandboxed execution as the operational substrate of the loop: isolated filesystem, dependency state, shell, language runtime, browser or IDE interface, and resource boundary.
+
+In plain English:
+
+> If an agent cannot run inside a controlled environment, its output is still a suggestion, not an operation.
+
+That environment does not need to be fancy at first. It can be a local repo, a test database, a Docker container, a browser profile, a preview server, or a CI runner.
+
+But the important thing is that actions become observable and bounded.
+
+## Deterministic sensors beat model vibes
+
+Verification is where the harness pays rent.
+
+The paper repeatedly returns to execution feedback: compiler diagnostics, parser errors, type errors, lint warnings, runtime exceptions, tests, fuzzing, benchmark evaluators, logs, traces.
+
+These are deterministic or at least reproducible enough to function as control signals.
+
+A model can critique code.
+
+But a test failure does not need to sound confident.
+
+<DoDont
+  title="Verification hierarchy"
+  doLabel="Prefer"
+  dontLabel="Avoid"
+  doItems={[
+    'Compiler, typecheck, lint, unit tests, integration tests',
+    'Runtime probes, smoke tests, screenshots, logs, traces',
+    'Explicit acceptance criteria and regression gates',
+    'Model critique that explains concrete evidence',
+  ]}
+  dontItems={[
+    'Model-only “looks good” review',
+    'Final-task success with no trace of how it happened',
+    'Passing one happy path while hiding skipped checks',
+    'Unverifiable claims like “should work now”',
+  ]}
+/>
+
+This is the heart of reliable agent work:
+
+```txt
+not: “the agent says it is done”
+
+but: “the harness observed the required state”
+```
+
+If the agent changed a package, run the package tests.
+
+If the agent changed a UI, load the route and take a screenshot.
+
+If the agent changed an API, hit the endpoint.
+
+If the agent changed instructions, run harness evals.
+
+If the agent wants to deploy, require approval and record it.
+
+That is what makes the system inspectable.
+
+## Multi-agent systems break when shared state is fake
+
+The paper is friendly to multi-agent systems, but it is not naive about them.
+
+It argues that single-agent systems hit real limits: context windows, lack of specialization, and lack of independent verification channels.
+
+So yes, multiple agents can help.
+
+But only if they share state reliably.
+
+A lot of multi-agent coding systems still rely on implicit shared state. Agent A writes a summary. Agent B reconstructs the repo state from chat. Agent C reviews based on stale assumptions. The files changed, the plan changed, the test output changed, but the shared understanding did not.
+
+That is how multi-agent systems turn into group chats with file access.
+
+The paper makes a useful distinction: files, APIs, diffs, tests, logs, schemas, blackboards, and workflow states are all partial channels for task state. Each trades off fidelity, latency, and scope.
+
+In practice:
+
+```txt
+Conversation history is not shared state.
+A summary is not shared state.
+A plan in chat is not shared state.
+```
+
+Real shared state looks more like:
+
+```txt
+TASK_GRAPH.yaml
+CURRENT_STATE.md
+source-traceability.json
+test results
+review findings
+logs
+permissions
+handoff notes
+```
+
+This is why many multi-agent demos feel magical until they touch a real repo. Without an authoritative state substrate, agents cannot reliably notice when their internal model diverges from the actual project.
+
+## Self-improving agents need governed self-improvement
+
+The paper also discusses adaptive harness optimization: using telemetry to improve prompts, tools, memory, sandboxes, validators, permissions, and workflows.
+
+That is exciting.
+
+It is also dangerous if treated casually.
+
+A harness that can mutate itself must be more governed than the agent it surrounds.
+
+The paper’s stance is careful: candidate harness changes should be evaluated in sandboxes, compared against fixed regression suites, recorded with auditable rationales, and require human approval for sensitive changes.
+
+That is the right frame.
+
+Self-improving agents are only safe if the self-improvement loop is itself harnessed.
+
+Otherwise you do not have adaptation.
+
+You have unreviewed infrastructure drift with a nicer name.
+
+## The Buildprint connection
+
+This is why I keep coming back to Buildprints.
+
+A Buildprint is not just documentation. It is a harness artifact.
+
+It gives agents a durable contract for what the project is, what matters, what can change, what must be verified, and what evidence counts.
+
+```txt
+Buildprint artifact                  Harness role
+────────────────────────────────────────────────────────
+TASK_GRAPH.yaml                       planning as contract
+source-traceability.json              shared evidence state
+probes/                               deterministic sensors
+permissions-and-risks.md              governed state transition
+review/readiness.md                   harness-level verification
+CURRENT_STATE.md                      durable shared context
+```
+
+This is also why generalized blueprints should not be long prompts.
+
+A long prompt still disappears into the model.
+
+A blueprint stays outside the model as executable context.
+
+It can be read, checked, updated, reviewed, diffed, tested, and handed to another agent.
+
+That is harness engineering.
+
+## What builders should do tomorrow
+
+If you are building with coding agents, do not start by adding another page to your prompt.
+
+Start by asking what is missing from the harness.
+
+<KeyPoints
+  title="Practical harness checklist"
+  items={[
+    'Turn plans into explicit contracts: files, invariants, validation commands, risk boundaries.',
+    'Keep important state outside chat: task graphs, current-state files, traces, tickets, logs.',
+    'Run agents inside controlled environments: local sandbox, Docker, worktree, preview app, CI.',
+    'Use deterministic sensors before model judgment: tests, typecheck, lint, probes, screenshots.',
+    'Make permissions explicit: secrets, deploys, payments, migrations, external messages.',
+    'Separate writer and reviewer roles for non-trivial work.',
+    'Evaluate harness changes with regression tasks before trusting them.',
+  ]}
+/>
+
+This does not mean every project needs a huge agent platform.
+
+It means every serious agent workflow needs some answer to:
+
+```txt
+What is the authoritative state?
+What can the agent do?
+How do we know it worked?
+What happens if it fails?
+Who approves risky transitions?
+```
+
+If those answers live only in a prompt, the system is fragile.
+
+If they live in code, files, tests, permissions, and review loops, you have the beginning of a harness.
+
+## The shift: prompt engineering → context engineering → harness engineering
+
+The paper fits into a larger shift:
+
+```txt
+Prompt engineering
+  asks: what should I say to the model?
+
+Context engineering
+  asks: what should the model know and have access to?
+
+Harness engineering
+  asks: what executable system surrounds the model so its actions are bounded, stateful, observable, and verifiable?
+```
+
+That last question is where agent engineering becomes software engineering again.
+
+And honestly, that is good news.
+
+It means reliability does not come from magical wording. It comes from boring, inspectable machinery: sandboxes, tests, logs, schemas, state, permissions, evals, rollback, review.
+
+The future of agents is not a smarter box of text.
+
+It is a controlled system of executable state.
+
+The model matters.
+
+But the harness is what turns it into software.
+
+## Sources
+
+- [Code as Agent Harness — arXiv:2605.18747](https://arxiv.org/abs/2605.18747)
+- [HTML version of the paper](https://arxiv.org/html/2605.18747v1)
+- [Companion paper list](https://github.com/YennNing/Awesome-Code-as-Agent-Harness-Papers)
+- [AGENTS.md open format](https://github.com/openai/agents.md)
+- [Model Context Protocol specification](https://modelcontextprotocol.io/specification)
