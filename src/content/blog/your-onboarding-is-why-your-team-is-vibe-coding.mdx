@@ -1,0 +1,416 @@
+---
+title: "Your Onboarding Is Why Your Team Is Vibe Coding"
+description: "Vibe coding at work is often not a developer discipline problem. It is what happens when companies fail to transfer context, then let AI fill the gaps."
+language: "en"
+slug: "your-onboarding-is-why-your-team-is-vibe-coding"
+canonicalSlug: "your-onboarding-is-why-your-team-is-vibe-coding"
+publishedAt: "2026-05-20"
+updatedAt: "2026-05-20"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "Developer Onboarding", "Vibe Coding", "Developer Experience", "Internal Tools", "Agent Harness"]
+topic: "AI-first Engineering"
+summary: "Teams do not usually start vibe coding because developers became careless. They start because onboarding is broken: docs are stale, harnesses are undocumented, system knowledge lives in people’s heads, and AI turns missing context into plausible code and Markdown."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Is vibe coding always bad?"
+    answer: "No. AI-assisted exploration can be useful when the risk is low and the output is reviewed. The danger starts when teams use AI-generated code or process artifacts as a substitute for system understanding, tests, ownership, and review."
+  - question: "What does onboarding have to do with AI code quality?"
+    answer: "AI amplifies the context it is given. If a developer has no reliable system map, no tested setup path, and no clear ownership model, AI can fill the gap with plausible but ungrounded code, runbooks, or harness instructions."
+  - question: "How can teams prevent this?"
+    answer: "Make onboarding executable: one-command setup, tested docs, owned internal tools, small first PRs, architecture maps, clear owner maps, and AI outputs that must come with evidence, tests, and explanation."
+---
+
+A new developer joins the team.
+
+HR says onboarding is complete. The laptop works. Slack works. The repo is cloned.
+
+Then reality starts.
+
+The README is stale. Local setup fails on step three. The test harness has three undocumented flags. The person who knows why is in meetings. The architecture diagram is either missing or aspirational. The internal wiki contains twelve versions of the truth, all written with confidence, none recently tested.
+
+So the developer does what a modern developer does: they ask an AI assistant.
+
+The assistant explains the harness. It writes a checklist. It drafts a new `SKILL.md`. It suggests a patch. Everything looks reasonable.
+
+Nothing is aligned.
+
+This is how vibe coding enters companies: not through laziness, but through missing context.
+
+## The new hire did not start with vibe coding. They started with a broken README.
+
+The common story about vibe coding is moralistic: developers are shipping code they do not understand because AI made them careless.
+
+Sometimes that is true. But inside companies, there is a sharper and more uncomfortable explanation:
+
+> Your team is not vibe coding because developers stopped caring. They are vibe coding because the company made understanding the system optional, then handed everyone autocomplete.
+
+A developer in one Reddit thread described a recent onboarding experience like this:
+
+> “I recently joined a mid-sized software company. Everything seemed fine during the interviews. But once I actually started... it was a mess. No central documentation. Tasks scattered across random repos. Setting up my dev environment took 3 full days because the instructions were outdated and everyone had their own version. No onboarding checklist, no real plan — just ‘talk to X and figure it out.’”
+
+That is not an edge case. That is a pattern.
+
+Another developer put the context problem even more directly:
+
+> “Is it just me or are most engineers terrible at onboarding and explaining new business context to other engineers? I feel like I'm on crazy pills that I've had to drag engineers at every new job over to a white board to draw me a diagram instead of assuming I've memorized the eight schemas, and their relationships, they've just rattled off.”
+
+This is the part companies underestimate. Onboarding is not paperwork. Onboarding is context transfer.
+
+And when that transfer fails, the failure has a predictable shape:
+
+- **Tribal knowledge dependency:** the real system lives in senior engineers’ heads.
+- **Broken or outdated setup paths:** the documented path no longer matches the working path.
+- **Unmaintained internal tools and harnesses:** scripts, skills, CLIs, and test harnesses become hidden architecture.
+- **Developers copying patterns they do not understand:** because copying is faster than archaeology.
+- **AI used as a workaround for missing context:** the model becomes the always-available senior engineer, even when it is guessing.
+
+That is the causal chain of this post.
+
+If the company does not transfer context, developers still need to ship. So they infer. They copy. They pattern-match. They ask around. They patch locally. Now they also prompt.
+
+Vibe coding is what happens when the fastest way to ship is to guess convincingly.
+
+## Bad onboarding turns system knowledge into folklore
+
+Every company has a real architecture and a folklore architecture.
+
+The real architecture is what the system does.
+
+The folklore architecture is what people say the system does when the docs are stale, the tests are incomplete, and the only person who remembers the migration is on vacation.
+
+Developers feel this immediately when they join. One ExperiencedDevs poster described a company where the real onboarding path was not documentation, but senior-engineer archaeology:
+
+> “Most development at my company relies heavily on tribal knowledge. There is documentation, but it is not written or stored in a consistent way; there are also several different knowledge bases with no rhyme or reason to them.”
+
+The next sentence is the real operational cost:
+
+> “I usually have to end up asking one of the senior engineers on my team, or in the company, in order to get unblocked, as they are usually the only ones with this tribal knowledge.”
+
+If “ask Sarah” is part of your architecture, your architecture is not written down.
+
+That does not mean Sarah is the problem. Sarah is probably holding the system together. The problem is that the company has turned a human being into an undocumented dependency.
+
+And undocumented dependencies do not scale.
+
+This is where the vibe-coding frame matters. When a new developer cannot find the real answer, AI becomes an attractive substitute for the senior engineer who is not available. It is instant. It is patient. It is fluent. It will explain the system even when it has not seen the system.
+
+That fluency is dangerous.
+
+The developer wanted context. The model provides confidence.
+
+## Setup drift trains people to patch around reality
+
+Onboarding failure is rarely one big missing document. It is usually a hundred tiny mismatches between what the company says the path is and what the path actually is.
+
+One developer summarized the setup problem perfectly:
+
+> “Lot of steps. Things change. Documentation doesn’t get updated. Existing devs have all gone through the process at different times and follow what works best for them so it’s easy to go down the wrong path or do things out of order which can waste a lot of time since most devs don’t follow the ‘current’ onboarding/setup.”
+
+That is setup drift.
+
+Setup drift happens when every developer has a slightly different local reality:
+
+- different environment variables
+- different package versions
+- different local aliases
+- different scripts
+- different permissions
+- different undocumented fixes
+- different memories of what finally worked
+
+The team says there is a setup path. In practice, there are twenty.
+
+So new hires learn the real lesson: the documented path is only a suggestion. The real job is to patch your way through.
+
+That lesson matters. Once a developer learns that the official path cannot be trusted, they stop treating official artifacts as truth. The README becomes a hint. The harness becomes a puzzle. The docs become vibes.
+
+Then AI arrives and makes the workaround faster.
+
+Instead of asking three people why the test harness fails, the developer asks the model. Instead of understanding the historical reason for an environment flag, they generate a wrapper. Instead of clarifying ownership, they add a checklist. The output may work locally. It may even look clean in review.
+
+But the organization has trained the developer to optimize for local unblocking, not shared understanding.
+
+That is the deeper failure.
+
+## The harness becomes the hidden architecture
+
+The most dangerous onboarding failures hide inside internal tools.
+
+Every team has them: scripts, generators, test harnesses, deployment helpers, agent skills, `Makefile` targets, internal CLIs, CI shortcuts, local bootstrap commands.
+
+These tools are supposed to reduce cognitive load. Often they do. But when nobody owns them, they become hidden architecture.
+
+A developer in an onboarding-pain thread described the exact failure mode:
+
+> “I absolutely hate when companies allow a single engineer to create custom internal dev tooling that’s required in the onboarding process. Odds are, the dev who built it has left and the tooling is undocumented and unmaintained, becoming a blocker for new employees trying to get started quickly.”
+
+That quote is the whole story.
+
+The harness is no longer just a helper. It is now a gatekeeper. It decides whether the developer can run tests, generate code, start services, or ship a first PR. But the knowledge of how it works is gone.
+
+This is where teams start monkey-patching the harness.
+
+Not because they are reckless. Because the harness is in the way, the owner is gone, and the task still has a deadline.
+
+In AI-native teams, this gets even stranger. The harness might not just be a shell script or internal CLI. It might be a folder of agent skills, Markdown instructions, routing rules, tool permissions, and evaluation prompts.
+
+That kind of harness can look very mature from the outside:
+
+```txt
+AGENTS.md
+skills/
+  review.md
+  deploy.md
+  research.md
+  incident-response.md
+runbooks/
+  onboarding.md
+  local-setup.md
+  testing.md
+```
+
+But if those files are AI-generated, untested, and disconnected from the real workflow, they are not alignment.
+
+They are alignment theater.
+
+## AI turns missing context into plausible artifacts
+
+The new onboarding failure is not an empty wiki.
+
+It is a polished AI-generated wiki that confidently describes a system that does not exist.
+
+That is the scary part. Bad AI output often does not look bad at first glance. It has headings. It has checklists. It has “best practices.” It uses the right nouns. It sounds like something a serious team would write.
+
+The same is true for agent skills and harness instructions. A lazy AI-written harness can produce fuzzy Markdown and plausible skills for humans. At first glance it feels like process. Deeper down, it is not alignment — it is autocomplete wearing a safety vest.
+
+A Hacker News commenter described the vibe-coding pattern in a way that maps painfully well to this:
+
+> “I feel like people just jam poorly specified input into LLMs and hope for the best. Then pile more tools on top when they don’t get what they want. People call this exact process ‘vibe coding’.”
+
+That is not only a code problem. It is a process problem.
+
+If your onboarding is vague, your prompts will be vague. If your harness is undocumented, your AI-generated harness docs will be guesses. If your architecture lives in senior engineers’ heads, the model will fill the missing parts with whatever looks statistically likely.
+
+This produces artifacts that are:
+
+- syntactically clean but semantically vague
+- persuasive but untested
+- human-readable but not executable
+- locally useful but globally misaligned
+- optimized for plausibility, not truth
+
+That can be worse than no documentation because it creates a false sense of shared understanding.
+
+A blank page is honest. A plausible wrong runbook is a trap.
+
+## This is not alignment. It is alignment theater.
+
+Real alignment is not the presence of an instruction file.
+
+A harness is not aligned because it has a `SKILL.md`. It is aligned when its instructions survive contact with the real workflow.
+
+Fake alignment looks like this:
+
+- onboarding docs nobody has tested
+- generated skills with broad “be careful” instructions
+- runbooks without failure modes
+- checklists that describe intent but not reality
+- internal tools with no owner
+- “golden paths” that only work on one machine
+- AI-generated best practices with no connection to production
+
+Real alignment looks different:
+
+- the local setup path is tested on clean machines
+- internal tools have owners, versions, and deprecation paths
+- the harness fails loudly when assumptions break
+- docs link to source-of-truth systems
+- commands can be copied and run
+- new hires update docs as part of onboarding
+- AI-generated changes come with tests, evidence, and explanation
+
+One developer phrased the fix in four words:
+
+> “I prefer executable documentation with automations and assertions.”
+
+That is the standard.
+
+Documentation should not merely describe the happy path. It should prove that the happy path still exists.
+
+## Why AI makes the failure mode faster
+
+AI is not the villain here.
+
+A good AI assistant in the hands of a developer with context can be a force multiplier. It can explain unfamiliar code, draft tests, generate boring glue, refactor safely, and reduce the time spent on repetitive work.
+
+GitHub’s Copilot research found developers completed a controlled task significantly faster with Copilot. Stack Overflow’s 2025 survey reports broad AI adoption and many developers reporting productivity gains.
+
+But speed is not the same as understanding.
+
+Stack Overflow also reports much weaker impact on team collaboration than on individual productivity. That distinction matters. Onboarding is a collaboration problem. It is a knowledge-transfer problem. It is a shared-context problem.
+
+AI can help an individual move faster while the team becomes less aligned.
+
+That is the failure mode.
+
+A Hacker News commenter put the work version bluntly:
+
+> “For some random hobby project, sure who cares. But people are using this at work. The codebase is rotting in a new innovative way.”
+
+Another described the surface-level version:
+
+> “Everyone from development to marketing vibe coding things that look good and function on a surface level but are creating more maintenance headaches for me to support since once they get their pretty front end, they think they did the job.”
+
+That is exactly what fake alignment does inside engineering orgs. It creates artifacts that look complete enough to move on from.
+
+The PR passes one local check. The generated skill reads well. The runbook has steps. The onboarding page has headings. The harness patch makes the error disappear.
+
+But nobody has asked the harder questions:
+
+- Is this connected to the real workflow?
+- Does the team understand the constraint it encodes?
+- Does it fail when the assumption is wrong?
+- Did anyone who owns the system review it?
+- Can the next developer use it without guessing?
+
+If the answer is no, the team did not gain alignment. It gained velocity-shaped debt.
+
+## How to stop training your team to vibe-code
+
+The fix is not “ban AI.”
+
+The fix is to stop using AI as a substitute for onboarding.
+
+AI should amplify good context, not hallucinate missing context.
+
+Start here.
+
+### 1. Make setup executable
+
+A setup guide should not be a museum artifact. It should be tested.
+
+Use one-command setup where possible. If that is unrealistic, make each command copyable. Test the path on clean machines. If you do not hire often, run the onboarding path regularly anyway.
+
+One developer gave this practical advice:
+
+> “You need a step by step guide in whatever your documentation system is. Ideally any command they need to run can be copied from there. To maintain this document if you're not hiring super regularly, use it to set up new machines regularly.”
+
+That is boring. That is also the point.
+
+Boring onboarding is good onboarding.
+
+### 2. Give people a system map, not just tickets
+
+New developers need the 1,000-foot view:
+
+- what the system does
+- where the main services are
+- which data flows matter
+- what the dangerous parts are
+- who owns what
+- what words mean
+
+A first ticket without a system map teaches people to patch. A first ticket with a map teaches people to navigate.
+
+### 3. Treat internal tools as products
+
+If a harness is required to work, it needs ownership.
+
+That means:
+
+- a named maintainer
+- a changelog
+- tests
+- versioning
+- failure-mode documentation
+- reviewed changes
+- a deprecation path
+
+The more powerful the harness, the more dangerous it is when nobody owns it.
+
+### 4. Review AI-generated process like code
+
+Do not let generated Markdown bypass review because it “only” changes docs.
+
+Agent skills, runbooks, onboarding guides, and harness instructions change behavior. They tell humans and agents what to do. That makes them operational artifacts.
+
+Review them like operational artifacts.
+
+Ask:
+
+- What workflow was this tested against?
+- What source of truth does it link to?
+- Who owns it?
+- What happens when it fails?
+- What assumptions does it encode?
+- Can a new developer follow it without private context?
+
+If nobody can answer, it is not ready.
+
+### 5. Make the first PR intentionally small
+
+A first PR is not about impact. It is about proving the path works.
+
+Can the developer set up the repo? Run tests? Find the owner? Understand review expectations? Merge safely?
+
+A developer in the onboarding thread said:
+
+> “No first task is too short or too easy: shipping the first PR is huge confidence booster. Assign a buddy: absolutely critical that the new hire has someone they know to talk to.”
+
+That is not hand-holding. That is infrastructure.
+
+### 6. Require AI output to come with evidence
+
+If AI writes code, it should come with tests or a clear explanation of why tests are not possible.
+
+If AI writes a runbook, it should name the real workflow it was checked against.
+
+If AI writes a skill, it should include scope, anti-goals, allowed tools, success criteria, and failure modes.
+
+If AI explains a system, it should cite the files, docs, or traces it used.
+
+No evidence, no alignment.
+
+## The real standard: can a new person tell what is true?
+
+The best test of onboarding is not whether a senior engineer can make the system work.
+
+Of course they can. They have the scars.
+
+The test is whether a new person can tell what is true without performing archaeology.
+
+Can they distinguish current setup from deprecated setup? Can they tell which runbook is canonical? Can they see who owns the harness? Can they understand why a flag exists? Can they use AI without asking it to invent the missing organization around them?
+
+If not, do not be surprised when the team starts vibe coding.
+
+You built the perfect conditions for it.
+
+## Closing
+
+Vibe coding is not only an individual discipline failure. In many teams, it is an organizational onboarding failure.
+
+The company failed to transfer context. The docs drifted. The harness became folklore. The senior engineers became human APIs. Then AI arrived and made guessing feel productive.
+
+That is the uncomfortable truth:
+
+> Organizations that fail to transfer context should not be surprised when people and agents hallucinate it.
+
+If you want less AI slop, fewer monkey patches, and fewer plausible-but-wrong harnesses, do not start by yelling at developers to be more careful.
+
+Start by making the system knowable.
+
+Because if you do not onboard your developers, your codebase will onboard them — through errors, folklore, and whatever the model hallucinates next.
+
+## Sources and further reading
+
+- Reddit: [The worst developer onboarding experience I’ve had](https://www.reddit.com/r/AskProgramming/comments/1kdw5k0/the_worst_developer_onboarding_experience_ive_had/)
+- Reddit: [Is lack of documentation / over-reliance on tribal knowledge a valid reason to look for a new job?](https://www.reddit.com/r/ExperiencedDevs/comments/l8j60d/is_lack_of_documentationoverreliance_on_tribal/)
+- Reddit: [What are your biggest onboarding pain points for new developers?](https://www.reddit.com/r/ExperiencedDevs/comments/1bxuqtr/what_are_your_biggest_onboarding_pain_points_for/)
+- Reddit: [I'm the most helpful onboarding dev I've ever worked with](https://www.reddit.com/r/ExperiencedDevs/comments/w4jba9/unpopular_opinion_im_the_most_helpful_onboarding/)
+- DORA: [Research](https://dora.dev/research/)
+- Martin Fowler: [Maximizing Developer Effectiveness](https://martinfowler.com/articles/developer-effectiveness.html)
+- GitHub: [Quantifying GitHub Copilot’s impact on developer productivity and happiness](https://github.blog/ai-and-ml/github-copilot/research-quantifying-github-copilots-impact-on-developer-productivity-and-happiness/)
+- Stack Overflow: [2025 Developer Survey](https://survey.stackoverflow.co/2025/)
+- Simon Willison: [Not all AI-assisted programming is vibe coding](https://simonwillison.net/2025/Mar/19/vibe-coding/)
