@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 import node from '@astrojs/node';
 import { fileURLToPath } from 'node:url';
 
-const site = process.env.SITE_URL || process.env.PUBLIC_SITE_URL || 'https://studio-4458124143.web.app';
+const site = process.env.SITE_URL || process.env.PUBLIC_SITE_URL || 'https://huecki.com';
 
 export default defineConfig({
   site,

@@ -5,7 +5,7 @@ export type Locale = (typeof locales)[number];
 export const siteUrl =
   import.meta.env.SITE_URL ||
   import.meta.env.PUBLIC_SITE_URL ||
-  'https://studio-4458124143.web.app';
+  'https://huecki.com';
 
 export const person = {
   name: 'Dominic Hückmann',
