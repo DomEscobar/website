@@ -1,0 +1,181 @@
+---
+title: "AI Agents Need Evidence Before They Click"
+description: "Multimodal agents should not treat screenshots as permission. The safer rule: every risky action needs typed evidence from DOM, accessibility tree, OCR, or API."
+language: "en"
+slug: "ai-agents-need-evidence-before-clicking"
+canonicalSlug: "ki-agenten-belege-vor-dem-klick"
+publishedAt: "2026-05-21"
+updatedAt: "2026-05-21"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Multimodal AI", "Browser Agents", "AI Safety", "Developer Workflow"]
+topic: "AI Agent Workflows"
+summary: "When an agent clicks, sends, pays, deletes, or extracts data, the critical truth cannot live only in model prose. Put a small evidence gate before risky tool calls: predicate, evidence type, source, decision."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is an evidence-carrying multimodal agent?"
+    answer: "An agent that stores typed evidence for every action-critical condition before risky actions, instead of only claiming that it saw something on screen."
+  - question: "When is a screenshot not enough evidence?"
+    answer: "Whenever the observation authorizes a privileged action: sending, paying, deleting, rescheduling, extracting private data, or granting access. Use DOM, accessibility, OCR, document, API, or user-approval evidence."
+  - question: "Do all browser agents need this?"
+    answer: "No. It is often too heavy for read-only research. It is worth it for irreversible, external, private, or financial actions."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## The short version
+
+A browser agent sees a button. It describes the button correctly. Then it clicks.
+
+That sounds harmless until the button sends money, emails a customer, deletes an account, or extracts private data from a document.
+
+The useful shift in ["Hallucination as Exploit: Evidence-Carrying Multimodal Agents"](https://arxiv.org/abs/2605.19192) is not just: multimodal models should hallucinate less.
+
+The sharper point is this:
+
+> A false visual claim can become an authorization bug.
+
+If an agent says “this is the right invoice” or “the recipient is selected,” that is not evidence yet. It is model text. For risky actions, model text should not count as permission.
+
+<MetricStrip
+  metrics={[
+    { value: '0', label: 'risky clicks from model prose alone' },
+    { value: '1', label: 'evidence table before the tool call' },
+    { value: '4', label: 'good sources: DOM, AX, OCR, API' },
+  ]}
+/>
+
+## The mistake: screenshot feeling as a permission slip
+
+Many computer-use demos work roughly like this:
+
+```txt
+Screenshot → model description → tool call
+```
+
+That is fine while the agent only reads or navigates. It gets thin when the description becomes a precondition for action.
+
+Examples:
+
+- “The recipient is Max” → send email.
+- “The amount is €49” → confirm payment.
+- “This is the right customer account” → export data.
+- “The checkbox is enabled” → store consent.
+- “The document has no sensitive data” → upload file.
+
+If those claims only come from free-form vision prose, the agent has no hard brake. It has a plausible story.
+
+<CompareGrid
+  title="Claim vs. evidence"
+  leftLabel="Weak"
+  rightLabel="Better"
+  rows={[
+    { left: '“I see the right button.”', right: 'Selector + accessible name + visible text match.' },
+    { left: '“The amount looks correct.”', right: 'Parsed field amount === expected amount.' },
+    { left: '“The invoice belongs to customer X.”', right: 'Document field / API ID / OCR box proves customer X.' },
+    { left: '“This is the login page.”', right: 'Origin, title, form action, and known markers match.' },
+  ]}
+/>
+
+## The small safety harness
+
+You do not need a research project for this. For many internal agents, a small gate before risky actions is enough.
+
+<FlowGraphic
+  title="Evidence gate before actions"
+  note="prove first, act second"
+  steps={['Action', 'Predicates', 'Evidence types', 'Check sources', 'Block or tool call', 'Audit log']}
+/>
+
+The rule:
+
+```txt
+No risky action while an action-critical condition is only supported by model text.
+```
+
+Action-critical means anything that permits, limits, or changes the risk of the action:
+
+- Who is the recipient, account, customer, or patient?
+- Which amount, contract, plan, or time range?
+- Which file, table, message, or data source?
+- Is the action reversible?
+- Was consent actually set?
+
+<KeyPoints
+  title="What can count as evidence"
+  items={[
+    'DOM: selector, value, attribute, form state, URL, origin.',
+    'Accessibility tree: role, name, checked/disabled/expanded state.',
+    'OCR: text plus bounding box when no DOM exists.',
+    'Parsed document/API: field value, ID, signature, server response.',
+  ]}
+/>
+
+## Steal this: the predicate prompt
+
+Put this before every risky tool call in your agent:
+
+```txt
+Before executing this action, create an evidence table.
+
+Action: [Tool Call]
+Risk: read-only | external | destructive | private | financial
+
+For each action-critical condition:
+- Predicate: what must be true?
+- Required evidence type: DOM | AX | OCR | parsed document | API | user approval
+- Observed evidence: concrete value
+- Source pointer: selector, bounding box, field path, URL, response id, or approval text
+- Status: proven | missing | conflicting
+
+Rule:
+If any condition is missing or only supported by free-form model prose, do not execute the action. Ask for confirmation or use a safer tool.
+```
+
+This is not slowness. It is a seatbelt.
+
+<DoDont
+  title="For browser agents"
+  doLabel="Do"
+  dontLabel="Avoid"
+  doItems={[
+    'split risky actions into predicates first',
+    'log typed evidence next to the tool call',
+    'prefer DOM/AX/API over screenshot prose',
+    'block on missing evidence instead of guessing',
+  ]}
+  dontItems={[
+    'treat screenshot descriptions as permission',
+    'click buttons only by visual position',
+    'trust OCR without bounding box or field context',
+    'build audit logs only from model summaries',
+  ]}
+/>
+
+## Where it is worth it
+
+For an agent that finds recipes, this is too much.
+
+For an agent that fills forms, checks invoices, moves customer data, changes bookings, or sends messages, this is exactly the right boring infrastructure.
+
+The point is not to distrust the model. The point is to cut its role cleanly:
+
+```txt
+The model may interpret.
+The harness must prove.
+The action may happen only after that.
+```
+
+That is the practical version of agent safety: low drama, a clear brake, and better everyday reliability.
+
+## Sources
+
+- [Hallucination as Exploit: Evidence-Carrying Multimodal Agents](https://arxiv.org/abs/2605.19192)
+- [Playwright: Locators](https://playwright.dev/docs/locators)
+- [WAI-ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/)
+- [Tesseract OCR Documentation](https://tesseract-ocr.github.io/)
