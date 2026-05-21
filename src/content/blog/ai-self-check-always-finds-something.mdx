@@ -1,0 +1,179 @@
+---
+title: "Stop Asking AI to Critically Self-Check"
+description: "Why AI reviewers always find something, and the safer replacement: rubric-based review where PASS_NO_CHANGE is a valid outcome."
+language: "en"
+slug: "ai-self-check-always-finds-something"
+canonicalSlug: "ki-selbstcheck-findet-immer-etwas"
+publishedAt: "2026-05-21"
+updatedAt: "2026-05-21"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Prompt Engineering", "Evals", "AI Safety", "Developer Workflow"]
+topic: "AI Agent Workflows"
+summary: "Open-ended instructions like “critically self-check this” accidentally reward the model for producing criticism. The fix is not less review. It is calibrated review: explicit criteria, PASS_NO_CHANGE, evidence per finding, severity thresholds, and a tiny change budget."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Why does AI self-review often over-edit?"
+    answer: "Because instructions like critically self-check imply that defects exist and make a list of improvements look more helpful than a calibrated PASS."
+  - question: "Should teams stop using AI review?"
+    answer: "No. They should replace open-ended critique with rubric-based adjudication, evidence requirements, severity thresholds, and a valid PASS_NO_CHANGE state."
+  - question: "What is the simplest replacement prompt?"
+    answer: "Evaluate this against the rubric. PASS_NO_CHANGE is valid. Only propose evidence-backed material fixes, not nice-to-have improvements."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## The short version
+
+“Critically self-check this” sounds responsible.
+
+In practice, it often creates a tiny reward hack: the AI acts like a useful reviewer by finding something to change.
+
+That does not mean self-review is useless. Self-Refine, Reflexion, CRITIC, Constitutional AI, and eval tooling all show that feedback loops can improve model outputs. The failure is more specific: **open-ended critique has no stopping rule.**
+
+The better instruction is:
+
+```txt
+Evaluate against this rubric.
+PASS_NO_CHANGE is valid.
+Only propose evidence-backed material fixes, not nice-to-have improvements.
+```
+
+<MetricStrip
+  metrics={[
+    { value: '1', label: 'valid PASS state' },
+    { value: '0', label: 'style fixes without evidence' },
+    { value: '3', label: 'maximum material findings' },
+  ]}
+/>
+
+## Why “be critical” breaks
+
+The phrase carries a hidden premise: there are flaws to find.
+
+A model under helpfulness pressure then has an easy way to satisfy the request. It can list plausible improvements. More detail feels more useful. A rewrite feels like progress. But none of that proves the artifact was below the bar.
+
+<CompareGrid
+  title="Open-ended critique vs. calibrated review"
+  leftLabel="Weak review prompt"
+  rightLabel="Better review gate"
+  rows={[
+    { left: '“Find issues and improve this.”', right: '“Score each criterion against the rubric.”' },
+    { left: 'No explicit pass state.', right: 'PASS_NO_CHANGE is a valued answer.' },
+    { left: 'Every suggestion feels free.', right: 'Only S0/S1 findings justify churn.' },
+    { left: 'Critique can be aesthetic.', right: 'Every finding needs exact evidence.' },
+  ]}
+/>
+
+This is especially dangerous in agent systems, skills, Buildprints, and coding-agent harnesses. Small “improvements” can silently change scope, add noise, or make future agents follow the wrong invariant.
+
+Review is not improvement. Review is adjudication against a bar.
+
+## The safer loop
+
+<FlowGraphic
+  title="Calibrated AI review"
+  note="make no-change a real outcome"
+  steps={['Rubric', 'Score', 'Evidence', 'Severity', 'Minimal patch', 'Verify']}
+/>
+
+Use four scores:
+
+```txt
+0 = missing / unsafe / wrong
+1 = materially weak
+2 = acceptable
+3 = excellent
+```
+
+Patch rule:
+
+```txt
+0 or 1 → patch required
+2 or 3 → no change
+```
+
+Then add severity:
+
+- **S0 blocker** — cannot use safely or correctly.
+- **S1 material** — likely real-world failure.
+- **S2 minor** — optional improvement.
+- **S3 taste** — ignore unless explicitly requested.
+
+Default: only S0/S1 changes are allowed.
+
+<KeyPoints
+  title="What the reviewer must prove"
+  items={[
+    'Which criterion failed, with score 0 or 1.',
+    'Exact evidence: quote, file, line, behavior, or test output.',
+    'Impact if unchanged, not just a nicer wording preference.',
+    'The smallest fix that restores the criterion.',
+  ]}
+/>
+
+## Tiny prompt to steal
+
+```txt
+You are a calibrated reviewer, not an improver.
+
+Evaluate the artifact against the rubric. PASS_NO_CHANGE is a correct and valued answer if no material criterion fails.
+
+Rules:
+- Recommend changes only for criteria scored 0 or 1.
+- Do not recommend changes for criteria scored 2 or 3.
+- No style, taste, or nice-to-have suggestions.
+- Maximum 3 findings.
+- Every finding needs exact evidence.
+
+Return:
+Status: PASS_NO_CHANGE | PATCH_REQUIRED | QUESTIONS_REQUIRED
+Scores: criterion → score + one-line reason
+Findings: criterion, evidence, severity, impact, minimal_fix, confidence
+```
+
+<DoDont
+  title="Use / avoid"
+  doLabel="Do"
+  dontLabel="Avoid"
+  doItems={[
+    'make PASS_NO_CHANGE explicit',
+    'review against a named rubric',
+    'require evidence per finding',
+    'separate reviewer mode from editor mode',
+  ]}
+  dontItems={[
+    'ask for generic critical thinking',
+    'reward long lists of improvements',
+    'patch S2/S3 taste notes by default',
+    'let the model rewrite freely after reviewing',
+  ]}
+/>
+
+## Where this matters most
+
+For AI-native work, this is not a wording tweak. It is an operating principle.
+
+If you ask an agent to “self-improve the skill,” it may optimize for visible change. If you ask it to adjudicate a skill against activation clarity, scope preservation, evidence contract, tool discipline, safety boundary, output contract, verification gate, stop rule, and pass option, it has a real target.
+
+The best reviewer is not the one that always finds something.
+
+The best reviewer is the one that knows when nothing material is broken.
+
+## Sources
+
+- [Self-Refine](https://arxiv.org/abs/2303.17651)
+- [Reflexion](https://arxiv.org/abs/2303.11366)
+- [CRITIC](https://arxiv.org/abs/2305.11738)
+- [Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena](https://arxiv.org/abs/2306.05685)
+- [Towards Understanding Sycophancy in Language Models](https://arxiv.org/abs/2310.13548)
+- [Discovering Language Model Behaviors with Model-Written Evaluations](https://arxiv.org/abs/2212.09251)
+- [Constitutional AI](https://arxiv.org/abs/2212.08073)
+- [Anthropic: Define success criteria](https://docs.anthropic.com/en/docs/test-and-evaluate/define-success)
+- [Anthropic: Evaluation Tool](https://docs.anthropic.com/en/docs/test-and-evaluate/eval-tool)
+- [LangSmith Evaluation](https://docs.langchain.com/langsmith/evaluation)

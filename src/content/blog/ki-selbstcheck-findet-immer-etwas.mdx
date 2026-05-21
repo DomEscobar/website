@@ -1,0 +1,179 @@
+---
+title: "Hör auf, KI zum kritischen Selbstcheck zu bitten"
+description: "Warum KI-Reviewer fast immer etwas finden — und der bessere Ersatz: Review nach Rubrik, bei dem PASS_NO_CHANGE erlaubt ist."
+language: "de"
+slug: "ki-selbstcheck-findet-immer-etwas"
+canonicalSlug: "ai-self-check-always-finds-something"
+publishedAt: "2026-05-21"
+updatedAt: "2026-05-21"
+author: "Dominic Hückmann"
+tags: ["KI-Agenten", "Prompt Engineering", "Evals", "KI-Sicherheit", "Developer Workflow"]
+topic: "KI-Agent Workflows"
+summary: "Offene Anweisungen wie „prüf das kritisch“ belohnen das Modell ungewollt dafür, Kritik zu produzieren. Die Lösung ist nicht weniger Review, sondern kalibriertes Review: klare Kriterien, PASS_NO_CHANGE, Evidenz pro Finding, Severity-Schwellen und ein kleines Änderungsbudget."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Warum überarbeitet KI beim Selbstcheck so oft zu viel?"
+    answer: "Weil Formulierungen wie kritisch prüfen nahelegen, dass Fehler existieren. Eine Liste mit Verbesserungen wirkt dann hilfreicher als ein kalibriertes PASS."
+  - question: "Sollten Teams KI-Review vermeiden?"
+    answer: "Nein. Sie sollten offene Kritik durch Review nach Rubrik ersetzen: mit Evidenzpflicht, Severity-Schwellen und einem gültigen PASS_NO_CHANGE."
+  - question: "Was ist der einfachste Ersatzprompt?"
+    answer: "Bewerte das gegen diese Rubrik. PASS_NO_CHANGE ist gültig. Schlage nur evidenzbasierte, materielle Fixes vor — keine Nice-to-have-Verbesserungen."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## Die Kurzfassung
+
+„Prüf das kritisch selbst“ klingt verantwortungsvoll.
+
+In der Praxis baut man damit oft einen kleinen Reward-Hack: Die KI wirkt wie ein nützlicher Reviewer, indem sie etwas findet.
+
+Das heißt nicht, dass Self-Review nutzlos ist. Self-Refine, Reflexion, CRITIC, Constitutional AI und Eval-Tools zeigen alle, dass Feedback-Loops Outputs verbessern können. Das Problem ist enger: **offene Kritik hat keinen Stop-Zustand.**
+
+Der bessere Prompt ist:
+
+```txt
+Bewerte das gegen diese Rubrik.
+PASS_NO_CHANGE ist gültig.
+Schlage nur evidenzbasierte, materielle Fixes vor — keine Nice-to-haves.
+```
+
+<MetricStrip
+  metrics={[
+    { value: '1', label: 'gültiger PASS-Zustand' },
+    { value: '0', label: 'Style-Fixes ohne Evidenz' },
+    { value: '3', label: 'maximale materielle Findings' },
+  ]}
+/>
+
+## Warum „sei kritisch“ kippt
+
+Die Formulierung trägt eine versteckte Annahme: Es gibt Fehler zu finden.
+
+Ein Modell unter Helpfulness-Druck hat dann einen einfachen Weg, die Aufgabe zu erfüllen. Es listet plausible Verbesserungen auf. Mehr Details fühlen sich nützlicher an. Ein Rewrite fühlt sich wie Fortschritt an. Aber nichts davon beweist, dass das Artefakt unter der Qualitätslatte lag.
+
+<CompareGrid
+  title="Offene Kritik vs. kalibriertes Review"
+  leftLabel="Schwacher Review-Prompt"
+  rightLabel="Besseres Review-Gate"
+  rows={[
+    { left: '„Finde Probleme und verbessere das.“', right: '„Score jedes Kriterium gegen die Rubrik.“' },
+    { left: 'Kein expliziter PASS-Zustand.', right: 'PASS_NO_CHANGE ist eine gewollte Antwort.' },
+    { left: 'Jede Änderung wirkt kostenlos.', right: 'Nur S0/S1-Findings rechtfertigen Churn.' },
+    { left: 'Kritik kann Geschmack sein.', right: 'Jedes Finding braucht konkrete Evidenz.' },
+  ]}
+/>
+
+Das ist besonders gefährlich bei Agent-Systemen, Skills, Buildprints und Coding-Agent-Harnesses. Kleine „Verbesserungen“ können Scope verschieben, Rauschen erzeugen oder künftigen Agenten die falsche Invariante beibringen.
+
+Review ist nicht Verbesserung. Review ist Entscheidung gegen eine Latte.
+
+## Der sichere Loop
+
+<FlowGraphic
+  title="Kalibriertes KI-Review"
+  note="No-change muss ein echtes Ergebnis sein"
+  steps={['Rubrik', 'Score', 'Evidenz', 'Severity', 'Minimaler Patch', 'Verifikation']}
+/>
+
+Nutze vier Scores:
+
+```txt
+0 = fehlt / unsicher / falsch
+1 = materiell schwach
+2 = akzeptabel
+3 = exzellent
+```
+
+Patch-Regel:
+
+```txt
+0 oder 1 → Patch nötig
+2 oder 3 → keine Änderung
+```
+
+Dann Severity dazu:
+
+- **S0 Blocker** — nicht sicher oder korrekt nutzbar.
+- **S1 Material** — wahrscheinlich echter Fehler in der Praxis.
+- **S2 Minor** — optionale Verbesserung.
+- **S3 Taste** — ignorieren, außer explizit gefragt.
+
+Default: Nur S0/S1 dürfen Änderungen auslösen.
+
+<KeyPoints
+  title="Was der Reviewer beweisen muss"
+  items={[
+    'Welches Kriterium mit Score 0 oder 1 scheitert.',
+    'Konkrete Evidenz: Zitat, Datei, Zeile, Verhalten oder Testausgabe.',
+    'Impact, wenn nichts geändert wird — nicht nur schönere Formulierung.',
+    'Der kleinste Fix, der das Kriterium wieder erfüllt.',
+  ]}
+/>
+
+## Mini-Prompt zum Klauen
+
+```txt
+Du bist ein kalibrierter Reviewer, kein Improver.
+
+Bewerte das Artefakt gegen die Rubrik. PASS_NO_CHANGE ist korrekt und erwünscht, wenn kein materielles Kriterium scheitert.
+
+Regeln:
+- Empfiehl Änderungen nur für Kriterien mit Score 0 oder 1.
+- Empfiehl keine Änderungen für Scores 2 oder 3.
+- Keine Style-, Geschmacks- oder Nice-to-have-Vorschläge.
+- Maximal 3 Findings.
+- Jedes Finding braucht konkrete Evidenz.
+
+Return:
+Status: PASS_NO_CHANGE | PATCH_REQUIRED | QUESTIONS_REQUIRED
+Scores: Kriterium → Score + Einzeiler
+Findings: Kriterium, Evidenz, Severity, Impact, Minimal-Fix, Confidence
+```
+
+<DoDont
+  title="Nutzen / vermeiden"
+  doLabel="Nutzen"
+  dontLabel="Vermeiden"
+  doItems={[
+    'PASS_NO_CHANGE explizit erlauben',
+    'gegen eine benannte Rubrik reviewen',
+    'Evidenz pro Finding verlangen',
+    'Reviewer-Modus und Editor-Modus trennen',
+  ]}
+  dontItems={[
+    'generisches „denk kritisch“ verlangen',
+    'lange Verbesserungslisten belohnen',
+    'S2/S3-Geschmack automatisch patchen',
+    'das Modell nach dem Review frei rewriten lassen',
+  ]}
+/>
+
+## Wo das am meisten zählt
+
+Für AI-native Arbeit ist das kein Wording-Trick. Es ist ein Betriebsprinzip.
+
+Wenn du einen Agenten bittest, „den Skill selbst zu verbessern“, optimiert er leicht auf sichtbare Änderung. Wenn du ihn gegen Aktivierungsklarheit, Scope-Erhalt, Evidenzvertrag, Tool-Disziplin, Safety Boundary, Output Contract, Verification Gate, Stop Rule und Pass Option urteilen lässt, hat er ein echtes Ziel.
+
+Der beste Reviewer ist nicht der, der immer etwas findet.
+
+Der beste Reviewer ist der, der weiß, wann materiell nichts kaputt ist.
+
+## Quellen
+
+- [Self-Refine](https://arxiv.org/abs/2303.17651)
+- [Reflexion](https://arxiv.org/abs/2303.11366)
+- [CRITIC](https://arxiv.org/abs/2305.11738)
+- [Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena](https://arxiv.org/abs/2306.05685)
+- [Towards Understanding Sycophancy in Language Models](https://arxiv.org/abs/2310.13548)
+- [Discovering Language Model Behaviors with Model-Written Evaluations](https://arxiv.org/abs/2212.09251)
+- [Constitutional AI](https://arxiv.org/abs/2212.08073)
+- [Anthropic: Define success criteria](https://docs.anthropic.com/en/docs/test-and-evaluate/define-success)
+- [Anthropic: Evaluation Tool](https://docs.anthropic.com/en/docs/test-and-evaluate/eval-tool)
+- [LangSmith Evaluation](https://docs.langchain.com/langsmith/evaluation)
