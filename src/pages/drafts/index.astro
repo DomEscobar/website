@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import Navbar from '@/components/portfolio/Navbar.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { formatDate, type Locale } from '@/lib/site';
+
+export const prerender = false;
+
+if (!import.meta.env.DEV) {
+  return new Response('Not found', { status: 404 });
+}
+
+const posts = (await getCollection('blog'))
+  .filter((post) => post.data.draft)
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+---
+
+<BaseLayout
+  locale="de"
+  title="Draft Preview | Hücki"
+  description="Local-only draft preview"
+  path="/drafts/"
+  noindex
+>
+  <Navbar locale="de" />
+  <main id="main-content" class="px-6 pt-32 pb-20 md:px-12 lg:px-24">
+    <section class="mx-auto max-w-5xl">
+      <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">Local preview</p>
+      <h1 class="mt-4 text-4xl font-bold tracking-tight md:text-6xl">Drafts</h1>
+      <p class="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">
+        Nur im lokalen Dev-Server sichtbar. Drafts bleiben aus Blog, Sitemap und RSS draußen.
+      </p>
+      <div class="mt-10 grid gap-5">
+        {posts.length ? posts.map((post) => {
+          const locale = post.data.language as Locale;
+          return (
+            <article class="rounded-md border border-border/70 bg-card/60 p-6">
+              <p class="text-sm text-muted-foreground">{post.data.language.toUpperCase()} · {formatDate(post.data.publishedAt, locale)} · {post.data.topic}</p>
+              <h2 class="mt-3 text-2xl font-bold tracking-tight">
+                <a href={`/drafts/${post.data.slug}/`} class="hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{post.data.title}</a>
+              </h2>
+              <p class="mt-3 leading-7 text-muted-foreground">{post.data.summary}</p>
+            </article>
+          );
+        }) : (
+          <p class="rounded-md border border-border/70 bg-card/60 p-6 text-muted-foreground">Keine Drafts gefunden.</p>
+        )}
+      </div>
+    </section>
+  </main>
+</BaseLayout>

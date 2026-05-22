@@ -1,0 +1,80 @@
+---
+import { getCollection, render } from 'astro:content';
+import Navbar from '@/components/portfolio/Navbar.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { formatDate, person, type Locale } from '@/lib/site';
+import { portfolioCopy } from '@/lib/portfolio-content';
+
+export const prerender = false;
+
+if (!import.meta.env.DEV) {
+  return new Response('Not found', { status: 404 });
+}
+
+const { slug } = Astro.params;
+const posts = await getCollection('blog');
+const post = posts.find((entry) => entry.data.draft && entry.data.slug === slug);
+
+if (!post) {
+  return new Response('Draft not found', { status: 404 });
+}
+
+const locale = post.data.language as Locale;
+const { Content } = await render(post);
+const copy = portfolioCopy[locale].blog;
+const published = post.data.publishedAt;
+const contactHref = `mailto:${person.email}?subject=${encodeURIComponent(locale === 'de' ? 'Projektanfrage an Hücki' : 'Project inquiry for Hücki')}`;
+---
+
+<BaseLayout
+  locale={locale}
+  title={`Draft: ${post.data.title} | Hücki`}
+  description={post.data.description}
+  path={`/drafts/${post.data.slug}/`}
+  alternatePaths={{ de: `/drafts/${post.data.slug}/`, en: `/drafts/${post.data.slug}/` }}
+  type="article"
+  noindex
+>
+  <Navbar locale={locale} />
+  <main id="main-content" class="overflow-hidden px-6 pt-32 pb-20 md:px-12 lg:px-24">
+    <article class="mx-auto max-w-4xl min-w-0">
+      <aside class="mb-8 rounded-md border border-yellow-500/40 bg-yellow-500/10 p-4 text-sm text-yellow-100">
+        Draft preview · local dev only · noindex · nicht in Sitemap/RSS
+        <a href="/drafts/" class="ml-2 font-semibold text-accent hover:text-foreground">Alle Drafts</a>
+      </aside>
+      <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">{post.data.topic}</p>
+      <h1 class="mt-4 break-words text-4xl font-bold tracking-tight [overflow-wrap:anywhere] md:text-6xl">{post.data.title}</h1>
+      <p class="mt-6 break-words text-lg leading-8 text-muted-foreground">{post.data.description}</p>
+      <div class="mt-6 text-sm text-muted-foreground">
+        {formatDate(published, locale)} · {post.data.author}
+      </div>
+      <section class="mt-10 overflow-hidden rounded-md border border-border/70 bg-card/70 p-6">
+        <h2 class="text-lg font-semibold">{copy.summary}</h2>
+        <p class="mt-3 break-words leading-7 text-muted-foreground">{post.data.summary}</p>
+      </section>
+      <div class="blog-prose prose prose-invert prose-stone mt-10 max-w-none break-words [overflow-wrap:anywhere]">
+        <Content />
+      </div>
+      {
+        post.data.faqs?.length && (
+          <section class="mt-12 border-t border-border pt-8">
+            <h2 class="text-2xl font-bold">FAQ</h2>
+            <div class="mt-6 space-y-5">
+              {post.data.faqs.map((faq) => (
+                <div>
+                  <h3 class="font-semibold">{faq.question}</h3>
+                  <p class="mt-2 leading-7 text-muted-foreground">{faq.answer}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )
+      }
+      <section class="mt-14 rounded-md border border-border/70 bg-card/70 p-6 md:p-8">
+        <h2 class="text-2xl font-bold tracking-tight">{copy.ctaTitle}</h2>
+        <p class="mt-3 max-w-2xl leading-7 text-muted-foreground">{copy.ctaText}</p>
+        <a href={contactHref} class="mt-6 inline-flex min-h-11 items-center rounded-md bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{copy.ctaButton}</a>
+      </section>
+    </article>
+  </main>
+</BaseLayout>

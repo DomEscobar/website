@@ -28,7 +28,7 @@ export default defineConfig({
         },
       },
       serialize(item) {
-        if (item.url.includes('/api/')) return undefined;
+        if (item.url.includes('/api/') || item.url.includes('/drafts/')) return undefined;
         return item;
       },
     }),
