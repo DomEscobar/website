@@ -1,0 +1,166 @@
+---
+title: "Spec-Driven Context Resets for Coding Agents"
+description: "A practical workflow for using requirements, analysis, design, and task files to reset coding-agent context without losing the decisions that matter."
+language: "en"
+slug: "spec-driven-context-resets-for-coding-agents"
+canonicalSlug: "spec-driven-context-resets-fuer-coding-agenten"
+publishedAt: "2026-05-23"
+updatedAt: "2026-05-23"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "Coding Agents", "Context Engineering", "Spec-Driven Development", "Developer Workflow"]
+topic: "AI-first Engineering"
+summary: "Long agent chats rot. A better pattern is to move decisions into small spec files, clear context between layers, and let each coding-agent session read only the artifact it needs."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is a spec-driven context reset?"
+    answer: "It is a workflow where requirements, code analysis, design, and implementation tasks are written to files, then the chat context is cleared between stages so the next coding-agent session works from focused durable artifacts instead of a bloated conversation."
+  - question: "When should I use this workflow?"
+    answer: "Use it for medium-size features, refactors, migrations, and agent tasks where architectural decisions matter and the work spans more than one clean context window."
+  - question: "When is it overkill?"
+    answer: "It is usually too slow for tiny fixes, one-file copy edits, throwaway prototypes, or tasks where the cost of maintaining specs is higher than the risk of context drift."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+
+Long coding-agent chats have a smell.
+
+At first, the agent is sharp. Then the conversation grows. Old assumptions linger. New decisions mix with abandoned plans. The model starts optimizing for the last few messages instead of the actual feature.
+
+The usual fix is more context. That is often backwards.
+
+A better move is to reset context on purpose, but keep the important decisions in files. The interesting pattern in [sddw](https://github.com/sermakarevich/sddw), a spec-driven workflow for Claude Code, is not merely “write specs before code.” It is this: every stage produces one durable artifact, then the next stage reads only the relevant artifacts inside a fresh, focused context window.
+
+That turns context reset from a panic button into an engineering technique.
+
+## The short version
+
+Do not keep the whole feature alive in one giant chat.
+
+Move the work through small files:
+
+<FlowGraphic
+  title="Spec-driven context reset"
+  note="durable files replace bloated chat memory"
+  steps={['Requirements', 'Code analysis', 'Design', 'Task files', 'One-task implementation', 'Verification']}
+/>
+
+After each layer, stop. Review the file. Clear the chat. Start the next session with the current artifact and the project rules.
+
+The point is scope control.
+
+A coding agent does not need every paragraph of the previous discussion. It needs the current contract: what must be true, which files matter, and what evidence will prove the work.
+
+## Why context resets help
+
+Context windows are not neutral storage. They are messy working memory.
+
+Old ideas compete with new instructions. Half-rejected options stay visible. The model may preserve details that should have died and forget decisions that should have survived.
+
+Spec files give you a cleaner memory boundary.
+
+<KeyPoints
+  title="What the files preserve"
+  items={[
+    'Requirements preserve user intent, constraints, and acceptance criteria.',
+    'Code analysis preserves what the existing system already does.',
+    'Design preserves architecture decisions before implementation pressure starts.',
+    'Task files preserve a small execution unit that one fresh agent session can finish and verify.',
+  ]}
+/>
+
+This is why good teams write tickets, design docs, migration plans, and ADRs. Coding agents make the failure mode obvious: if state only lives in chat, it decays.
+
+## The practical workflow
+
+Use four files for any feature that feels too large for one clean agent pass.
+
+```txt
+.sddw/feature-name/
+  requirements.md
+  analysis.md
+  design.md
+  tasks/
+    01-first-task.md
+    02-second-task.md
+```
+
+Then run the work like this:
+
+1. Ask the agent to produce `requirements.md` only. Include user stories, constraints, and acceptance criteria. Stop.
+2. In a fresh context, ask it to inspect the codebase and write `analysis.md`. Stop.
+3. In a fresh context, ask for `design.md`: the approach, touched modules, interfaces, risks, and verification plan. Stop.
+4. In a fresh context, break the design into task files. Stop.
+5. In a fresh context, implement exactly one task file. Run the verification listed in that task. Write back any lesson or blocker.
+
+The stolen prompt:
+
+```txt
+Create requirements.md, analysis.md, design.md, and task files for this feature.
+After each file, stop.
+The next session should read only the current file, the project rules, and the minimum source files needed.
+Each implementation task must include: goal, allowed files, constraints, verification commands, and done evidence.
+```
+
+That last line matters. Without verification, specs become prettier vibes.
+
+## What this replaces
+
+<CompareGrid
+  title="Mega-chat vs. spec reset"
+  leftLabel="One giant chat"
+  rightLabel="Spec-driven reset"
+  rows={[
+    { left: 'All decisions live in conversation history.', right: 'Important decisions live in versioned files.' },
+    { left: 'The agent sees stale plans and abandoned options.', right: 'Each stage sees the artifact that actually matters.' },
+    { left: 'Implementation starts before architecture is reviewed.', right: 'Requirements, analysis, and design can be checked before code.' },
+    { left: 'Progress is hard to resume after context loss.', right: 'A new agent can resume from the current task file.' },
+  ]}
+/>
+
+The reset is not about making the model forget. It is about choosing what survives.
+
+## Where it fails
+
+This workflow can fossilize bad thinking. If `requirements.md` misunderstands the feature, every later stage becomes confidently wrong. If `analysis.md` misses an important code path, the design will route around reality. If task files are too broad, you are back to the same overloaded context problem with extra markdown.
+
+So keep the human review points short and sharp:
+
+<DoDont
+  title="Use the reset wisely"
+  doLabel="Do"
+  dontLabel="Do not"
+  doItems={[
+    'Review each spec layer before generating the next one.',
+    'Keep each implementation task small enough for one focused session.',
+    'Put verification commands and done evidence directly in the task file.',
+    'Write back lessons when implementation reveals the design was wrong.',
+  ]}
+  dontItems={[
+    'Use this for tiny one-line fixes.',
+    'Treat generated specs as truth without checking them against the code.',
+    'Let task files become vague todo lists with no acceptance criteria.',
+    'Carry the full chat forward “just in case.”',
+  ]}
+/>
+
+## The normal-person version
+
+The same pattern works for a renovation, legal checklist, trip plan, hiring process, or messy research project:
+
+```txt
+requirements → current situation → plan → tasks → one task per fresh context
+```
+
+Stop asking AI to remember everything. Make it write the memory worth keeping, reset the rest, and continue from the smallest useful artifact.
+
+That is the quiet power of spec-driven context resets: not more context, better boundaries.
+
+## Source
+
+- [sddw: Spec-Driven Development Workflow for Claude Code](https://github.com/sermakarevich/sddw)
+- [Hacker News discussion: Spec-Driven Development Workflow for Claude Code](https://news.ycombinator.com/item?id=48231575)

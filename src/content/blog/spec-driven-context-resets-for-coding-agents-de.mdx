@@ -1,0 +1,168 @@
+---
+title: "Spec-Driven Context Resets für Coding-Agenten"
+description: "Ein praktischer Workflow, um Requirements, Code-Analyse, Design und Task-Dateien zu nutzen, damit Coding-Agenten mit frischem Kontext arbeiten, ohne wichtige Entscheidungen zu verlieren."
+language: "de"
+slug: "spec-driven-context-resets-fuer-coding-agenten"
+canonicalSlug: "spec-driven-context-resets-for-coding-agents"
+publishedAt: "2026-05-23"
+updatedAt: "2026-05-23"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "Coding Agents", "Context Engineering", "Spec-Driven Development", "Developer Workflow"]
+topic: "AI-first Engineering"
+summary: "Lange Agenten-Chats verrotten. Besser ist es, Entscheidungen in kleine Spec-Dateien zu verschieben, zwischen den Ebenen bewusst den Kontext zu resetten und jede Coding-Agent-Session nur das lesen zu lassen, was sie wirklich braucht."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Was ist ein spec-driven context reset?"
+    answer: "Ein Workflow, bei dem Requirements, Code-Analyse, Design und Implementierungsaufgaben in Dateien geschrieben werden. Zwischen den Schritten wird der Chat-Kontext gelöscht, damit die nächste Coding-Agent-Session mit fokussierten, dauerhaften Artefakten statt mit einem aufgeblähten Verlauf arbeitet."
+  - question: "Wann sollte ich diesen Workflow nutzen?"
+    answer: "Für mittelgroße Features, Refactorings, Migrationen und Agenten-Aufgaben, bei denen Architekturentscheidungen wichtig sind und die Arbeit nicht sauber in ein einziges Kontextfenster passt."
+  - question: "Wann ist das zu viel?"
+    answer: "Für winzige Fixes, Ein-Datei-Änderungen, Wegwerf-Prototypen oder Aufgaben, bei denen die Pflege der Specs mehr kostet als das Risiko von Kontextdrift."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+
+Lange Coding-Agent-Chats haben einen Geruch.
+
+Am Anfang ist der Agent scharf. Dann wächst der Verlauf. Alte Annahmen bleiben liegen. Neue Entscheidungen vermischen sich mit verworfenen Plänen. Das Modell optimiert plötzlich auf die letzten Nachrichten statt auf das eigentliche Feature.
+
+Die übliche Reaktion ist: mehr Kontext.
+
+Oft ist das genau falsch.
+
+Der bessere Move ist, Kontext bewusst zu resetten, aber die wichtigen Entscheidungen in Dateien zu behalten. Das spannende Muster in [sddw](https://github.com/sermakarevich/sddw), einem spec-driven Workflow für Claude Code, ist nicht nur „erst Specs schreiben, dann Code“. Der Kern ist: Jeder Schritt produziert genau ein dauerhaftes Artefakt. Der nächste Schritt liest nur die relevanten Artefakte in einem frischen, fokussierten Kontextfenster.
+
+So wird der Kontext-Reset vom Notfallknopf zur Engineering-Technik.
+
+## Die Kurzfassung
+
+Halte nicht das komplette Feature in einem riesigen Chat am Leben.
+
+Schiebe die Arbeit durch kleine Dateien:
+
+<FlowGraphic
+  title="Spec-driven context reset"
+  note="dauerhafte Dateien ersetzen aufgeblähte Chat-Erinnerung"
+  steps={['Requirements', 'Code-Analyse', 'Design', 'Task-Dateien', 'Eine Task implementieren', 'Verifikation']}
+/>
+
+Nach jeder Ebene: stoppen. Datei prüfen. Chat löschen. Die nächste Session startet mit dem aktuellen Artefakt und den Projektregeln.
+
+Der Punkt ist Scope-Kontrolle.
+
+Ein Coding-Agent braucht nicht jeden Absatz der alten Diskussion. Er braucht den aktuellen Vertrag: was wahr sein muss, welche Dateien relevant sind und welche Evidenz die Arbeit beweist.
+
+## Warum Kontext-Resets helfen
+
+Kontextfenster sind kein neutraler Speicher. Sie sind chaotisches Arbeitsgedächtnis.
+
+Alte Ideen konkurrieren mit neuen Anweisungen. Halb verworfene Optionen bleiben sichtbar. Das Modell kann Details konservieren, die sterben sollten, und Entscheidungen vergessen, die überleben müssten.
+
+Spec-Dateien schaffen eine sauberere Gedächtnisgrenze.
+
+<KeyPoints
+  title="Was die Dateien bewahren"
+  items={[
+    'Requirements bewahren Nutzerziel, Constraints und Akzeptanzkriterien.',
+    'Code-Analyse bewahrt, was das bestehende System wirklich tut.',
+    'Design bewahrt Architekturentscheidungen, bevor Implementierungsdruck entsteht.',
+    'Task-Dateien bewahren eine kleine Ausführungseinheit, die eine frische Agenten-Session abschließen und verifizieren kann.',
+  ]}
+/>
+
+Aus demselben Grund schreiben gute Teams Tickets, Design-Dokumente, Migrationspläne und ADRs. Coding-Agenten machen den Fehler nur offensichtlicher: Wenn State nur im Chat lebt, zerfällt er.
+
+## Der praktische Workflow
+
+Nutze vier Artefakte für jedes Feature, das zu groß für einen sauberen Agenten-Durchlauf wirkt.
+
+```txt
+.sddw/feature-name/
+  requirements.md
+  analysis.md
+  design.md
+  tasks/
+    01-first-task.md
+    02-second-task.md
+```
+
+Dann läuft die Arbeit so:
+
+1. Lass den Agenten nur `requirements.md` erzeugen: User Stories, Constraints, Akzeptanzkriterien. Stop.
+2. In frischem Kontext: Codebase prüfen und `analysis.md` schreiben. Stop.
+3. In frischem Kontext: `design.md` schreiben — Ansatz, betroffene Module, Interfaces, Risiken, Verifikationsplan. Stop.
+4. In frischem Kontext: Design in Task-Dateien zerlegen. Stop.
+5. In frischem Kontext: exakt eine Task-Datei implementieren, die dort genannten Checks ausführen und Lessons oder Blocker zurückschreiben.
+
+Der Prompt zum Stehlen:
+
+```txt
+Erstelle requirements.md, analysis.md, design.md und Task-Dateien für dieses Feature.
+Stoppe nach jeder Datei.
+Die nächste Session soll nur die aktuelle Datei, die Projektregeln und die minimal nötigen Source-Dateien lesen.
+Jede Implementierungs-Task braucht: Ziel, erlaubte Dateien, Constraints, Verifikationsbefehle und Done-Evidenz.
+```
+
+Die letzte Zeile ist wichtig. Ohne Verifikation werden Specs nur hübschere Vibes.
+
+## Was das ersetzt
+
+<CompareGrid
+  title="Mega-Chat vs. Spec-Reset"
+  leftLabel="Ein riesiger Chat"
+  rightLabel="Spec-driven reset"
+  rows={[
+    { left: 'Alle Entscheidungen leben im Gesprächsverlauf.', right: 'Wichtige Entscheidungen leben in versionierten Dateien.' },
+    { left: 'Der Agent sieht alte Pläne und verworfene Optionen.', right: 'Jede Ebene sieht nur das Artefakt, das wirklich zählt.' },
+    { left: 'Implementierung startet, bevor Architektur geprüft wurde.', right: 'Requirements, Analyse und Design können vor Code reviewed werden.' },
+    { left: 'Fortschritt ist nach Kontextverlust schwer fortsetzbar.', right: 'Ein neuer Agent kann von der aktuellen Task-Datei weitermachen.' },
+  ]}
+/>
+
+Der Reset soll das Modell nicht einfach vergessen lassen. Er entscheidet, was überlebt.
+
+## Wo es scheitert
+
+Dieser Workflow kann falsches Denken einfrieren. Wenn `requirements.md` das Feature missversteht, werden alle späteren Schritte selbstbewusst falsch. Wenn `analysis.md` einen wichtigen Codepfad übersieht, designt der Agent an der Realität vorbei. Wenn Task-Dateien zu groß sind, hast du wieder dasselbe Kontextproblem — nur mit mehr Markdown.
+
+Darum müssen die Review-Punkte kurz und hart sein:
+
+<DoDont
+  title="Den Reset sinnvoll nutzen"
+  doLabel="Mach"
+  dontLabel="Lass"
+  doItems={[
+    'Prüfe jede Spec-Ebene, bevor die nächste erzeugt wird.',
+    'Halte Implementierungs-Tasks klein genug für eine fokussierte Session.',
+    'Schreibe Verifikationsbefehle und Done-Evidenz direkt in die Task-Datei.',
+    'Schreibe Lessons zurück, wenn die Implementierung zeigt, dass das Design falsch war.',
+  ]}
+  dontItems={[
+    'Für winzige Ein-Zeilen-Fixes verwenden.',
+    'Generierte Specs als Wahrheit behandeln, ohne sie gegen den Code zu prüfen.',
+    'Task-Dateien zu vagen Todo-Listen ohne Akzeptanzkriterien machen.',
+    'Den kompletten Chat „zur Sicherheit“ mitschleppen.',
+  ]}
+/>
+
+## Die Normalmenschen-Version
+
+Das gleiche Muster funktioniert für Renovierung, Behördenkram, Reiseplanung, Hiring oder ein chaotisches Research-Projekt:
+
+```txt
+requirements → aktuelle Situation → Plan → Tasks → eine Task pro frischem Kontext
+```
+
+Hör auf, AI alles merken zu lassen. Lass sie die Erinnerung schreiben, die bleiben soll. Resette den Rest. Arbeite vom kleinsten nützlichen Artefakt weiter.
+
+Das ist die leise Stärke von spec-driven context resets: nicht mehr Kontext, sondern bessere Grenzen.
+
+## Quelle
+
+- [sddw: Spec-Driven Development Workflow for Claude Code](https://github.com/sermakarevich/sddw)
+- [Hacker News Diskussion: Spec-Driven Development Workflow for Claude Code](https://news.ycombinator.com/item?id=48231575)
