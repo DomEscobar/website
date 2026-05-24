@@ -1,0 +1,178 @@
+---
+title: "Failed Agent Runs Should Become Skills"
+description: "A practical workflow for turning repeated coding-agent failures into small local skill files instead of just retrying the same broken session."
+language: "en"
+slug: "failed-agent-runs-should-become-skills"
+canonicalSlug: "failed-agent-runs-should-become-skills"
+publishedAt: "2026-05-23"
+updatedAt: "2026-05-23"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "Coding Agents", "Agent Skills", "Developer Workflow", "Verification"]
+topic: "AI Agent Workflows"
+summary: "When an agent fails three times, the useful artifact is not another retry. Mine the traces, extract verifier-relevant habits, and turn them into a tiny local skill the next run must follow."
+heroImage: "/dominic-h.png"
+draft: true
+featured: false
+faqs:
+  - question: "What is a skill file for a coding agent?"
+    answer: "A small operational instruction file, such as SKILL.md, AGENTS.md, or CLAUDE.md, that captures repo-specific rules, failure modes, verification commands, and recovery habits for future agent runs."
+  - question: "When should failed traces become a skill?"
+    answer: "Do it when the same class of task will recur, when tests or verifiers expose repeatable mistakes, or when the agent keeps losing repo-specific context across sessions."
+  - question: "What is the main risk?"
+    answer: "Bad traces can produce superstitious rules. Keep every skill rule tied to evidence from logs, tests, files, or successful recovery steps."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+A coding agent fails. You paste the error back in. It fails differently. You paste again. Eventually it passes, or you get tired and fix the last ten percent yourself.
+
+That feels normal now.
+
+It is also wasteful.
+
+The interesting move in [Trace2Skill](https://arxiv.org/abs/2605.21810) is not “try more samples.” It is: when repeated agent runs create traces, the traces can become a better instruction policy. The paper applies this to long-context hardware design tasks, but the workflow is useful for normal software teams too.
+
+If an agent keeps making the same mistake, do not only retry.
+
+Turn the failure into a local skill.
+
+## the short version
+
+A failed run is not trash. It is training data for your next repo instruction.
+
+<FlowGraphic
+  title="Trace to skill loop"
+  note="do not retry the same blind spot forever"
+  steps={['Run agent', 'Collect trace', 'Find verifier signal', 'Extract rule', 'Update skill', 'Rerun with proof']}
+/>
+
+The loop is simple:
+
+1. Run the agent on a task with a real verifier: tests, build, lint, browser check, hidden review, or acceptance checklist.
+2. Save the useful trace: prompt, changed files, errors, recovery steps, and final proof.
+3. Ask a separate pass to extract repeated failure modes and successful habits.
+4. Write a tiny `SKILL.md`, `AGENTS.md`, or `CLAUDE.md` rule.
+5. Rerun the next task with that rule in context.
+
+This is how a team’s agent setup stops being generic.
+
+## what to mine from the trace
+
+Most logs are noise. The useful parts are the places where the verifier taught you something the prompt did not.
+
+<MetricStrip
+  metrics={[
+    { value: '3-5', label: 'attempts before mining patterns' },
+    { value: '1', label: 'tiny skill patch, not a manifesto' },
+    { value: '0', label: 'rules without evidence' },
+  ]}
+/>
+
+Look for four things:
+
+<KeyPoints
+  title="useful trace material"
+  items={[
+    'Verifier-relevant files: the places tests, fixtures, schemas, migrations, or browser checks actually care about.',
+    'Recurring mistakes: wrong setup command, missing env assumption, stale generated file, skipped route, fake green check.',
+    'Recovery moves: the exact inspection or command that turned a failing run into a passing one.',
+    'Stop conditions: when the agent should ask, downgrade the claim, or mark the work not fully done.',
+  ]}
+/>
+
+The skill should not say “be careful.”
+
+It should say something like:
+
+```txt
+Before editing generated blog content, inspect the content schema and one recent published post.
+After editing, run npm run build.
+If the post is draft:true, verify it does not appear in sitemap, RSS, or llms outputs.
+Never claim publish-ready if hreflang points to a missing translation.
+```
+
+That is small. It is operational. It changes the next run.
+
+## steal this prompt
+
+Use this after a messy agent session.
+
+```txt
+You are mining failed agent traces into a local skill.
+
+Inputs:
+- original task
+- prompts used
+- changed files
+- command output
+- test/build/browser failures
+- final successful fix, if any
+
+Produce:
+1. recurring failure modes, with evidence from the trace
+2. verifier-relevant files and commands
+3. recovery moves that actually helped
+4. rules to add to SKILL.md / AGENTS.md / CLAUDE.md
+5. rules to reject as superstition
+
+Constraints:
+- every permanent rule needs evidence
+- prefer concrete commands, files, and stop conditions
+- keep the final skill under 20 lines
+- do not include secrets, private logs, or hidden test details
+```
+
+The important line is “rules to reject as superstition.” Failed traces are seductive. A model can turn any coincidence into a ritual if you let it.
+
+## what this replaces
+
+<CompareGrid
+  title="Retry loop vs. skill loop"
+  leftLabel="blind retry"
+  rightLabel="trace-mined skill"
+  rows={[
+    { left: 'Paste error back into the same context.', right: 'Extract the invariant the error revealed.' },
+    { left: 'Hope the next sample avoids the bug.', right: 'Change the instructions future runs inherit.' },
+    { left: 'Let lessons disappear when the chat ends.', right: 'Store lessons in repo-local agent rules.' },
+    { left: 'Reward passing once.', right: 'Preserve the recovery path that made passing possible.' },
+  ]}
+/>
+
+This is especially useful for repo-specific work: migrations, generated artifacts, browser flows, release scripts, or anything with hidden assumptions.
+
+The agent needs the scar tissue from the last failure.
+
+## where it fails
+
+Trace-mined skills can go bad in two ways.
+
+First, they can encode superstition. Maybe one retry passed because the dependency cache warmed up.
+
+Second, they can leak things. Logs can contain secrets, customer data, hidden tests, private URLs, or credentials. Sanitize first.
+
+<DoDont
+  title="keep the skill useful"
+  doLabel="Do"
+  dontLabel="Do not"
+  doItems={[
+    'Tie each rule to a verifier failure or successful recovery step.',
+    'Keep skills short enough that agents actually follow them.',
+    'Review rules after a few runs and delete stale ones.',
+    'Store repo-specific rules near the repo, not only in one chat.',
+  ]}
+  dontItems={[
+    'Promote one lucky fix into permanent law.',
+    'Copy secrets, private logs, or hidden tests into skill text.',
+    'Use skills to hide weak acceptance criteria.',
+    'Let the skill grow into a second messy prompt dump.',
+  ]}
+/>
+
+## sources
+
+- [Trace2Skill: Verifier-Guided Skill Evolution for Long-Context EDA Agents](https://arxiv.org/abs/2605.21810)
+- Related huecki pattern: durable local rules and proof gates for coding agents, not longer one-off prompts.

@@ -1,0 +1,142 @@
+---
+title: "Die besten KI-Agenten schlafen die meiste Zeit"
+description: "Lang laufende Agenten werden erst praktisch, wenn sie nicht pollen, sondern pausieren, auf Ereignisse warten und mit sauberem Zustand wieder aufwachen."
+language: "de"
+slug: "agenten-die-schlafen-koennen"
+canonicalSlug: "agents-that-can-sleep"
+publishedAt: "2026-05-19"
+updatedAt: "2026-05-19"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Automation", "Workflow Design", "State Machines", "Agent Development"]
+topic: "AI Agent Workflows"
+summary: "Viele Agenten-Demos sehen aus wie Chatbots mit Tools. Reale Workflows dauern aber Tage: warten auf Unterschriften, Lieferungen, Antworten oder Freigaben. Dafür brauchen Agenten Schlafzustände, Events und klare State Machines."
+heroImage: "/dominic-h.png"
+draft: true
+featured: false
+faqs:
+  - question: "Warum sollten KI-Agenten schlafen können?"
+    answer: "Viele echte Prozesse bestehen aus Wartezeit: Freigaben, Antworten, Lieferungen oder Termine. Ein Agent sollte in dieser Zeit keinen Thread blockieren oder ständig pollen, sondern Zustand speichern und per Ereignis wieder starten."
+  - question: "Ist das nur für Entwickler relevant?"
+    answer: "Nein. Das Muster passt auch zu HR-Onboarding, Rechnungsstreitigkeiten, Vertrieb, Support, Einkauf und Compliance — überall dort, wo Arbeit über Tage pausiert und wieder aufgenommen wird."
+  - question: "Was ist der wichtigste Designfehler?"
+    answer: "Den Agenten wie einen langen Chat zu bauen. Besser ist eine explizite State Machine mit Zuständen, Wake-up-Events, Approval Gates und Tests für simulierte Wartezeit."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## Die kurze Version
+
+Ein echter Agent arbeitet nicht die ganze Zeit.
+
+Er wartet.
+
+Auf eine Unterschrift. Auf eine Antwort. Auf Hardware. Auf eine Freigabe. Auf ein Event aus einem anderen System.
+
+Deshalb ist die spannendste Agenten-Architektur nicht “mehr Tools im Prompt”, sondern: **Kann der Agent schlafen, ohne seinen Zustand zu verlieren?**
+
+<MetricStrip
+  metrics={[
+    { value: '80%', label: 'echter Prozess ist oft Wartezeit' },
+    { value: '0', label: 'blockierte Threads während Idle Time' },
+    { value: '1', label: 'saubere State Machine statt endloser Chat' },
+  ]}
+/>
+
+<FlowGraphic
+  title="Agent, der schlafen kann"
+  note="nicht pollen — pausieren"
+  steps={['Zustand speichern', 'Dormant Gate betreten', 'Auf Event warten', 'Mit State Delta aufwachen', 'Nächste Aktion ausführen']}
+/>
+
+## Der Denkfehler: Agent = langer Chat
+
+Viele Agenten-Demos funktionieren wie ein sehr langer Chat mit Tools. Das reicht für “lies dieses Repo und schreib einen Fix”.
+
+Es reicht nicht für Prozesse, die Tage dauern:
+
+- HR-Onboarding: warten auf unterschriebene Dokumente
+- Einkauf: warten auf Freigabe und Lieferbestätigung
+- Rechnungsstreit: warten auf Antwort des Vendors
+- Vertrieb: Follow-up erst nach drei Tagen
+- Compliance: sammeln, prüfen, eskalieren, wieder warten
+
+Wenn du das als Chat baust, musst du alte Historie wiederholen, pollst Systeme leer oder hältst Jobs künstlich offen. Das ist kein Agent. Das ist ein sehr teurer Timer.
+
+<CompareGrid
+  title="Polling-Agent vs. Schlaf-Agent"
+  leftLabel="Fragiler Agent"
+  rightLabel="Robuster Agent"
+  rows={[
+    { left: 'prüft alle paar Minuten, ob etwas passiert ist', right: 'wacht durch Webhook, Event oder Human Approval auf' },
+    { left: 'versteckt Zustand in Chat-Historie', right: 'speichert explizite Zustände und State Deltas' },
+    { left: 'ein riesiger Agent macht alles', right: 'delegiert fokussierte Schritte an Sub-Agenten' },
+    { left: 'Tests dauern so lange wie der echte Prozess', right: 'simuliert Tage Wartezeit in Sekunden' },
+  ]}
+/>
+
+## Mini-Workflow zum Klauen
+
+```txt
+Baue diesen Agenten nicht als langen Chat.
+
+Modelliere ihn als State Machine:
+1. dauerhafte Zustände
+2. erlaubte Übergänge
+3. Wake-up-Events
+4. Approval Gates
+5. State Deltas beim Aufwachen
+6. Sub-Agenten für Spezialschritte
+7. Tests, die 48h Wartezeit in Sekunden simulieren
+
+Gib außerdem an, wann der Agent NICHTS tun darf.
+```
+
+<KeyPoints
+  title="Die wichtigsten Bausteine"
+  items={[
+    'Durable State: Der Agent weiß nach Tagen noch, wo er war.',
+    'Dormant Gates: Warten ist ein Zustand, kein aktiver Loop.',
+    'Wake-up Events: Webhook, Antwort, Lieferung, Freigabe oder Termin startet den nächsten Schritt.',
+    'Evaluations: Simuliere lange Wartezeiten, statt zwei Wochen auf Fehler zu warten.',
+  ]}
+/>
+
+## Wann lohnt sich das?
+
+Nicht jeder Agent braucht Schlaf. Ein Code-Fix, eine Zusammenfassung, ein kurzer Research-Task: alles okay als Session.
+
+Aber sobald der Workflow auf Menschen, E-Mails, Lieferungen, Freigaben oder externe Systeme wartet, brauchst du ein anderes Modell.
+
+<DoDont
+  title="Nutzen / vermeiden"
+  doLabel="Nutzen für"
+  dontLabel="Nicht dafür"
+  doItems={[
+    'Onboarding, Einkauf, Support, Sales und Compliance',
+    'Workflows mit Wartezeiten über Stunden oder Tage',
+    'Prozesse mit klaren Zuständen und Freigaben',
+    'Agenten, die zuverlässig wiederaufnehmen müssen',
+  ]}
+  dontItems={[
+    'kurze Einmalaufgaben',
+    'unklare Prozesse ohne definierte Zustände',
+    'Tasks, bei denen Polling billiger und sicherer ist',
+    'kritische Entscheidungen ohne Human Gate',
+  ]}
+/>
+
+## Der bessere Agent wirkt langweilig
+
+Das ist der Punkt.
+
+Ein guter Langläufer ist nicht dauernd “aktiv”. Er speichert Zustand, geht schlafen und wacht nur auf, wenn wirklich etwas passiert ist.
+
+Vielleicht ist das die wichtigste Lektion für Agenten 2026: **Autonomie sieht oft aus wie diszipliniertes Nichtstun.**
+
+## Quellen
+
+- [Build Long-running AI agents that pause, resume, and never lose context with ADK — Google Developers Blog](https://developers.googleblog.com/en/build-long-running-ai-agents-that-pause-resume-and-never-lose-context-with-adk/)

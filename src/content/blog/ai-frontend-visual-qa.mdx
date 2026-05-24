@@ -1,0 +1,135 @@
+---
+title: "Stop Asking AI to Make the UI Look Right"
+description: "Frontend agents get more reliable when visual QA becomes measurable: extract design values, implement, inspect browser-computed styles, then review taste."
+language: "en"
+slug: "ai-frontend-visual-qa"
+canonicalSlug: "ki-frontend-qa-messbar"
+publishedAt: "2026-05-17"
+updatedAt: "2026-05-17"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Frontend", "Design QA", "Web Development", "Automation"]
+topic: "AI Agent Workflows"
+summary: "AI frontend work usually fails because “looks right” is not a test. A better workflow extracts design values, builds the component, checks computed browser styles, and leaves taste decisions to humans."
+heroImage: "/dominic-h.png"
+draft: true
+featured: false
+faqs:
+  - question: "Why is screenshot comparison not enough?"
+    answer: "Screenshots help, but they often do not explain why something looks wrong. Computed-style checks show concrete mismatches in spacing, typography, size, color, or alignment."
+  - question: "Should every UI task use this pipeline?"
+    answer: "No. It is overkill for tiny tweaks. It is useful for repeatable landing page sections, design systems, migrations, and agent workflows with heavy visual QA."
+  - question: "What stays human?"
+    answer: "Taste, priorities, brand feel, and whether the design is actually good. The pipeline checks execution, not judgment."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## Short answer
+
+The worst prompt for a frontend agent is: **“make it look better.”**
+
+Not because AI cannot build UI. It can write Tailwind, refactor components, clean SVGs, and wire up pages. The problem is that “looks better” is not a test. If the QA is vibes, the output will be vibes.
+
+The better question is:
+
+> Which parts of this design can be measured?
+
+<MetricStrip
+  metrics={[
+    { value: '5', label: 'pipeline steps instead of one giant prompt' },
+    { value: '0', label: 'vibe checks as the only QA layer' },
+    { value: '1', label: 'human taste review at the end, not every pixel' },
+  ]}
+/>
+
+<FlowGraphic
+  title="Frontend agent pipeline"
+  note="measure first, judge second"
+  steps={['Extract design values', 'Plan components', 'Build UI', 'Inspect browser styles', 'Review taste']}
+/>
+
+## Translate “it looks wrong”
+
+A human says: “The spacing feels off.”
+
+A useful pipeline says:
+
+- expected gap: `32px`
+- actual gap: `24px`
+- expected font size: `18px`
+- actual font size: `16px`
+- this animation is unsafe in Safari
+
+That is the difference between opinion and feedback an agent can act on.
+
+<CompareGrid
+  title="Vibe QA vs. measurable QA"
+  leftLabel="Weak workflow"
+  rightLabel="Better workflow"
+  rows={[
+    { left: '“Make it closer to the Figma.”', right: 'Extract spacing, type, dimensions, colors, and radius values.' },
+    { left: 'Agent looks at a screenshot and guesses.', right: 'Agent inspects computed styles in the browser.' },
+    { left: 'Review depends on taste and fatigue.', right: 'Mismatches are reported as concrete values.' },
+    { left: 'Every fix becomes a new prompt.', right: 'The QA loop stays reusable.' },
+  ]}
+/>
+
+## Tiny workflow to steal
+
+```txt
+Implement this UI section.
+Do not rely on visual similarity alone.
+
+Return:
+1. extracted design values: spacing, type, dimensions, colors, radius
+2. component plan
+3. browser computed-style checks after implementation
+4. exact mismatches vs the source design
+5. what still needs human taste review
+```
+
+<KeyPoints
+  title="What agents can check well"
+  items={[
+    'Spacing, dimensions, colors, radii, and typography against expected values.',
+    'Framework mistakes: Astro frontmatter, hydration, invalid component usage.',
+    'Browser issues: Safari animations, unsupported CSS, broken SVG behavior.',
+    'Regressions: same section, same checks, less subjective discussion.',
+  ]}
+/>
+
+## When it is worth it
+
+You do not need this for every button. It is worth it when the UI work repeats: landing page sections, design system migrations, Figma-to-code pipelines, client websites, or components that must stay consistent.
+
+<DoDont
+  title="Use / avoid"
+  doLabel="Use for"
+  dontLabel="Avoid for"
+  doItems={[
+    'repeatable frontend sections',
+    'design systems and token migrations',
+    'agent workflows with Playwright or DevTools access',
+    'UI where consistency matters more than spontaneity',
+  ]}
+  dontItems={[
+    'one-off tiny tweaks',
+    'early exploratory design',
+    'brand or taste decisions',
+    'messy design sources without clear values',
+  ]}
+/>
+
+## Humans still matter
+
+Measurable QA does not replace a good designer. It removes the annoying part of review: “Is the gap correct? Is the type size right? Does Safari break?”
+
+Then the human can do the human thing: decide whether the UI is actually good.
+
+## Sources
+
+- [The Workflow Is the Product: Building Specialized Pipelines for Coding Agents — WyeWorks](https://www.wyeworks.com/blog/2026/05/13/custom-agentic-workflows-for-coding-agents/)

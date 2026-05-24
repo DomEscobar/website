@@ -1,0 +1,142 @@
+---
+title: "The Best AI Agents Sleep Most of the Time"
+description: "Long-running agents become practical when they stop polling, pause cleanly, wait for events, and resume from explicit durable state."
+language: "en"
+slug: "agents-that-can-sleep"
+canonicalSlug: "agenten-die-schlafen-koennen"
+publishedAt: "2026-05-19"
+updatedAt: "2026-05-19"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Automation", "Workflow Design", "State Machines", "Agent Development"]
+topic: "AI Agent Workflows"
+summary: "Most agent demos look like chatbots with tools. Real workflows last days: waiting for signatures, deliveries, replies, approvals, or external events. Those agents need sleep states, wake-up events, and explicit state machines."
+heroImage: "/dominic-h.png"
+draft: true
+featured: false
+faqs:
+  - question: "Why should AI agents be able to sleep?"
+    answer: "Many real processes are mostly waiting: approvals, replies, deliveries, or scheduled follow-ups. An agent should not block a thread or poll constantly; it should persist state and resume when an event arrives."
+  - question: "Is this only relevant for developers?"
+    answer: "No. The pattern fits HR onboarding, invoice disputes, sales follow-ups, procurement approvals, support escalations, and compliance workflows — anywhere work pauses for days and then resumes."
+  - question: "What is the biggest design mistake?"
+    answer: "Building the agent as one long chat. A better design uses an explicit state machine with states, wake-up events, approval gates, and tests for simulated idle time."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## Short answer
+
+A real agent is not working all the time.
+
+It waits.
+
+For a signature. For a reply. For hardware. For approval. For an event from another system.
+
+So the interesting agent architecture is not “more tools in the prompt.” It is: **can the agent sleep without losing its place?**
+
+<MetricStrip
+  metrics={[
+    { value: '80%', label: 'real processes are often idle time' },
+    { value: '0', label: 'threads blocked while waiting' },
+    { value: '1', label: 'clean state machine instead of endless chat' },
+  ]}
+/>
+
+<FlowGraphic
+  title="Agent that can sleep"
+  note="do not poll — pause"
+  steps={['Persist state', 'Enter dormant gate', 'Wait for event', 'Wake with state delta', 'Run next action']}
+/>
+
+## The mistake: agent = long chat
+
+Many agent demos work like a very long chat with tools. That is fine for “read this repo and fix the bug.”
+
+It is not enough for workflows that take days:
+
+- HR onboarding: wait for signed documents
+- procurement: wait for approval and delivery confirmation
+- invoice disputes: wait for the vendor reply
+- sales: follow up after three days
+- compliance: collect, review, escalate, wait again
+
+If you model that as chat, you either replay old history, poll systems constantly, or keep jobs open for no reason. That is not an agent. That is an expensive timer.
+
+<CompareGrid
+  title="Polling agent vs. sleeping agent"
+  leftLabel="Fragile agent"
+  rightLabel="Robust agent"
+  rows={[
+    { left: 'checks every few minutes whether something changed', right: 'wakes through webhook, event, or human approval' },
+    { left: 'hides state inside chat history', right: 'stores explicit states and state deltas' },
+    { left: 'one giant agent does everything', right: 'delegates focused steps to sub-agents' },
+    { left: 'tests take as long as the real process', right: 'simulates days of idle time in seconds' },
+  ]}
+/>
+
+## Tiny workflow to steal
+
+```txt
+Do not build this agent as one long chat.
+
+Model it as a state machine:
+1. durable states
+2. allowed transitions
+3. wake-up events
+4. approval gates
+5. state deltas on resume
+6. sub-agents for specialized steps
+7. tests that simulate 48h of idle time in seconds
+
+Also specify when the agent must do nothing.
+```
+
+<KeyPoints
+  title="The core building blocks"
+  items={[
+    'Durable state: after days, the agent still knows where it was.',
+    'Dormant gates: waiting is a state, not an active loop.',
+    'Wake-up events: webhook, reply, delivery, approval, or scheduled time starts the next step.',
+    'Evaluations: simulate long waits instead of discovering failures two weeks later.',
+  ]}
+/>
+
+## When it is worth it
+
+Not every agent needs sleep. A code fix, a summary, a short research task: a session is fine.
+
+But once the workflow waits on humans, email, deliveries, approvals, or external systems, you need a different model.
+
+<DoDont
+  title="Use / avoid"
+  doLabel="Use for"
+  dontLabel="Avoid for"
+  doItems={[
+    'onboarding, procurement, support, sales, and compliance',
+    'workflows with idle time across hours or days',
+    'processes with clear states and approvals',
+    'agents that must resume reliably',
+  ]}
+  dontItems={[
+    'short one-off tasks',
+    'unclear processes without defined states',
+    'tasks where simple polling is cheaper and safer',
+    'critical decisions without a human gate',
+  ]}
+/>
+
+## The better agent looks boring
+
+That is the point.
+
+A good long-running agent is not constantly “active.” It stores state, goes dormant, and wakes only when something actually happens.
+
+Maybe that is the most useful agent lesson for 2026: **autonomy often looks like disciplined inaction.**
+
+## Sources
+
+- [Build Long-running AI agents that pause, resume, and never lose context with ADK — Google Developers Blog](https://developers.googleblog.com/en/build-long-running-ai-agents-that-pause-resume-and-never-lose-context-with-adk/)

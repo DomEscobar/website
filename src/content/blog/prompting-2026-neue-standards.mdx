@@ -1,0 +1,325 @@
+---
+title: "Prompting ist nicht tot. Es wurde Infrastruktur."
+description: "Die neuen Prompting-Standards 2026 drehen sich nicht um magische Sätze, sondern um Task Contracts, Kontext-Pakete, Schemas, Tools, Reasoning-Regeln und Evals."
+language: "de"
+slug: "prompting-2026-neue-standards"
+canonicalSlug: "prompting-2026-new-standards-en"
+publishedAt: "2026-05-20"
+updatedAt: "2026-05-20"
+author: "Dominic Hückmann"
+tags: ["Prompt Engineering", "Context Engineering", "AI Agents", "Structured Outputs", "Evals", "KI-Workflows"]
+topic: "AI-first Engineering"
+summary: "Prompting ist 2026 nicht verschwunden. Es ist zur Infrastruktur geworden: klare Task Contracts, kuratierter Kontext, strukturierte Outputs, Tool-Regeln, Reasoning-Policy und Evals."
+heroImage: "/dominic-h.png"
+draft: true
+featured: false
+faqs:
+  - question: "Was ist der wichtigste neue Prompting-Standard 2026?"
+    answer: "Der wichtigste Standard ist, Prompts nicht mehr als magischen Text zu behandeln, sondern als Schnittstelle in einem System: Task Contract, Kontext, Tools, Schemas, Reasoning-Regeln und Evals."
+  - question: "Sollte man Reasoning-Modelle noch zu Chain-of-Thought auffordern?"
+    answer: "Nicht blind. Bei modernen Reasoning-Modellen ist es besser, Reasoning-Budget oder kurze Begründungen zu nutzen und nicht auf sichtbare vollständige Gedankengänge zu bestehen."
+  - question: "Was ist besser als 'Bitte gib JSON zurück'?"
+    answer: "Wenn Software den Output weiterverarbeitet, sind Structured Outputs oder JSON Schema besser. Sie definieren nicht nur gültiges JSON, sondern die erwartete Form."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+
+## Kurz erklärt
+
+Prompting ist nicht tot. Es wurde nur aus der Chatbox befördert.
+
+Früher war ein Prompt oft der ganze Workflow: ein langer Text, ein bisschen Rolle, ein paar Beispiele, dann hoffen.
+
+2026 ist ein guter Prompt eher die **Startfläche eines Systems**: Er sagt dem Modell nicht nur, was es tun soll, sondern auch, welchen Kontext es benutzen darf, welche Tools zählen, welches Format rauskommen muss, wie Unsicherheit aussieht und woran Erfolg gemessen wird.
+
+<FlowGraphic
+  title="Der neue Prompting-Standard"
+  steps={['Task Contract', 'Kontext-Paket', 'Schemas + Tools', 'Reasoning-Policy', 'Evals + Verifikation']}
+/>
+
+<KeyPoints
+  title="Der wichtigste Shift"
+  items={[
+    'Prompting ist weniger Formulierungskunst, mehr Schnittstellen-Design.',
+    'Ein Prompt allein reicht nicht, wenn Tools, State, Dateien oder APIs beteiligt sind.',
+    'Reasoning-Modelle brauchen andere Regeln als alte Chatmodelle.',
+    'Für Produkt-Workflows ist ein Prompt ohne Eval nur eine Hoffnung.',
+  ]}
+/>
+
+## Warum der alte Prompting-Vibe bricht
+
+Der alte Vibe war:
+
+```txt
+Act as a world-class expert.
+Think step by step.
+Be accurate.
+Return JSON.
+```
+
+Das war nicht komplett falsch. Aber es ist zu grob.
+
+Heute ist das Problem nicht mehr nur: “Wie schreibe ich die perfekte Anweisung?”
+
+Das Problem ist:
+
+```txt
+Welche Informationen darf das Modell sehen?
+Welche Informationen sind nur Daten und keine Anweisungen?
+Welche Tools darf es benutzen?
+Welches Format muss maschinell validierbar sein?
+Wie merke ich, ob der Output schlechter geworden ist?
+Wann muss der Agent stoppen?
+```
+
+Das ist kein Copywriting-Problem mehr. Das ist Systemdesign.
+
+<CompareGrid
+  title="Alter Prompting-Stil vs. neuer Standard"
+  leftLabel="Prompt-Hack"
+  rightLabel="Prompt-Infrastruktur"
+  rows={[
+    { left: '“Schreibe besser.”', right: 'Erfolgskriterien und Beispiele definieren.' },
+    { left: '“Gib JSON zurück.”', right: 'Structured Output / JSON Schema nutzen.' },
+    { left: '“Denk Schritt für Schritt.”', right: 'Reasoning-Budget + kurze Verifikationsnotiz.' },
+    { left: 'Alle Infos in einen Mega-Prompt.', right: 'Kontext kuratieren, labeln und testen.' },
+    { left: 'Antwort lesen und hoffen.', right: 'Evals, Traces und Regressionstests.' },
+  ]}
+/>
+
+## Die neue Formel
+
+```txt
+klarer Task Contract
++ kuratiertes Kontext-Paket
++ Output-Schema
++ Tool-Regeln
++ Reasoning-Policy
++ Eval / Akzeptanzcheck
+= moderner Prompt
+```
+
+Ein moderner Prompt beantwortet nicht nur “Was soll passieren?”, sondern auch:
+
+- Was ist das Ziel?
+- Was ist **nicht** Teil des Ziels?
+- Welche Fakten sind verbindlich?
+- Welche Eingaben sind untrusted?
+- Welche Tools zählen als Evidenz?
+- Wie sieht ein Blocker aus?
+- Wann darf Erfolg behauptet werden?
+
+## Der Task Contract
+
+Wenn du nur eine Struktur übernimmst, nimm diese:
+
+```xml
+<role>
+Du bist ein präziser Assistent für [Domain].
+</role>
+
+<task>
+Erstelle [Output] für [Zielgruppe], damit [Ziel].
+</task>
+
+<context>
+Nur die relevanten Fakten, Quellen, Entscheidungen und Constraints.
+</context>
+
+<constraints>
+- Nutze keine unbelegten Behauptungen.
+- Trenne Fakten von Empfehlungen.
+- Wenn Informationen fehlen, gib BLOCKED zurück.
+</constraints>
+
+<tools>
+- Nutze Tools für aktuelle oder veränderliche Fakten.
+- Simuliere keine Tool-Ergebnisse.
+- Verifiziere vor finaler Erfolgsmeldung.
+</tools>
+
+<output_format>
+1. Kurzantwort
+2. Evidenz
+3. Empfehlung
+4. Caveats oder Blocker
+</output_format>
+```
+
+Das wirkt weniger sexy als ein viraler Prompt. Aber es ist viel robuster.
+
+## Reasoning-Modelle brauchen andere Prompts
+
+Der Satz “Think step by step” war lange der Standard-Tipp. Für viele alte Modelle konnte das helfen.
+
+Bei modernen Reasoning-Modellen ist die bessere Regel:
+
+<KeyPoints
+  title="Reasoning sauber steuern"
+  items={[
+    'Bitte nicht blind vollständige Chain-of-Thought erzwingen.',
+    'Nutze Reasoning-Effort oder Thinking-Budget, wenn das Modell es anbietet.',
+    'Fordere lieber eine kurze Begründung, Annahmenliste oder Verifikationsnotiz.',
+    'Für schwierige Entscheidungen: mehrere Optionen + Kriterien + Empfehlung statt Gedankenprotokoll.',
+  ]}
+/>
+
+Der Punkt ist nicht, dass Modelle nicht denken sollen. Der Punkt ist: Du willst **nutzbare Kontrolle**, nicht ein langes Gedanken-Theater.
+
+## Structured Outputs schlagen “mach JSON”
+
+Wenn Menschen den Output lesen, ist Markdown okay.
+
+Wenn Software den Output verarbeitet, brauchst du ein Schema.
+
+```txt
+Schwach:
+Bitte gib valides JSON zurück.
+
+Stärker:
+Gib ein Objekt zurück, das exakt diesem JSON Schema entspricht.
+Wenn ein Feld unbekannt ist, setze unknown: true und erkläre warum.
+```
+
+Warum?
+
+Weil “valides JSON” nur sagt: Der Text ist parsebar.
+
+Ein Schema sagt: Der Output hat die richtige Form.
+
+Das ist ein riesiger Unterschied, wenn der nächste Schritt ein Import, ein API-Call, ein Agent-Plan oder ein Eval ist.
+
+## Tool-Regeln sind Teil des Prompts
+
+Sobald ein Modell Tools benutzen kann, reicht eine Aufgabenbeschreibung nicht mehr.
+
+Du brauchst Regeln wie:
+
+```txt
+- Lies Dateien, bevor du sie bearbeitest.
+- Prüfe aktuelle Fakten mit Tools, statt sie aus Erinnerung zu beantworten.
+- Frage vor externen, destruktiven oder schwer rückgängig zu machenden Aktionen.
+- Behaupte Erfolg erst nach Build/Test/Live-Check.
+- Wenn ein Tool fehlschlägt, markiere den Schritt als Blocker statt zu raten.
+```
+
+Das klingt langweilig. Genau deshalb funktioniert es.
+
+<DoDont
+  title="Tool-Using Agents"
+  doLabel="Bauen"
+  dontLabel="Hoffen"
+  doItems={[
+    'Tool-Zweck und Stop-Regeln definieren',
+    'Mutable Fakten live prüfen',
+    'Output gegen Gates testen',
+    'Blocker explizit machen',
+  ]}
+  dontItems={[
+    'Tool-Ergebnisse simulieren lassen',
+    'alles aus Modellwissen beantworten',
+    'Erfolg ohne Verifikation akzeptieren',
+    'untrusted Content als Anweisung behandeln',
+  ]}
+/>
+
+## Lange Kontexte sind nicht automatisch gute Kontexte
+
+Long Context ist mächtig. Aber “mehr Kontext” ist nicht dasselbe wie “besserer Kontext”.
+
+Wenn du dem Modell 800 Dateien gibst, hat es zwar mehr Material — aber auch mehr Rauschen.
+
+Besser ist:
+
+- relevante Dokumente nach oben
+- Aufgabe und Frage klar ans Ende
+- Quellen sauber trennen
+- untrusted Inhalte labeln
+- unnötige Historie rauswerfen
+- Retrieval/Evals testen
+
+Der neue Skill ist nicht, alles ins Fenster zu kippen. Der neue Skill ist, den Kontext so zu bauen, dass das Modell nicht suchen, raten und halluzinieren muss.
+
+## Prompt Chaining ist kein Selbstzweck
+
+Mehrere Prompts hintereinander sind sinnvoll, wenn du Zwischenstände sehen oder kontrollieren musst.
+
+Zum Beispiel:
+
+```txt
+1. Quellen extrahieren
+2. Claims gegen Quellen prüfen
+3. Entwurf schreiben
+4. Review gegen Kriterien
+5. Finalisieren
+```
+
+Aber Chaining ist nicht automatisch besser. Manchmal reicht ein guter Task Contract plus Schema plus Eval.
+
+Die Frage ist nicht: “Ein Prompt oder fünf?”
+
+Die Frage ist: **Welche Zwischenergebnisse müssen überprüfbar sein?**
+
+## Der wichtigste Teil: Evals
+
+Ein Prompt, der Geld, Code, Support, SEO oder Produktentscheidungen beeinflusst, braucht Tests.
+
+```txt
+Golden Cases
++ Edge Cases
++ Injection Cases
++ Schema Checks
++ Fakten-/Quellen-Checks
++ Regression nach Prompt-Änderungen
+```
+
+Ohne Evals ist Prompting Bauchgefühl.
+
+Mit Evals wird Prompting Produktlogik.
+
+## Quick rules
+
+<KeyPoints
+  title="Die neuen Prompting-Regeln"
+  items={[
+    'Schreibe Task Contracts, keine Zaubersprüche.',
+    'Trenne Instruktionen, Kontext, Beispiele und User-Input sichtbar.',
+    'Nutze Schemas, wenn Output maschinell weiterläuft.',
+    'Steuere Reasoning über Budget, Kriterien und kurze Begründung — nicht über Gedankenprotokolle.',
+    'Definiere Tool-Regeln, Stop-Regeln und Blocker-Verhalten.',
+    'Teste wichtige Prompts wie Code.',
+  ]}
+/>
+
+## Fazit
+
+Prompting ist nicht verschwunden.
+
+Es ist erwachsen geworden.
+
+Der gute Prompt 2026 ist kein einzelner genialer Satz. Er ist die dünne, klare Schnittstelle zwischen Mensch, Modell, Kontext, Tools, State und Verifikation.
+
+Oder kürzer:
+
+```txt
+Prompting ist nicht mehr der ganze Workflow.
+Prompting ist das Interface zum Workflow.
+```
+
+## Quellen
+
+- [OpenAI Cookbook: GPT-4.1 Prompting Guide](https://cookbook.openai.com/examples/gpt4-1_prompting_guide)
+- [Anthropic: Prompt engineering overview](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview)
+- [Anthropic: Claude prompting best practices](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/claude-4-best-practices)
+- [Google Gemini: Prompt design strategies](https://ai.google.dev/gemini-api/docs/prompting-intro)
+- [Microsoft Azure: Prompt engineering techniques](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/prompt-engineering)
+- [Microsoft Azure: Structured outputs](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/structured-outputs)
+- [AWS: Prompt engineering best practices against prompt injection](https://docs.aws.amazon.com/prescriptive-guidance/latest/llm-prompt-engineering-best-practices/introduction.html)
+- [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
+- [DSPy docs](https://dspy.ai/)
+- [Model Context Protocol specification](https://modelcontextprotocol.io/specification)
+- [AGENTS.md convention](https://github.com/openai/agents.md)

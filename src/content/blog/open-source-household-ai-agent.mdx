@@ -1,0 +1,156 @@
+---
+title: "The AI That Actually Runs a Household"
+description: "A short field note on an open-source family AI system: Markdown agents, Telegram, cron jobs, and persistent memory instead of chatbot vibes."
+language: "en"
+slug: "open-source-household-ai-agent"
+canonicalSlug: "open-source-household-ai-agent"
+publishedAt: "2026-05-15"
+updatedAt: "2026-05-13"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Personal AI", "Automation", "AI Workflows"]
+topic: "Personal AI Workflows"
+summary: "A real family open-sourced a household AI system with 17 Markdown-based agents. The useful lesson is not the number of agents, but the structure: domain boundaries, memory, scheduled runs, and correction loops."
+heroImage: "/dominic-h.png"
+draft: true
+featured: false
+faqs:
+  - question: "Is this household AI assistant a product?"
+    answer: "No. It is an open-source personal system built around GitHub Copilot CLI, Telegram, Markdown agent files, memory, and scheduled jobs."
+  - question: "What is the practical lesson?"
+    answer: "Do not start with one giant assistant. Start with one narrow agent, clear rules, memory, and a scheduled trigger."
+  - question: "Is it safe to copy directly?"
+    answer: "Only if you understand the permissions. Any agent that can run shell commands, use APIs, or message people needs strict boundaries and human approval for risky actions."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## Short answer
+
+The interesting part is not that someone built another AI assistant. The interesting part is that a family open-sourced a real one that runs boring household work: groceries, budget reminders, dog care, pregnancy prep, home maintenance, and daily briefings.
+
+It is not Alexa with a nicer prompt. It is closer to a tiny operating system for domestic admin.
+
+<MetricStrip
+  metrics={[
+    { value: '17', label: 'specialized agents with narrow household domains' },
+    { value: '15', label: 'scheduled cron jobs for recurring work' },
+    { value: '1', label: 'simple principle: one agent owns one area' },
+  ]}
+/>
+
+<FlowGraphic
+  title="Household agent loop"
+  note="small system, not magic chatbot"
+  steps={['Define domain', 'Load memory', 'Run on trigger', 'Act or ask', 'Save correction']}
+/>
+
+<KeyPoints
+  title="What makes it useful"
+  items={[
+    'Agents are Markdown files, not a heavy framework.',
+    'Telegram becomes the interface, so the system fits normal family life.',
+    'Cron jobs handle recurring tasks before anyone remembers to ask.',
+    'Corrections persist into memory and standing orders instead of disappearing in chat history.',
+  ]}
+/>
+
+## The pattern worth stealing
+
+Do not build a “life assistant.” That is too vague.
+
+Build one tiny agent with a job title.
+
+A `dog-parent` agent can know feeding schedules, vet reminders, and food inventory. A `home-manager` can know filters, service providers, and maintenance dates. A `task-coach` can serve one next action instead of dumping a giant list.
+
+That is the trick: the household is not one problem. It is a set of repeated micro-domains.
+
+<CompareGrid
+  title="Chatbot vs. household agent"
+  leftLabel="Generic assistant"
+  rightLabel="Useful household agent"
+  rows={[
+    { left: 'Answers when you remember to ask.', right: 'Runs on a schedule before the task is forgotten.' },
+    { left: 'Knows a little about everything.', right: 'Owns one narrow domain with clear rules.' },
+    { left: 'Loses corrections in old chats.', right: 'Writes corrections into durable memory.' },
+    { left: 'Creates more messages to manage.', right: 'Returns only the next useful action or decision.' },
+  ]}
+/>
+
+## Start smaller than you want
+
+The best first agent is not the impressive one. It is the one with clear inputs and a low-risk output.
+
+Good starter agents:
+
+- recurring home maintenance reminders
+- grocery list cleanup
+- weekly budget review
+- one-next-task coach
+- calendar prep checklist
+
+Bad starter agents:
+
+- “run my whole life”
+- anything that spends money automatically
+- anything that sends messages as you without review
+- medical, legal, or safety-critical decisions
+
+<DoDont
+  title="Build boundaries first"
+  doLabel="Do"
+  dontLabel="Don't"
+  doItems={[
+    'give each agent one domain',
+    'write explicit approval rules',
+    'save memory in plain text or JSON',
+    'start with reminders before actions',
+  ]}
+  dontItems={[
+    'make one god-agent for everything',
+    'let it execute risky actions silently',
+    'store secrets in prompts or memory files',
+    'treat household data as low-risk just because it is boring',
+  ]}
+/>
+
+## A tiny agent template
+
+Steal this before you steal the whole architecture:
+
+```txt
+Agent: [domain-owner]
+
+Job:
+Own exactly one recurring household domain: [domain].
+
+Memory to load:
+- current state
+- last correction
+- known preferences
+- upcoming dates
+
+Decision rules:
+- remind when [condition]
+- ask before [risky action]
+- never do [forbidden action]
+
+Output:
+- one next action
+- why now
+- what changed since last run
+```
+
+## Why this matters
+
+Most AI assistant demos still look like chat. This one looks more like infrastructure: agents, memory, scheduled work, small tools, and a human correction loop.
+
+That is probably where personal AI becomes useful: not one perfect bot, but boring little workers with names, boundaries, and memory.
+
+## Sources
+
+- [I Open-Sourced the AI That Runs My Household — htek.dev](https://htek.dev/articles/copilot-home-assistant-ai-runs-my-household)
+- [htekdev/copilot-home-assistant on GitHub](https://github.com/htekdev/copilot-home-assistant)

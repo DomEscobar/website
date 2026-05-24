@@ -1,0 +1,37 @@
+topic: Agent harness skill alignment with AGENTS.md, skills, context and evals
+output: /root/website/content-research/agent-harness-skill-alignment-2026-05-15
+depth: standard
+user_intent: Research for a new Huecki blog post about LLM-native developers building harnesses around coding agents: AGENTS.md, skill alignment, context rules, evals, and change-safety.
+questions:
+  - What are the emerging conventions for AGENTS.md/repo instructions?
+  - How do agent skills/rules/memory files align or conflict with AGENTS.md?
+  - What should developers evaluate so prompt/context/skill changes do not break behavior?
+  - What practical examples can readers implement tomorrow?
+source_policy:
+  prefer:
+    - official docs/specs
+    - GitHub repositories and formats
+    - model/provider engineering docs
+    - security standards around LLM apps
+  use_secondary_for:
+    - framing and language only
+entities:
+  - AGENTS.md
+  - OpenAI Codex/Codex CLI
+  - Claude Code / Anthropic skills / agents guidance
+  - Cursor rules
+  - Windsurf rules
+  - Model Context Protocol
+  - OWASP LLM Top 10
+  - SWE-bench / coding-agent eval concepts
+  - promptfoo / agent eval tooling
+research_dimensions:
+  - repo instruction hierarchy and context loading
+  - skills/rules as versioned behavior modules
+  - evals for harness regressions
+  - permissions/tools/security boundaries
+  - examples for blog readers
+unknowns:
+  - exact cross-tool standardization level for AGENTS.md
+  - whether skills have a common portable format across vendors
+  - best minimal eval suite for small teams

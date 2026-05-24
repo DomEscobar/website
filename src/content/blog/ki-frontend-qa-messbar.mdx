@@ -1,0 +1,135 @@
+---
+title: "Hör auf, KI zu bitten: Mach das UI hübsch"
+description: "Frontend-Agenten werden zuverlässiger, wenn aus Bauchgefühl messbare QA wird: Designwerte extrahieren, implementieren, im Browser prüfen, dann erst Geschmack reviewen."
+language: "de"
+slug: "ki-frontend-qa-messbar"
+canonicalSlug: "ai-frontend-visual-qa"
+publishedAt: "2026-05-17"
+updatedAt: "2026-05-17"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Frontend", "Design QA", "Web Development", "Automation"]
+topic: "AI Agent Workflows"
+summary: "KI-Frontend-Arbeit scheitert selten daran, dass das Modell keine Buttons bauen kann. Sie scheitert daran, dass “sieht richtig aus” kein Test ist. Besser: Designwerte extrahieren, live im Browser messen und nur den Rest menschlich reviewen."
+heroImage: "/dominic-h.png"
+draft: true
+featured: false
+faqs:
+  - question: "Warum reicht ein Screenshot-Vergleich nicht?"
+    answer: "Screenshots helfen, aber sie erklären nicht immer warum etwas falsch aussieht. Computed-Style-Checks zeigen konkrete Abweichungen bei Abstand, Typografie, Größe, Farbe oder Alignment."
+  - question: "Ist das für jedes UI-Projekt sinnvoll?"
+    answer: "Nein. Für kleine Tweaks ist es oft Overkill. Es lohnt sich bei wiederholbaren Landingpage-Sektionen, Designsystemen, Migrationen und Agenten-Workflows mit viel visueller QA."
+  - question: "Was bleibt menschliche Arbeit?"
+    answer: "Taste, Prioritäten, Markenwirkung und die Frage, ob das Design überhaupt gut ist. Die Pipeline prüft Ausführung, nicht Geschmack."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## Die kurze Version
+
+Der schlechteste Prompt für UI-Agenten ist: **“Mach das schöner.”**
+
+Nicht weil KI kein Frontend kann. Sondern weil “schön” kein ausführbarer Test ist. Ein Agent kann Tailwind schreiben, Komponenten umbauen und SVGs säubern. Aber wenn die QA nur aus Bauchgefühl besteht, bekommst du Bauchgefühl als Output.
+
+Die bessere Frage ist:
+
+> Welche Teile dieses Designs kann ich messen?
+
+<MetricStrip
+  metrics={[
+    { value: '5', label: 'Pipeline-Schritte statt ein Riesenprompt' },
+    { value: '0', label: 'Vibe-Checks als einzige QA' },
+    { value: '1', label: 'menschlicher Review am Ende, nicht bei jedem Pixel' },
+  ]}
+/>
+
+<FlowGraphic
+  title="Frontend-Agenten-Pipeline"
+  note="erst messen, dann urteilen"
+  steps={['Designwerte extrahieren', 'Komponenten planen', 'UI bauen', 'Browserwerte prüfen', 'Taste reviewen']}
+/>
+
+## Der Trick: “sieht falsch aus” übersetzen
+
+Ein Mensch sagt: “Der Abstand wirkt komisch.”
+
+Eine gute Pipeline sagt:
+
+- erwarteter Abstand: `32px`
+- tatsächlicher Abstand: `24px`
+- erwartete Schriftgröße: `18px`
+- tatsächliche Schriftgröße: `16px`
+- Safari unterstützt diese Animation nicht sauber
+
+Das ist der Unterschied zwischen Meinung und Feedback, mit dem ein Agent arbeiten kann.
+
+<CompareGrid
+  title="Vibe-QA vs. messbare QA"
+  leftLabel="Schwacher Workflow"
+  rightLabel="Besserer Workflow"
+  rows={[
+    { left: '“Mach es näher am Figma.”', right: 'Extrahiere Spacing, Typografie, Größen und Radien.' },
+    { left: 'Agent schaut Screenshot an und rät.', right: 'Agent liest computed styles direkt im Browser.' },
+    { left: 'Review hängt an Geschmack und Müdigkeit.', right: 'Abweichungen werden als konkrete Werte gemeldet.' },
+    { left: 'Jeder Fix ist ein neuer Prompt.', right: 'Die QA-Schleife bleibt gleich und wird wiederverwendet.' },
+  ]}
+/>
+
+## Mini-Workflow zum Klauen
+
+```txt
+Implementiere diese UI-Sektion.
+Verlasse dich nicht nur auf optische Ähnlichkeit.
+
+Gib zurück:
+1. extrahierte Designwerte: Spacing, Type, Größe, Farben, Radius
+2. Komponentenplan
+3. Browser-computed-style-Checks nach Umsetzung
+4. konkrete Abweichungen zum Design
+5. was noch menschlichen Taste-Review braucht
+```
+
+<KeyPoints
+  title="Was Agenten gut prüfen können"
+  items={[
+    'Abstände, Größen, Farben, Border-Radien und Typografie gegen Sollwerte.',
+    'Framework-Fehler: Astro-Frontmatter, Hydration, falsche Component-Nutzung.',
+    'Browser-Probleme: Safari-Animationen, unsupported CSS, kaputte SVGs.',
+    'Regressionen: gleiche Sektion, gleiche Checks, weniger subjektive Diskussion.',
+  ]}
+/>
+
+## Wann lohnt sich das?
+
+Diese Pipeline ist nicht für jeden Button nötig. Sie lohnt sich, wenn du ähnliche UI-Arbeit mehrfach machst: Landingpage-Sektionen, Designsystem-Migrationen, Figma-to-Code, Kundenwebsites oder Komponenten, die wirklich konsistent aussehen müssen.
+
+<DoDont
+  title="Nutzen / vermeiden"
+  doLabel="Nutzen für"
+  dontLabel="Nicht dafür"
+  doItems={[
+    'wiederholbare Frontend-Sektionen',
+    'Designsysteme und Token-Migrationen',
+    'Agenten-Workflows mit Playwright/DevTools-Zugriff',
+    'UI, bei der Konsistenz wichtiger ist als spontane Kreativität',
+  ]}
+  dontItems={[
+    'einmalige kleine Tweaks',
+    'frühe explorative Designs',
+    'Brand- oder Taste-Entscheidungen',
+    'schlechte Designquellen ohne klare Werte',
+  ]}
+/>
+
+## Mensch bleibt wichtig
+
+Messbare QA ersetzt keinen guten Designer. Sie nimmt nur das Nervige aus dem Review: “Ist der Abstand korrekt? Ist die Schriftgröße richtig? Bricht Safari?”
+
+Danach kann der Mensch wieder das tun, was Menschen besser können: entscheiden, ob das UI wirklich gut ist.
+
+## Quellen
+
+- [The Workflow Is the Product: Building Specialized Pipelines for Coding Agents — WyeWorks](https://www.wyeworks.com/blog/2026/05/13/custom-agentic-workflows-for-coding-agents/)

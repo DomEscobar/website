@@ -1,0 +1,310 @@
+---
+title: "Ich habe aus Versehen eine kleine KI-Firma auf einem VPS gebaut"
+description: "Ein ehrlicher Field Note über mein privates Agenten-Setup: Telegram als Control Plane, Docker als Maschinenraum und AI Agents, die echte Arbeit machen — inklusive RAM-Leaks, kaputten Crons und Browser-Watchdogs."
+language: "de"
+slug: "kleine-ki-firma-vps"
+canonicalSlug: "tiny-ai-company-vps"
+publishedAt: "2026-05-13"
+updatedAt: "2026-05-13"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "OpenClaw", "VPS", "Automation", "Docker", "Engineering"]
+topic: "AI-first Engineering"
+summary: "Ich wollte einen nützlichen Telegram-Agenten. Entstanden ist ein kleines Agenten-Betriebssystem auf einem VPS: mit Browsern, Docker, Crons, Watchdogs, Memory und echten Projekten."
+heroImage: "/dominic-h.png"
+draft: true
+featured: true
+faqs:
+  - question: "Ist das ein fertiges Produkt oder ein persönliches Setup?"
+    answer: "Es ist ein persönliches, produktives Agenten-Setup: mehrere Projekte, Container, Browser-Automationen, Crons und ein Telegram-Interface auf einem VPS."
+  - question: "Was ist die wichtigste Lektion?"
+    answer: "AI Agents sind weniger Magie als Betrieb. Du brauchst Limits, Logs, Cleanup, Watchdogs, klare Zuständigkeiten und einen Menschen im Loop."
+  - question: "Warum Telegram als Interface?"
+    answer: "Weil es schnell, mobil und direkt ist. Für ein persönliches Agenten-OS ist Chat oft die praktischste Control Plane."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## Der Server brannte nicht. Aber er roch komisch.
+
+Neulich war mein VPS plötzlich dicht.
+
+Nicht wegen Kubernetes. Nicht wegen einem Enterprise-Monolithen. Nicht wegen irgendeiner genial komplizierten Microservice-Architektur.
+
+Sondern weil meine kleine Flotte aus AI Agents beschlossen hatte, gleichzeitig produktiv zu sein.
+
+Ein Agent hielt zu viele Browser-Prozesse offen. Ein anderer hing in Chromium. Ein alter Cronjob lief alle 15 Minuten ins Nichts. Dazu ein AI-Influencer, ein Immobilien-Scout, ein Leadgen-Board, ein Blog-Research-Workflow und mehrere Docker-Container, die alle so taten, als wäre das völlig normal.
+
+Ich schrieb in Telegram ungefähr: **scan mal.**
+
+Der Agent schaute in Prozesse, Docker Stats, Logs, Crons und Browser-Debug-Ports. Danach wurden Container neu gebaut, Browser-Watchdogs eingebaut, kaputte Crons entfernt und RAM-Limits gesetzt.
+
+Das war der Moment, in dem ich gemerkt habe:
+
+> Ich habe mir nicht nur einen Chatbot gebaut.
+> Ich habe aus Versehen eine kleine KI-Firma auf einem VPS gebaut.
+
+## Die Architektur in einem Bild
+
+<FlowGraphic
+  title="Mein kleines Agenten-OS"
+  steps={['Telegram', 'OpenClaw', 'Tools + Memory', 'Docker + Browser', 'echte Projekte']}
+/>
+
+Die Idee ist simpel:
+
+- **Telegram** ist die Control Plane.
+- **OpenClaw** ist der Agent-Kernel.
+- **Docker** ist der Maschinenraum.
+- **Browser/CDP** ist die Hand ins Web.
+- **Memory, Logs und Crons** sind das Nervensystem.
+- **Ich** bleibe der Mensch, der entscheidet, wenn es riskant wird.
+
+Das klingt fancy. In der Praxis sieht es oft so aus:
+
+```txt
+ich: kill den legacy cron
+agent: prüft crontab, logs, script-existenz
+agent: entfernt nur die betroffenen jobs
+agent: speichert backup
+agent: meldet kurz zurück
+```
+
+Das ist unspektakulär. Genau deshalb ist es nützlich.
+
+## Was gerade alles auf dem VPS lebt
+
+<MetricStrip
+  items={[
+    { label: 'OpenClaw Crons', value: '4' },
+    { label: 'große Agent-Projekte', value: '4+' },
+    { label: 'Browser-Agenten', value: 'mehrere' },
+    { label: 'Interface', value: 'Telegram' },
+  ]}
+/>
+
+Die wichtigsten Teile:
+
+### Mila: AI-Influencerin mit eigenem Maschinenraum
+
+Mila ist kein einzelner Prompt. Sie hat ein kleines Creator-System:
+
+- Trend- und Account-Recherche
+- Drafts
+- Research Store
+- Instagram-Browser
+- Bild-/Video-Pipeline
+- Dashboard
+- Watchdog gegen hängende Browser
+
+Der spannende Teil ist nicht, dass ein Modell Captions schreiben kann. Der spannende Teil ist alles drumherum: Wann recherchiert sie? Welche Browser-Tabs bleiben offen? Wann ist ein Trend alt? Was passiert, wenn Chromium hängt?
+
+### Rawen: persönlicher Research- und Web-Agent
+
+Rawen ist eher ein Operator-Agent:
+
+- Web-Recherche
+- Property-/Immobilien-Workflows
+- Browser-Steuerung
+- Telegram/Web-Interface
+- OpenClaw-Brücke
+
+Rawen hatte zwischendurch ein sehr echtes Agentenproblem: **nicht „zu wenig Intelligenz“, sondern zu viele Browserprozesse.**
+
+Der Fix war nicht ein besserer Prompt. Der Fix war Betrieb:
+
+- Browser leichter starten
+- GPU/WebGL-Risiken entfernen
+- CDP Health prüfen
+- bei kaputtem Browser neu starten
+- am Ende Tabs aufräumen
+- RAM und CPU begrenzen
+
+### NexBoard: Leadgen als echtes kleines Produkt
+
+NexBoard ist ein öffentlich deploytes Lead-Discovery-Board.
+
+Es kann Jobbörsen durchsuchen, Leads importieren, Enrichment ausführen und daraus Sales-Ansätze bauen. Nicht als Mockup, sondern als laufender Service mit Backend, Frontend und Datenbank.
+
+### huecki: Content Research und Blog-Pipeline
+
+Mein eigener Blog hängt auch dran.
+
+Der Agent sammelt Ideen, bewertet sie und kann daraus Entwürfe machen. Genau dieser Artikel ist ein Beispiel: nicht „generiere mir Content aus Luft“, sondern **nimm mein echtes Setup, echte Incidents und echte Learnings — und mach daraus einen Field Note.**
+
+## Der wichtigste Shift: Agents sind Ops
+
+Viele AI-Agent-Demos sehen so aus:
+
+```txt
+Prompt rein → Magie raus
+```
+
+Mein echtes Setup sieht eher so aus:
+
+```txt
+Prompt rein
+→ Tool Call
+→ Browser hängt
+→ Watchdog greift
+→ Docker Stats prüfen
+→ Cron war legacy
+→ Memory aktualisieren
+→ Mensch bekommt Kurzfassung
+```
+
+<CompareGrid
+  title="Demo-Agent vs. echter Agent"
+  leftLabel="Demo"
+  rightLabel="Produktion auf einem VPS"
+  rows={[
+    { left: 'Ein sauberer Beispiel-Task.', right: 'Viele kleine, schmutzige Aufgaben.' },
+    { left: 'Browser öffnet eine Seite.', right: 'Browser bleibt hängen, braucht Cleanup und Restart.' },
+    { left: 'Prompt ist der Hauptteil.', right: 'Limits, Logs, Memory und Watchdogs sind der Hauptteil.' },
+    { left: 'Alles läuft einmal.', right: 'Alles muss morgen auch noch laufen.' },
+  ]}
+/>
+
+Das ist für mich die eigentliche Erkenntnis:
+
+> Die Zukunft von AI Agents fühlt sich nicht an wie ein einzelner Super-Assistent.
+> Sie fühlt sich an wie DevOps für kleine digitale Mitarbeiter.
+
+## Die hässlichen Details sind das Produkt
+
+Ein Agent, der echte Dinge macht, braucht langweilige Infrastruktur:
+
+<KeyPoints
+  title="Was jeder produktive Agent braucht"
+  items={[
+    'ein klares Ressourcenbudget: CPU, RAM, Laufzeit, Tokens',
+    'einen Kill-Switch für Browser, Crons und externe Aktionen',
+    'Memory, aber nicht als magische Seele — eher als Logbuch und Entscheidungsspeicher',
+    'saubere Tool-Grenzen: lesen, patchen, starten, messen',
+    'Observability: Logs, Docker Stats, Health Checks, Run-Historie',
+    'einen Menschen im Loop für riskante oder öffentliche Aktionen',
+  ]}
+/>
+
+Die lustige Wahrheit: Die meisten Probleme waren nicht „KI kann das nicht“.
+
+Die Probleme waren:
+
+- ein alter Cron schreibt alle 15 Minuten Fehler
+- Chromium frisst RAM
+- CDP antwortet nicht mehr
+- ein Container hat kein Memory-Limit
+- ein Browser-Agent räumt Tabs nicht auf
+- ein Workflow ist eigentlich Legacy, läuft aber weiter
+
+Also genau die Art Probleme, die Software schon immer hatte.
+
+Nur jetzt heißen die Prozesse nicht mehr nur `node` oder `chromium`, sondern „mein Immobilien-Agent“, „mein Creator-Agent“ oder „mein Research-Agent“.
+
+## Mein aktueller Control-Plane-Stack
+
+<FlowGraphic
+  title="Von Nachricht zu Aktion"
+  steps={['Telegram-Nachricht', 'Agent prüft Kontext', 'Tool-Ausführung', 'Verifikation', 'kurze Rückmeldung']}
+/>
+
+Beispielhafte Aufgaben, die ich über Chat anstoße:
+
+- „fahr den Container wieder hoch“
+- „warum frisst der so viel RAM?“
+- „kill den Legacy-Cron“
+- „patch das analog“
+- „prüf CPU/RAM/CDP nach Restart“
+- „schreib daraus einen Blogpost“
+
+Das ist nicht perfekt. Aber es fühlt sich wie ein neues Interface für meinen Server an.
+
+Nicht SSH-first. Nicht Dashboard-first.
+
+**Intent-first.**
+
+## Was ich anders machen würde
+
+<DoDont
+  title="Regeln für private Agenten-Systeme"
+  doLabel="Machen"
+  dontLabel="Lassen"
+  doItems={[
+    'jeden Agenten mit CPU/RAM/Timeout-Limits starten',
+    'Browser-Agenten immer mit Cleanup und Health Check bauen',
+    'Crons regelmäßig ausmisten',
+    'öffentliche Aktionen explizit freigeben lassen',
+    'wichtige Entscheidungen in Memory/Logs schreiben',
+  ]}
+  dontItems={[
+    'Agenten unbegrenzt Browser öffnen lassen',
+    'alte Automationen vergessen',
+    'alles als einen Super-Agenten bauen',
+    'Secrets, Ports oder private IDs in Blogposts posten',
+    'Autonomie mit fehlender Kontrolle verwechseln',
+  ]}
+/>
+
+Wenn du so etwas baust, fang nicht mit „Autonomie“ an.
+
+Fang mit **Betrieb** an:
+
+```txt
+Kann ich sehen, was passiert?
+Kann ich es stoppen?
+Kann ich es neu starten?
+Kann ich nachvollziehen, warum es etwas getan hat?
+Kann ich verhindern, dass es morgen meinen VPS grillt?
+```
+
+Wenn die Antwort ja ist, darf der Agent mehr Verantwortung bekommen.
+
+## Der eigentliche Punkt
+
+Ich glaube nicht, dass die spannende Agenten-Zukunft aus einem einzigen allwissenden Super-Agent besteht.
+
+Ich glaube eher an kleine, begrenzte, überwachte Agenten:
+
+- einer für Research
+- einer für Content
+- einer für Operations
+- einer für Leadgen
+- einer für Monitoring
+- einer für persönliche Workflows
+
+Jeder ein bisschen dumm. Jeder mit klaren Werkzeugen. Jeder mit Limits.
+
+Zusammen fühlt es sich plötzlich an wie ein kleines Team.
+
+Nicht perfekt. Nicht sauber. Nicht VC-Demo-glatt.
+
+Aber echt.
+
+Und vielleicht ist genau das der Unterschied zwischen „AI Agent Demo“ und „AI Agent, der wirklich in meinem Alltag lebt“.
+
+## Kurzfassung
+
+<KeyPoints
+  title="Was ich gelernt habe"
+  items={[
+    'Ein Agent ist erst nützlich, wenn er echte Systeme bedienen darf.',
+    'Sobald er echte Systeme bedient, wird Ops wichtiger als Prompting.',
+    'Browser-Automation braucht Watchdogs, sonst wird sie irgendwann Zombie-Automation.',
+    'Jeder Cron wird irgendwann Legacy.',
+    'Telegram ist ein erstaunlich gutes Interface für ein persönliches Agenten-OS.',
+    'Die besten Agenten sind keine Magier. Sie sind kleine Operator mit klaren Grenzen.',
+  ]}
+/>
+
+Ich wollte eigentlich nur einen besseren Assistenten.
+
+Jetzt habe ich einen kleinen Maschinenraum auf einem VPS.
+
+Und manchmal schreibt er mir zurück, dass er gerade den Maschinenraum repariert hat.
+
+Das ist ziemlich weird.
+
+Aber auch ziemlich nah an der Zukunft, die ich mir vorgestellt habe.

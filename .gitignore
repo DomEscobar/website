@@ -48,3 +48,8 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# Agent Buildprint local/preview artifacts
+.project.buildprint/
+.dockerignore.agent-buildprint
+Dockerfile.agent-buildprint-preview

@@ -1,0 +1,41 @@
+{"url":"https://agents.md/","title":"AGENTS.md open format","type":"primary","priority":"high"}
+{"url":"https://github.com/openai/codex/blob/main/docs/config.md","title":"OpenAI Codex config docs","type":"primary","priority":"high"}
+{"url":"https://github.com/openai/codex/blob/main/docs/advanced.md","title":"OpenAI Codex advanced docs","type":"primary","priority":"high"}
+{"url":"https://docs.anthropic.com/en/docs/claude-code/memory","title":"Claude Code memory docs","type":"primary","priority":"high"}
+{"url":"https://docs.anthropic.com/en/docs/claude-code/settings","title":"Claude Code settings docs","type":"primary","priority":"high"}
+{"url":"https://docs.anthropic.com/en/docs/claude-code/hooks","title":"Claude Code hooks docs","type":"primary","priority":"high"}
+{"url":"https://docs.anthropic.com/en/docs/claude-code/sub-agents","title":"Claude Code subagents docs","type":"primary","priority":"high"}
+{"url":"https://docs.anthropic.com/en/docs/claude-code/skills","title":"Claude Code skills docs","type":"primary","priority":"high"}
+{"url":"https://www.anthropic.com/engineering/building-effective-agents","title":"Anthropic building effective agents","type":"primary","priority":"high"}
+{"url":"https://modelcontextprotocol.io/introduction","title":"Model Context Protocol introduction","type":"primary","priority":"high"}
+{"url":"https://owasp.org/www-project-top-10-for-large-language-model-applications/","title":"OWASP Top 10 for LLM Applications","type":"primary","priority":"high"}
+{"url":"https://docs.cursor.com/context/rules","title":"Cursor rules docs","type":"primary","priority":"medium"}
+{"url":"https://docs.windsurf.com/windsurf/cascade/memories","title":"Windsurf memories docs","type":"primary","priority":"medium"}
+{"url":"https://docs.windsurf.com/windsurf/cascade/rules","title":"Windsurf rules docs","type":"primary","priority":"medium"}
+{"url":"https://www.promptfoo.dev/docs/intro/","title":"promptfoo docs","type":"primary","priority":"medium"}
+{"url":"https://github.com/SWE-bench/SWE-bench","title":"SWE-bench repo","type":"primary","priority":"medium"}
+{"url":"https://www.swebench.com/","title":"SWE-bench site","type":"primary","priority":"medium"}
+{"url": "https://raw.githubusercontent.com/openai/codex/main/docs/config.md", "title": "OpenAI Codex config raw", "type": "primary", "priority": "high"}
+{"url": "https://raw.githubusercontent.com/openai/codex/main/docs/advanced.md", "title": "OpenAI Codex advanced raw", "type": "primary", "priority": "high"}
+{"url": "https://raw.githubusercontent.com/openai/agents.md/main/README.md", "title": "AGENTS.md GitHub README", "type": "primary", "priority": "high"}
+{"url": "https://github.blog/ai-and-ml/github-copilot/how-to-use-github-copilot-in-your-ide-tips-tricks-and-best-practices/", "title": "GitHub Copilot best practices", "type": "secondary", "priority": "medium"}
+{"url": "https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot", "title": "GitHub Copilot repository custom instructions", "type": "primary", "priority": "high"}
+{"url": "https://docs.github.com/en/copilot/customizing-copilot/adding-personal-custom-instructions-for-github-copilot", "title": "GitHub Copilot personal custom instructions", "type": "primary", "priority": "medium"}
+{"url": "https://docs.cursor.com/context/@-symbols/basic", "title": "Cursor context @ symbols", "type": "primary", "priority": "medium"}
+{"url": "https://docs.cursor.com/context/memories", "title": "Cursor memories", "type": "primary", "priority": "medium"}
+{"url": "https://docs.windsurf.com/windsurf/cascade/skills", "title": "Windsurf skills docs", "type": "primary", "priority": "medium"}
+{"url": "https://docs.windsurf.com/windsurf/cascade/workflows", "title": "Windsurf workflows docs", "type": "primary", "priority": "medium"}
+{"url": "https://google-gemini.github.io/gemini-cli/docs/cli/configuration.html", "title": "Gemini CLI configuration", "type": "primary", "priority": "medium"}
+{"url": "https://google-gemini.github.io/gemini-cli/docs/cli/commands.html", "title": "Gemini CLI commands", "type": "primary", "priority": "medium"}
+{"url": "https://aider.chat/docs/usage/conventions.html", "title": "Aider conventions docs", "type": "primary", "priority": "medium"}
+{"url": "https://aider.chat/docs/usage/watch.html", "title": "Aider watch mode docs", "type": "primary", "priority": "low"}
+{"url": "https://opencode.ai/docs/agents/", "title": "opencode agents docs", "type": "primary", "priority": "medium"}
+{"url": "https://opencode.ai/docs/config/", "title": "opencode config docs", "type": "primary", "priority": "medium"}
+{"url": "https://docs.anthropic.com/en/docs/claude-code/common-workflows", "title": "Claude Code common workflows", "type": "primary", "priority": "medium"}
+{"url": "https://docs.anthropic.com/en/docs/claude-code/best-practices", "title": "Claude Code best practices", "type": "primary", "priority": "medium"}
+{"url": "https://docs.anthropic.com/en/docs/claude-code/permissions", "title": "Claude Code permissions", "type": "primary", "priority": "high"}
+{"url": "https://docs.anthropic.com/en/docs/claude-code/testing", "title": "Claude Code testing", "type": "primary", "priority": "medium"}
+{"url": "https://www.promptfoo.dev/docs/configuration/expected-outputs/", "title": "promptfoo assertions expected outputs", "type": "primary", "priority": "medium"}
+{"url": "https://www.promptfoo.dev/docs/red-team/", "title": "promptfoo red team", "type": "primary", "priority": "medium"}
+{"url": "https://github.com/microsoft/ai-agents-for-beginners", "title": "Microsoft AI Agents for Beginners", "type": "primary", "priority": "low"}
+{"url": "https://www.nist.gov/itl/ai-risk-management-framework", "title": "NIST AI RMF", "type": "primary", "priority": "medium"}

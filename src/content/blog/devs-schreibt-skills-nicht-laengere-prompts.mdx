@@ -1,0 +1,291 @@
+---
+title: "Devs: Schreibt Skills, nicht längere Prompts"
+description: "Warum Entwickler für KI-Agenten nicht immer größere Prompts schreiben sollten — sondern kleine Skills, die Aufmerksamkeit, Kontext und Verifikation steuern."
+language: "de"
+slug: "devs-schreibt-skills-nicht-laengere-prompts"
+canonicalSlug: "devs-write-skills-not-longer-prompts"
+publishedAt: "2026-05-18"
+updatedAt: "2026-05-18"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Skills", "Prompt Engineering", "Context Engineering", "Developer Workflow"]
+topic: "AI-first Engineering"
+summary: "Wenn dein Agent unzuverlässig wird, brauchst du meistens keinen noch längeren Prompt. Du brauchst Skills: kleine, wartbare Arbeitsanweisungen mit Kontext, Tool-Regeln und Verifikations-Gates."
+heroImage: "/dominic-h.png"
+draft: true
+featured: false
+faqs:
+  - question: "Was ist ein Skill für KI-Agenten?"
+    answer: "Ein Skill ist eine kleine, wiederverwendbare Arbeitsanweisung für eine bestimmte Aufgabe: wann er genutzt wird, welche Schritte zählen, welche Tools erlaubt sind und wie das Ergebnis geprüft wird."
+  - question: "Warum sind Skills besser als lange Prompts?"
+    answer: "Lange Prompts verbrauchen Kontext und buryen wichtige Regeln. Skills sind kleiner, gezielter, leichter testbar und werden nur geladen, wenn sie zur Aufgabe passen."
+  - question: "Wie starte ich als Entwickler?"
+    answer: "Nimm einen wiederkehrenden Workflow — Code Review, Release, Debugging, Research — und schreibe einen Skill mit Trigger, Inputs, Prozess, Stop-Regeln und Verifikation."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## Die kurze Version
+
+Wenn dein Coding Agent Mist baut, ist die erste Reaktion oft:
+
+> „Dann schreibe ich halt einen besseren Prompt.“
+
+Und dann wächst der Prompt. Mehr Regeln. Mehr Ausnahmen. Mehr „Bitte wirklich beachten“. Mehr Bulletpoints, die irgendwo in der Mitte verschwinden.
+
+Das Problem: Ein Sprachmodell liest nicht wie ein Mensch mit Gewissen. Es arbeitet über Tokens, Attention und ein begrenztes Context Window. Ein langer Prompt ist nicht automatisch eine bessere Steuerung. Oft ist er nur ein größerer Raum, in dem die wichtigste Regel verloren geht.
+
+Für Entwickler ist die bessere Abstraktion: **Skills statt Mega-Prompts.**
+
+<MetricStrip
+  metrics={[
+    { value: '1', label: 'Skill pro wiederholbarem Workflow' },
+    { value: '3', label: 'Dinge: Trigger, Prozess, Check' },
+    { value: '0', label: 'Vertrauen in “wird schon passen”' },
+  ]}
+/>
+
+## Warum das technisch Sinn macht
+
+Transformer-Modelle routen Information über Attention: Jeder Token entscheidet, welche anderen Tokens gerade wichtig sind. Volle Attention ist mächtig, aber teuer — und bei langen Kontexten nicht perfekt.
+
+Die Forschung zeigt zwei Dinge, die jeder Entwickler beim Prompten kennen sollte:
+
+1. **Context Window ist Input-Budget, kein echtes Gedächtnis.** Nur weil ein Modell 100k Tokens annehmen kann, heißt das nicht, dass es jeden Satz zuverlässig benutzt.
+2. **Wichtige Infos können im langen Kontext untergehen.** In „Lost in the Middle“ schneiden Modelle oft besser ab, wenn relevante Informationen am Anfang oder Ende stehen — und schlechter, wenn sie in der Mitte begraben sind.
+
+Das heißt praktisch:
+
+```txt
+mehr Prompt ≠ mehr Kontrolle
+mehr Kontext ≠ mehr Verständnis
+mehr Regeln ≠ mehr Verlässlichkeit
+```
+
+Ein Skill löst das nicht magisch. Aber er macht die Steuerung kleiner, lokaler und testbarer.
+
+<CompareGrid
+  title="Prompt vs. Skill"
+  leftLabel="Mega-Prompt"
+  rightLabel="Skill"
+  rows={[
+    { left: 'Eine riesige Anleitung für alles.', right: 'Eine kleine Anleitung für einen Workflow.' },
+    { left: 'Regeln stehen irgendwo im Kontext.', right: 'Trigger und Stop-Regeln sind explizit.' },
+    { left: 'Schwer zu testen.', right: 'Mit Beispielen und Evals prüfbar.' },
+    { left: 'Wächst mit jeder Ausnahme.', right: 'Neue Aufgabe = neuer oder angepasster Skill.' },
+  ]}
+/>
+
+## Was ist ein Skill?
+
+Ein Skill ist kein magischer Prompt. Ein Skill ist eher wie eine kleine interne Developer-Doku, die ein Agent wirklich benutzen kann.
+
+```txt
+Skill =
+  wann benutzen?
++ was ist der Input?
++ welche Schritte sind Pflicht?
++ welche Tools/Dateien sind erlaubt?
++ wann muss der Agent stoppen oder fragen?
++ wie wird das Ergebnis verifiziert?
+```
+
+Für Menschen klingt das banal. Für Agenten ist es der Unterschied zwischen „mach mal Code Review“ und einem wiederholbaren Arbeitsablauf.
+
+<FlowGraphic
+  title="Wie ein Skill den Agenten führt"
+  steps={['Trigger erkennen', 'Kontext klein halten', 'Workflow ausführen', 'Risiken stoppen', 'Ergebnis verifizieren']}
+/>
+
+## Beispiel: aus Prompt wird Skill
+
+Schlechter Prompt:
+
+```txt
+Review bitte den Code gründlich, achte auf Bugs, Sicherheit,
+Performance, Style, Tests und sag mir alles Wichtige.
+```
+
+Besserer Skill:
+
+```md
+# Code Review Skill
+
+Use when: user asks for review, PR feedback, risky diff, or regression check.
+
+Inputs:
+- changed files
+- test output if available
+- project rules / AGENTS.md
+
+Process:
+1. Read the diff before judging.
+2. Identify correctness bugs first.
+3. Check security/privacy risks.
+4. Check missing tests or broken contracts.
+5. Only then mention style or cleanup.
+
+Rules:
+- Do not request broad rewrites unless necessary.
+- Do not flag speculative issues as facts.
+- Cite file + line for every finding.
+
+Output:
+- Critical findings first
+- Then medium/low findings
+- Then “no issue found” only if verified
+
+Verification:
+- Mention which files were inspected.
+- Mention which tests/builds were run or why not.
+```
+
+Der zweite Text ist nicht nur länger. Er hat eine andere Form: Trigger, Inputs, Prozess, Regeln, Output, Verification. Das ist näher an Software als an Copywriting.
+
+## Warum gerade Entwickler Skills schreiben sollten
+
+Entwickler verstehen schon, wie man Systeme robust macht:
+
+- kleine Module statt God Object
+- Tests statt Hoffnung
+- Interfaces statt impliziter Absprachen
+- Linting statt „bitte sauber schreiben“
+- CI statt manuellem Bauchgefühl
+
+Skills sind genau dieser Shift für Agenten.
+
+<KeyPoints
+  title="Ein guter Skill ist Developer-Denken für Agenten"
+  items={[
+    'Er kapselt einen wiederholbaren Workflow.',
+    'Er reduziert irrelevanten Kontext.',
+    'Er sagt dem Agenten, wann er stoppen soll.',
+    'Er macht Verifikation zur Pflicht.',
+    'Er kann versioniert, reviewed und evaluiert werden.',
+  ]}
+/>
+
+## Wann du einen Skill schreiben solltest
+
+Schreib keinen Skill für jede Kleinigkeit. Schreib einen Skill, wenn ein Workflow wiederkommt oder teuer schiefgehen kann.
+
+Gute Kandidaten:
+
+- Code Review
+- Debugging
+- Release / Deployment
+- Security Review
+- Datenmigration
+- Research mit Quellenpflicht
+- UI QA / Screenshot Review
+- Writing Style für ein Produkt
+- Support-Antworten mit Policies
+- Refactoring mit Grenzen
+
+<DoDont
+  title="Skill-Design"
+  doLabel="Machen"
+  dontLabel="Lassen"
+  doItems={[
+    'einen klaren Trigger definieren',
+    'Pflichtschritte in Reihenfolge schreiben',
+    'riskante Aktionen markieren',
+    'Verifikation und Output-Format festlegen',
+    'Beispiele für gute/schlechte Outputs geben',
+  ]}
+  dontItems={[
+    'alles in einen globalen Prompt packen',
+    '20 Workflows in einen Skill stopfen',
+    'Regeln ohne Check formulieren',
+    'Agenten blind “mach einfach” sagen',
+    'lange Kontext-Dumps als Steuerung verwechseln',
+  ]}
+/>
+
+## Die Skill-Template, die du klauen kannst
+
+```md
+# <Skill Name>
+
+## Use when
+- <Trigger 1>
+- <Trigger 2>
+
+## Do not use when
+- <Out-of-scope case>
+- <Risky case that needs human approval>
+
+## Inputs
+- <Required input>
+- <Optional input>
+
+## Workflow
+1. <First step>
+2. <Second step>
+3. <Third step>
+
+## Rules
+- <Hard constraint>
+- <Tool/file permission>
+- <Escalation rule>
+
+## Output format
+Return:
+1. <section>
+2. <section>
+3. <section>
+
+## Verification
+Before final answer:
+- <test/check/source>
+- <evidence to report>
+
+## Examples
+Good:
+<short good output>
+
+Bad:
+<short bad output and why>
+```
+
+## Der eigentliche Mindset-Shift
+
+Prompt Engineering war Phase 1: Menschen lernen, wie sie mit Modellen sprechen.
+
+Context Engineering ist Phase 2: Teams lernen, welche Informationen, Tools und Regeln ins Modellfenster gehören.
+
+Skill Engineering ist Phase 3: Entwickler bauen kleine Arbeitsmodule, damit Agenten nicht jedes Mal neu raten müssen, wie ein Workflow funktioniert.
+
+```txt
+Prompt: Bitte mach X.
+Context: Hier ist alles, was du für X brauchst.
+Skill: So wird X in diesem Team korrekt erledigt.
+```
+
+Das ist der Punkt: Skills sind nicht nur bessere Prompts. Skills sind **Betriebswissen in ausführbarer Form**.
+
+## Quellen / weiter lesen
+
+- Vaswani et al.: [Attention Is All You Need](https://arxiv.org/abs/1706.03762)
+- Beltagy et al.: [Longformer: The Long-Document Transformer](https://arxiv.org/abs/2004.05150)
+- Liu et al.: [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)
+- Hsieh et al.: [RULER: What’s the Real Context Size of Your Long-Context Language Models?](https://arxiv.org/abs/2404.06654)
+- Schulhoff et al.: [The Prompt Report](https://arxiv.org/abs/2406.06608)
+- Khattab et al.: [DSPy](https://arxiv.org/abs/2310.03714)
+
+## Takeaway
+
+Wenn du heute mit Coding Agents arbeitest, frag nicht nur:
+
+> „Wie schreibe ich bessere Prompts?“
+
+Frag:
+
+> „Welche wiederholbaren Workflows meines Teams verdienen einen Skill?“
+
+Denn der Agent braucht nicht noch einen Roman im Kontextfenster.
+
+Er braucht eine kleine, klare Arbeitsweise, die er zur richtigen Zeit laden kann.
