@@ -1,0 +1,301 @@
+---
+title: "Agent harnesses should be specs, not hidden glue code"
+description: "A field note on Natural-Language Agent Harnesses: why the policy around an agent should be inspectable, editable, ablatable, and executed by a runtime instead of buried in controller code."
+language: "en"
+slug: "natural-language-agent-harnesses"
+canonicalSlug: "natural-language-agent-harnesses"
+publishedAt: "2026-05-24"
+updatedAt: "2026-05-24"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "AI Agents", "Agent Harness", "Evals", "Developer Workflow"]
+topic: "AI-first Engineering"
+summary: "Natural-Language Agent Harnesses give a useful name to an important shift: the agent policy should be an inspectable document that a runtime executes, not invisible glue hidden inside controller code."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is a Natural-Language Agent Harness?"
+    answer: "A Natural-Language Agent Harness is an editable natural-language document that describes run-level agent policy: task contracts, stages, tools, handoffs, state updates, validation gates, and artifact requirements."
+  - question: "Why not just keep harness logic in code?"
+    answer: "Code can enforce the runtime, but burying policy in controller glue makes the harness harder to inspect, compare, transfer, and ablate. A spec-like harness makes the policy layer visible."
+  - question: "What is the practical lesson for agent builders?"
+    answer: "Write the agent harness as a short, testable policy document first, then let code enforce it. Keep state, evidence, acceptance gates, and recovery rules explicit."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+
+Most agent failures are not model failures.
+
+They are harness failures wearing a model mask.
+
+The agent skipped the real check. The handoff lost state. The recovery path was improvised. The acceptance criteria lived in someone’s head. The tool policy was hidden inside controller code that nobody reviews as product behavior.
+
+So the team blames the model.
+
+But the model was only one part of the system.
+
+A new paper, [**Natural-Language Agent Harnesses**](https://arxiv.org/html/2603.25723v2), gives a useful name to the missing layer: the policy around an agent should be represented as an editable natural-language object, then executed by a runtime.
+
+That sounds abstract.
+
+The practical version is simple:
+
+> Your agent harness should be inspectable like a spec, not hidden in controller glue code.
+
+## The short version
+
+The paper’s claim is not that prompts are magic programs.
+
+The useful claim is narrower and better:
+
+A lot of agent behavior comes from the surrounding harness: task contracts, stages, tools, handoffs, state, validation gates, and artifact rules. Today, that logic is often buried in one-off controller code or scattered prompts.
+
+Natural-Language Agent Harnesses, or NLAHs, pull that policy into an explicit document.
+
+<FlowGraphic
+  title="From hidden controller to explicit harness"
+  note="the runtime still executes; the policy becomes visible"
+  steps={['Task intent', 'Harness policy document', 'Runtime interpretation', 'Tool calls and handoffs', 'State updates', 'Validation gates', 'Accepted artifact']}
+/>
+
+The split matters:
+
+```txt
+Harness policy: what should happen
+Runtime: how it is executed
+Model: the reasoning engine inside each step
+Tools: the outside-world actions
+Evidence: what proves the run is done
+```
+
+When those pieces are mixed together, the agent is hard to debug.
+
+When they are separated, the harness becomes something you can inspect, compare, transfer, and test.
+
+## The hidden layer around every agent
+
+An agent is never just a model.
+
+Even the simplest agent has a harness, whether the team admits it or not.
+
+<KeyPoints
+  title="What the harness quietly decides"
+  items={[
+    'What counts as the task contract.',
+    'Which tools the model can use, and when.',
+    'Where state is stored between steps.',
+    'How failures are recovered from.',
+    'What evidence is required before completion.',
+    'When another agent or human receives a handoff.',
+  ]}
+/>
+
+If that policy lives inside ad hoc code, the system may still work.
+
+But the important behavior becomes hard to see.
+
+A reviewer can inspect the prompt and miss the actual control policy. A benchmark can compare models and accidentally compare harnesses. A team can “improve the agent” by adding branches while making the acceptance discipline weaker.
+
+That is why the paper’s language is useful. It makes the harness a first-class object.
+
+Not vibes.
+
+Not incidental glue.
+
+An object.
+
+## Natural language is useful at the policy layer
+
+There is an easy wrong reaction here:
+
+“Natural language is ambiguous, therefore harnesses should be code.”
+
+Code should absolutely enforce dangerous edges: permissions, sandboxes, schemas, validators, approvals, logging, retries, and artifact checks.
+
+But the policy layer is different.
+
+The policy layer often needs to say things like:
+
+```txt
+First establish the task contract.
+Do not start implementation until the acceptance evidence is named.
+If a tool result contradicts the plan, update state before continuing.
+Handoff must include the current artifact, known blockers, and the exact next check.
+Completion requires the benchmark gate or an explicit proof gap.
+```
+
+Those are not just implementation details. They are operating rules.
+
+Natural language is a good medium for them because humans can review it, agents can follow it, and evaluators can ask whether a run preserved it.
+
+The point is not to replace code with prose.
+
+The point is to stop hiding policy in places where nobody can reason about it.
+
+<CompareGrid
+  title="Controller glue vs. harness spec"
+  leftLabel="Hidden controller glue"
+  rightLabel="Explicit harness spec"
+  rows={[
+    { left: 'Behavior is scattered across code paths and prompt fragments.', right: 'Run policy is visible in one editable document.' },
+    { left: 'Hard to know which rule caused the behavior.', right: 'Rules can be inspected, changed, and reviewed.' },
+    { left: 'Benchmark results may measure accidental scaffold choices.', right: 'Harness variants can be compared deliberately.' },
+    { left: 'Ablation means rewriting code.', right: 'Modules can be removed or swapped for evaluation.' },
+    { left: 'Handoffs depend on whatever the controller remembered.', right: 'Handoff contract can require state, blockers, artifact, and next check.' },
+  ]}
+/>
+
+## The strongest lesson: state and acceptance beat extra branching
+
+The paper’s result section has one especially practical lesson: the strongest harness modules are the ones that tighten state and acceptance discipline.
+
+That matches what you see in real agent work.
+
+More branches do not automatically create more control.
+
+Sometimes they create more places to hide uncertainty.
+
+```txt
+Weak control:
+If A, do B.
+If C, do D.
+If confused, try another route.
+
+Strong control:
+State what is known.
+State what evidence is missing.
+Choose the next action.
+Update durable state.
+Do not accept without the required gate.
+```
+
+A reliable agent does not need infinite procedural cleverness.
+
+It needs fewer ways to silently pretend that the task is done.
+
+This is the core difference between agent theater and agent operations.
+
+Agent theater adds more “thinking” steps.
+
+Agent operations adds sharper state, evidence, permissions, and acceptance contracts.
+
+## The handoff problem is still real
+
+The paper also names a weakness: handoff remains hard.
+
+That is worth underlining because many multi-agent demos handwave it.
+
+A handoff is not “Agent A sends a summary to Agent B.”
+
+A real handoff needs enough structure that the next worker can continue without reconstructing the universe.
+
+A useful handoff should include:
+
+```txt
+- task contract
+- current artifact
+- current state
+- decisions already made
+- evidence already collected
+- known blockers
+- next smallest check
+- acceptance gate still required
+```
+
+Without that, multi-agent systems become lossy telephone games with tool access.
+
+The model may sound confident, but the harness has dropped the state.
+
+## What builders should steal
+
+The paper’s best contribution is not a new buzzword. It is a design posture.
+
+Write the harness like something you expect to debug.
+
+<DoDont
+  title="Practical harness rules"
+  doLabel="Do"
+  dontLabel="Don’t"
+  doItems={[
+    'Start with the task contract and acceptance evidence.',
+    'Separate stages from mechanisms: plan, execute, verify, recover, handoff.',
+    'Make state updates explicit and durable.',
+    'Write module boundaries so they can be ablated.',
+    'Keep the language simple enough that a failed run can be judged against it.',
+  ]}
+  dontItems={[
+    'Hide policy inside controller branches no one reviews.',
+    'Treat a longer prompt as a substitute for validation gates.',
+    'Add branching when the real problem is weak acceptance discipline.',
+    'Let handoffs be free-form summaries.',
+    'Call a benchmark result “model performance” when the harness changed too.',
+  ]}
+/>
+
+A minimal natural-language harness for a coding agent might look like this:
+
+```txt
+Task contract
+- Restate the requested change in one sentence.
+- Identify the acceptance evidence before editing.
+
+Execution
+- Inspect relevant files before changing them.
+- Make the smallest coherent edit.
+- Do not add dependencies unless the task requires it.
+
+State
+- Track changed files and unresolved uncertainty.
+- If a check fails, record the failure before retrying.
+
+Validation
+- Run the smallest meaningful test or build gate.
+- Completion requires test output, direct inspection, or a named blocker.
+
+Handoff
+- If unfinished, provide changed files, current failure, next command, and proof gap.
+```
+
+That is not enough by itself.
+
+The runtime still has to enforce tools, approvals, logs, and validators.
+
+But it gives the system a visible policy surface.
+
+And visible policy is the beginning of serious agent engineering.
+
+## The takeaway
+
+The future of agents is not “one bigger prompt.”
+
+It is a stack:
+
+```txt
+natural-language policy
++ runtime enforcement
++ durable state
++ tool permissions
++ evidence gates
++ evals over the whole harness
+```
+
+Natural-Language Agent Harnesses are useful because they name the policy layer as something we can inspect and improve.
+
+That is the real shift.
+
+Not prompt as magic.
+
+Harness as operating system.
+
+If your agent’s behavior matters, do not bury the harness where only the controller can see it.
+
+Write it down. Execute it. Test it. Ablate it.
+
+Then you can finally tell whether the agent got better — or whether the invisible glue just changed.
+
+## Source
+
+- [Natural-Language Agent Harnesses](https://arxiv.org/html/2603.25723v2)
