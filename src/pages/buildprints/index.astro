@@ -3,34 +3,79 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { buildprints, categories } from '@/lib/buildprints';
 
 export const prerender = true;
-const title = 'Agent Buildprint — construction plans for coding agents';
-const description = 'Browse AI-readable buildprints: architecture contracts, UI specs, backend plans, policies, tests, and prompts that coding agents can follow.';
+const title = 'Agent Buildprint — executable contracts for coding agents';
+const description = 'Browse executable Buildprints: phase-flow packets, runtime evidence schemas, review contracts, proof gates, and prompts that coding agents can follow without guessing.';
+
+const methodologySteps = [
+  ['01', 'Distill', 'Turn source facts into a source-independent product contract.'],
+  ['02', 'Phase', 'Split the work into bounded implementation phases with proof gates.'],
+  ['03', 'Replay', 'Run a fresh agent against the packet in an isolated workspace.'],
+  ['04', 'Prove', 'Accept only schema-valid evidence; blockers never become fake success.'],
+];
 ---
 
 <BaseLayout locale="en" title={title} description={description} path="/buildprints/">
   <main class="min-h-screen bg-background text-foreground">
-    <section class="relative overflow-hidden border-b border-border/70">
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,hsl(var(--accent)/0.18),transparent_36%),radial-gradient(circle_at_80%_20%,rgba(99,102,241,0.18),transparent_28%)]"></div>
-      <div class="relative mx-auto max-w-7xl px-6 py-16 sm:py-24">
-        <div class="max-w-3xl">
-          <p class="mb-4 inline-flex rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-sm font-medium text-accent">agent-buildprint.com MVP</p>
-          <h1 class="text-4xl font-black tracking-tight sm:text-6xl">Construction plans for coding agents.</h1>
-          <p class="mt-6 text-lg leading-8 text-muted-foreground">Find reusable buildprints for product OSes, AI agents, integrations, quality harnesses, policies, and tests. Copy the prompt, open the package manifest, inspect the GitHub folder, or submit your own buildprint.</p>
+    <section class="relative isolate overflow-hidden border-b border-border/70">
+      <div class="absolute inset-0 -z-20 bg-[radial-gradient(circle_at_15%_12%,hsl(var(--accent)/0.24),transparent_30%),radial-gradient(circle_at_85%_16%,rgba(14,165,233,0.18),transparent_28%),linear-gradient(135deg,hsl(var(--background))_0%,hsl(var(--background))_54%,hsl(var(--card))_100%)]"></div>
+      <div class="absolute left-1/2 top-0 -z-10 h-px w-[72rem] -translate-x-1/2 bg-gradient-to-r from-transparent via-accent/80 to-transparent"></div>
+      <div class="relative mx-auto grid max-w-7xl gap-10 px-6 py-16 sm:py-24 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
+        <div>
+          <p class="mb-5 inline-flex rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-sm font-bold uppercase tracking-[0.22em] text-accent">phase-flow buildprints</p>
+          <h1 class="max-w-4xl text-4xl font-black tracking-[-0.06em] sm:text-6xl lg:text-7xl">Executable contracts for coding agents.</h1>
+          <p class="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">Buildprints are no longer just package manifests and prompts. The new methodology ships a phase-flow packet: setup questions, executable phases, review contracts, runtime evidence schemas, and replay gates that tell a fresh agent exactly what counts as done.</p>
           <div class="mt-8 flex flex-wrap gap-3">
-            <a href="#catalog" class="rounded-full bg-accent px-5 py-3 text-sm font-bold text-accent-foreground transition hover:scale-[1.02]">Browse buildprints</a>
-            <a href="/buildprints/submit" class="rounded-full border border-border bg-card px-5 py-3 text-sm font-bold transition hover:border-accent/60">Submit a buildprint</a>
+            <a href="#catalog" class="rounded-full bg-accent px-5 py-3 text-sm font-bold text-accent-foreground shadow-[0_0_34px_hsl(var(--accent)/0.22)] transition hover:-translate-y-0.5">Browse buildprints</a>
+            <a href="/buildprints/buildprint-mapper-os/" class="rounded-full border border-border bg-card/85 px-5 py-3 text-sm font-bold transition hover:-translate-y-0.5 hover:border-accent/60">See Mapper OS methodology</a>
           </div>
         </div>
+
+        <div class="relative rounded-[2rem] border border-border/80 bg-card/70 p-4 shadow-2xl shadow-black/10 backdrop-blur">
+          <div class="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-accent/20 blur-3xl"></div>
+          <div class="rounded-[1.45rem] border border-border/70 bg-background/80 p-5">
+            <div class="mb-5 flex items-center justify-between gap-3">
+              <p class="font-mono text-xs uppercase tracking-[0.24em] text-muted-foreground">selected-buildprint/</p>
+              <span class="rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent">replayable</span>
+            </div>
+            <div class="grid gap-3">
+              {methodologySteps.map(([number, title, text]) => (
+                <div class="group grid grid-cols-[3.25rem_1fr] gap-3 rounded-2xl border border-border/70 bg-card/70 p-3 transition hover:border-accent/50">
+                  <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/15 font-mono text-sm font-black text-accent">{number}</span>
+                  <span>
+                    <strong class="block text-sm">{title}</strong>
+                    <span class="mt-1 block text-sm leading-6 text-muted-foreground">{text}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+            <pre class="mt-5 overflow-hidden rounded-2xl border border-border/70 bg-background p-4 font-mono text-xs leading-6 text-muted-foreground"><code>03-phases/phase-flow.md
+05-evidence/evidence-ledger.schema.json
+.buildprint/phase-runs/&lt;phase&gt;/reviews/*.md
+.buildprint/evidence/evidence-ledger.jsonl</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-border/70 bg-card/25 px-6 py-10">
+      <div class="mx-auto grid max-w-7xl gap-4 md:grid-cols-4">
+        {methodologySteps.map(([number, title, text]) => (
+          <div class="rounded-3xl border border-border bg-background/75 p-5">
+            <p class="font-mono text-xs font-bold text-accent">{number}</p>
+            <h2 class="mt-3 text-lg font-black tracking-tight">{title}</h2>
+            <p class="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
+          </div>
+        ))}
       </div>
     </section>
 
     <section id="catalog" class="mx-auto max-w-7xl px-6 py-12">
       <div class="mb-8 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
         <div>
-          <h2 class="text-2xl font-bold">Buildprint registry</h2>
-          <p class="mt-2 text-muted-foreground">{buildprints.length} bootstrappable buildprints. Search by stack, category, creator, or use case.</p>
+          <h2 class="text-2xl font-black tracking-tight">Buildprint registry</h2>
+          <p class="mt-2 text-muted-foreground">{buildprints.length} bootstrappable Buildprints. Search by stack, category, creator, use case, methodology, or risk.</p>
         </div>
-        <input id="buildprint-search" type="search" placeholder="Search Stripe, RAG, agent, blog, shorts..." class="w-full rounded-2xl border border-border bg-card px-4 py-3 text-sm outline-none ring-accent/30 transition focus:ring-4 lg:w-96" />
+        <input id="buildprint-search" type="search" placeholder="Search phase-flow, evidence, Stripe, RAG..." class="w-full rounded-2xl border border-border bg-card px-4 py-3 text-sm outline-none ring-accent/30 transition focus:ring-4 lg:w-96" />
       </div>
 
       <div class="mb-8 flex flex-wrap gap-2" id="category-filters">
@@ -39,23 +84,30 @@ const description = 'Browse AI-readable buildprints: architecture contracts, UI 
 
       <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-3" id="buildprint-grid">
         {buildprints.map((buildprint) => (
-          <article class="buildprint-card group overflow-hidden rounded-3xl border border-border bg-card/80 shadow-2xl shadow-black/10 transition hover:-translate-y-1 hover:border-accent/50" data-category={buildprint.category} data-search={`${buildprint.title} ${buildprint.creator} ${buildprint.category} ${buildprint.stack.join(' ')} ${buildprint.summary}`.toLowerCase()}>
-            <div class={`h-44 bg-gradient-to-br ${buildprint.imageTone} p-5`}>
-              <div class="grid h-full grid-cols-3 gap-3 rounded-2xl border border-white/10 bg-background/30 p-4 backdrop-blur">
-                <div class="rounded-xl bg-accent/25"></div>
-                <div class="rounded-xl border border-white/10 bg-card/70"></div>
-                <div class="rounded-xl border border-white/10 bg-card/70"></div>
-                <div class="col-span-2 rounded-xl border border-white/10 bg-card/70"></div>
-                <div class="rounded-xl bg-white/10"></div>
+          <article class="buildprint-card group overflow-hidden rounded-3xl border border-border bg-card/80 shadow-2xl shadow-black/10 transition hover:-translate-y-1 hover:border-accent/50" data-category={buildprint.category} data-search={`${buildprint.title} ${buildprint.creator} ${buildprint.category} ${buildprint.stack.join(' ')} ${buildprint.summary} ${buildprint.methodology?.join(' ') ?? ''} ${buildprint.risks.join(' ')}`.toLowerCase()}>
+            <div class={`relative h-44 overflow-hidden bg-gradient-to-br ${buildprint.imageTone} p-5`}>
+              <div class="absolute inset-x-5 top-5 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
+              <div class="grid h-full grid-cols-[0.9fr_1.1fr] gap-3 rounded-2xl border border-white/10 bg-background/30 p-4 backdrop-blur">
+                <div class="space-y-2">
+                  <div class="h-3 rounded-full bg-accent/50"></div>
+                  <div class="h-3 w-2/3 rounded-full bg-white/20"></div>
+                  <div class="mt-4 h-16 rounded-xl border border-white/10 bg-card/70"></div>
+                </div>
+                <div class="grid gap-2">
+                  <div class="rounded-xl border border-white/10 bg-card/70"></div>
+                  <div class="rounded-xl border border-white/10 bg-card/70"></div>
+                  <div class="rounded-xl bg-white/10"></div>
+                </div>
               </div>
             </div>
             <div class="p-5">
               <div class="mb-3 flex flex-wrap gap-2 text-xs">
                 <span class="rounded-full bg-accent/10 px-2.5 py-1 font-semibold text-accent">{buildprint.category}</span>
                 <span class="rounded-full bg-secondary px-2.5 py-1 text-muted-foreground">{buildprint.difficulty}</span>
+                {buildprint.methodology?.[0] && <span class="rounded-full border border-accent/25 px-2.5 py-1 text-accent">{buildprint.methodology[0]}</span>}
               </div>
-              <h3 class="text-xl font-bold">{buildprint.title}</h3>
-              <p class="mt-2 text-sm text-muted-foreground">{buildprint.summary}</p>
+              <h3 class="text-xl font-black tracking-tight">{buildprint.title}</h3>
+              <p class="mt-2 text-sm leading-6 text-muted-foreground">{buildprint.summary}</p>
               <div class="mt-4 flex flex-wrap gap-2">{buildprint.stack.slice(0, 4).map((tag) => <span class="rounded-full border border-border px-2 py-1 text-xs text-muted-foreground">{tag}</span>)}</div>
               <div class="mt-5 flex flex-wrap gap-3">
                 <a href={`/buildprints/${buildprint.slug}`} class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">View detail</a>

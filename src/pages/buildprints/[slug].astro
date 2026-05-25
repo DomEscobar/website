@@ -10,64 +10,101 @@ const buildprint = getBuildprint(Astro.params.slug ?? '');
 if (!buildprint) return Astro.redirect('/buildprints/');
 const title = `${buildprint.title} — Agent Buildprint`;
 const description = buildprint.summary;
+const defaultMethodology = ['Contract spine', 'Implementation phases', 'Validation gates', 'Prompt handoff'];
+const methodology = buildprint.methodology ?? defaultMethodology;
+const runtimeSpine = buildprint.runtimeSpine ?? buildprint.files;
+const proofNotes = buildprint.proofNotes ?? buildprint.checks;
 ---
 
 <BaseLayout locale="en" title={title} description={description} path={`/buildprints/${buildprint.slug}/`}>
   <main class="min-h-screen bg-background text-foreground">
-    <section class="mx-auto grid max-w-7xl gap-8 px-6 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-20">
-      <div>
-        <a href="/buildprints" class="text-sm font-semibold text-accent">← Back to registry</a>
-        <div class="mt-6 flex flex-wrap gap-2 text-xs">
-          <span class="rounded-full bg-accent/10 px-3 py-1 font-semibold text-accent">{buildprint.category}</span>
-          <span class="rounded-full bg-secondary px-3 py-1 text-muted-foreground">{buildprint.difficulty}</span>
-          <span class="rounded-full bg-secondary px-3 py-1 text-muted-foreground">by {buildprint.creator}</span>
+    <section class="relative isolate overflow-hidden border-b border-border/70">
+      <div class={`absolute inset-0 -z-20 bg-gradient-to-br ${buildprint.imageTone}`}></div>
+      <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_12%,hsl(var(--accent)/0.18),transparent_26%),linear-gradient(180deg,hsl(var(--background)/0.86),hsl(var(--background))_78%)]"></div>
+      <div class="mx-auto grid max-w-7xl gap-8 px-6 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-20">
+        <div>
+          <a href="/buildprints" class="text-sm font-semibold text-accent">← Back to registry</a>
+          <div class="mt-6 flex flex-wrap gap-2 text-xs">
+            <span class="rounded-full bg-accent/10 px-3 py-1 font-semibold text-accent">{buildprint.category}</span>
+            <span class="rounded-full bg-secondary px-3 py-1 text-muted-foreground">{buildprint.difficulty}</span>
+            <span class="rounded-full bg-secondary px-3 py-1 text-muted-foreground">by {buildprint.creator}</span>
+          </div>
+          <h1 class="mt-5 max-w-4xl text-4xl font-black tracking-[-0.06em] sm:text-6xl">{buildprint.title}</h1>
+          <p class="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">{buildprint.promise}</p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <button id="copy-main" class="rounded-full bg-accent px-5 py-3 text-sm font-bold text-accent-foreground shadow-[0_0_34px_hsl(var(--accent)/0.22)]">Copy build prompt</button>
+            <a href={buildprint.manifestUrl} class="rounded-full border border-border bg-card/85 px-5 py-3 text-sm font-bold">Open manifest</a>
+            <a href={buildprint.githubUrl} class="rounded-full border border-border bg-card/85 px-5 py-3 text-sm font-bold">GitHub folder</a>
+          </div>
         </div>
-        <h1 class="mt-5 text-4xl font-black tracking-tight sm:text-6xl">{buildprint.title}</h1>
-        <p class="mt-6 text-lg leading-8 text-muted-foreground">{buildprint.promise}</p>
-        <div class="mt-8 flex flex-wrap gap-3">
-          <button id="copy-main" class="rounded-full bg-accent px-5 py-3 text-sm font-bold text-accent-foreground">Copy build prompt</button>
-          <a href={buildprint.manifestUrl} class="rounded-full border border-border bg-card px-5 py-3 text-sm font-bold">Open package manifest</a>
-          <a href={buildprint.githubUrl} class="rounded-full border border-border bg-card px-5 py-3 text-sm font-bold">View GitHub folder</a>
-        </div>
-      </div>
-      <div class={`rounded-[2rem] border border-border bg-gradient-to-br ${buildprint.imageTone} p-6 shadow-2xl shadow-black/20`}>
-        <div class="rounded-3xl border border-white/10 bg-background/45 p-5 backdrop-blur">
-          <p class="mb-4 text-sm font-bold text-accent">Build map</p>
-          <div class="space-y-3">
-            {buildprint.includes.map((item, index) => (
-              <div class="flex items-center gap-3 rounded-2xl border border-border/70 bg-card/70 p-3">
-                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-accent/15 text-sm font-bold text-accent">{index + 1}</span>
-                <span class="text-sm font-medium">{item}</span>
-              </div>
-            ))}
+        <div class="rounded-[2rem] border border-border bg-card/75 p-4 shadow-2xl shadow-black/15 backdrop-blur">
+          <div class="rounded-[1.45rem] border border-border/70 bg-background/80 p-5">
+            <div class="mb-5 flex items-center justify-between gap-4">
+              <p class="font-mono text-xs uppercase tracking-[0.24em] text-muted-foreground">methodology</p>
+              <span class="rounded-full bg-accent/10 px-3 py-1 text-xs font-bold text-accent">agent-ready</span>
+            </div>
+            <div class="space-y-3">
+              {methodology.map((item, index) => (
+                <div class="grid grid-cols-[3rem_1fr] items-center gap-3 rounded-2xl border border-border/70 bg-card/70 p-3">
+                  <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent/15 font-mono text-xs font-black text-accent">{String(index + 1).padStart(2, '0')}</span>
+                  <span class="text-sm font-bold">{item}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="mx-auto grid max-w-7xl gap-5 px-6 pb-16 lg:grid-cols-3">
+    <section class="mx-auto grid max-w-7xl gap-5 px-6 py-12 lg:grid-cols-[1fr_1fr_1fr]">
       <div class="rounded-3xl border border-border bg-card p-6">
-        <h2 class="text-lg font-bold">Files a creator provides</h2>
-        <ul class="mt-4 space-y-2 text-sm text-muted-foreground">{buildprint.files.map((file) => <li class="rounded-xl bg-secondary/60 px-3 py-2 font-mono">{file}</li>)}</ul>
+        <h2 class="text-lg font-black tracking-tight">Executable packet spine</h2>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">The files or runtime artifacts a fresh agent must read or produce before claiming progress.</p>
+        <ul class="mt-4 space-y-2 text-sm text-muted-foreground">{runtimeSpine.map((file) => <li class="rounded-xl bg-secondary/60 px-3 py-2 font-mono text-xs">{file}</li>)}</ul>
       </div>
       <div class="rounded-3xl border border-border bg-card p-6">
-        <h2 class="text-lg font-bold">Inspections / checks</h2>
-        <ul class="mt-4 space-y-2 text-sm text-muted-foreground">{buildprint.checks.map((check) => <li>✓ {check}</li>)}</ul>
+        <h2 class="text-lg font-black tracking-tight">Proof gates</h2>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">Checks that prevent a vague implementation from being reported as complete.</p>
+        <ul class="mt-4 space-y-3 text-sm text-muted-foreground">{buildprint.checks.map((check) => <li class="flex gap-2"><span class="text-accent">✓</span><span>{check}</span></li>)}</ul>
       </div>
       <div class="rounded-3xl border border-border bg-card p-6">
-        <h2 class="text-lg font-bold">Risks covered</h2>
-        <ul class="mt-4 space-y-2 text-sm text-muted-foreground">{buildprint.risks.map((risk) => <li>⚠ {risk}</li>)}</ul>
+        <h2 class="text-lg font-black tracking-tight">Risks covered</h2>
+        <p class="mt-2 text-sm leading-6 text-muted-foreground">Failure modes the Buildprint makes visible before an agent can hide them in “done”.</p>
+        <ul class="mt-4 space-y-3 text-sm text-muted-foreground">{buildprint.risks.map((risk) => <li class="flex gap-2"><span class="text-accent">⚠</span><span>{risk}</span></li>)}</ul>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-7xl px-6 pb-12">
+      <div class="grid gap-5 lg:grid-cols-[0.95fr_1.05fr]">
+        <div class="rounded-3xl border border-border bg-card p-6">
+          <h2 class="text-lg font-black tracking-tight">What this ships</h2>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2">
+            {buildprint.includes.map((item, index) => (
+              <div class="rounded-2xl border border-border/70 bg-background/60 p-4">
+                <p class="font-mono text-xs font-bold text-accent">{String(index + 1).padStart(2, '0')}</p>
+                <p class="mt-2 text-sm font-semibold">{item}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div class="rounded-3xl border border-border bg-card p-6">
+          <h2 class="text-lg font-black tracking-tight">Validation evidence</h2>
+          <p class="mt-2 text-sm leading-6 text-muted-foreground">For newer phase-flow Buildprints, this names replay or outcome evidence. For older registry entries, it lists the included validation checks.</p>
+          <ul class="mt-4 space-y-3 text-sm text-muted-foreground">{proofNotes.map((note) => <li class="rounded-2xl border border-border/70 bg-background/60 px-4 py-3">{note}</li>)}</ul>
+        </div>
       </div>
     </section>
 
     <section class="mx-auto max-w-7xl px-6 pb-20">
       <div class="rounded-3xl border border-border bg-card p-6">
-        <div class="mb-4 flex items-center justify-between gap-4">
-          <h2 class="text-lg font-bold">Copyable agent prompt</h2>
-          <a href={buildprint.manifestUrl} class="rounded-full border border-border px-4 py-2 text-sm font-bold">Manifest</a>
-          <button id="copy-secondary" class="rounded-full border border-border px-4 py-2 text-sm font-bold">Copy</button>
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
+          <h2 class="text-lg font-black tracking-tight">Copyable agent prompt</h2>
+          <div class="flex flex-wrap gap-3">
+            <a href={buildprint.manifestUrl} class="rounded-full border border-border px-4 py-2 text-sm font-bold">Manifest</a>
+            <button id="copy-secondary" class="rounded-full border border-border px-4 py-2 text-sm font-bold">Copy</button>
+          </div>
         </div>
-        <pre class="overflow-x-auto whitespace-pre-wrap rounded-2xl bg-background p-5 text-sm text-muted-foreground"><code id="prompt-text">{buildprint.copyPrompt}</code></pre>
+        <pre class="overflow-x-auto whitespace-pre-wrap rounded-2xl bg-background p-5 text-sm leading-7 text-muted-foreground"><code id="prompt-text">{buildprint.copyPrompt}</code></pre>
       </div>
     </section>
   </main>

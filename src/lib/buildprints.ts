@@ -13,6 +13,9 @@ export type Buildprint = {
   files: string[];
   checks: string[];
   copyPrompt: string;
+  methodology?: string[];
+  runtimeSpine?: string[];
+  proofNotes?: string[];
   githubUrl: string;
   manifestUrl: string;
 };
@@ -77,16 +80,19 @@ export const buildprints: Buildprint[] = [
     title: "Buildprint Mapper OS",
     creator: "Agent Buildprint",
     category: "Quality",
-    stack: ["Any repo", "Static analysis", "LLM review", "Evidence maps"],
+    stack: ["Any repo", "Phase-flow replay", "Evidence ledger", "Fresh-agent evals"],
     difficulty: "Advanced",
-    summary: "Map an existing repo into an evidence-backed Buildprint package with scope, contracts, risks, checks, and handoff prompts.",
-    promise: "Turn a real codebase into an AI-readable architecture contract so agents extend it from evidence instead of guesses.",
+    summary: "Map an existing repo into an executable Buildprint packet with phase-flow replay, schema-valid evidence, review contracts, and fresh-agent isolation.",
+    promise: "Turn a real codebase into a source-independent execution contract so agents build in bounded phases, prove claims honestly, and hand off without source-repo access.",
     imageTone: "from-sky-400/20 via-teal-400/10 to-lime-400/20",
-    includes: ["Repository census", "Evidence-backed map", "Scope decision gate", "Buildprint extraction", "Clean-room reversal", "Golden eval harness"],
-    risks: ["Secret leakage", "Overconfident inference", "Including unsupported capabilities"],
-    files: ["BUILDPRINT.md", "CONTRACTS.md", "PLAN.md", "README.md", "SPEC.md", "TEST_MATRIX.md", "VALIDATION_TEMPLATE.md", "evals/check-map.mjs", "evals/golden-projects/admin-dashboard/expected-signals.json", "checks/acceptance.md"],
-    checks: ["No secret values copied", "Low-confidence areas become questions", "Every included capability has validation", "Reversal attempt verifies usability", "Golden eval harness passes fixture repos"],
-    copyPrompt: "Use the Agent Buildprint: Buildprint Mapper OS.\n\nBootstrap it with `agb start https://agent-buildprint.com/buildprints/buildprint-mapper-os/package.json ./my-build` or inspect the GitHub folder. Follow BUILDPRINT.md as the authority spine, read the supporting contracts/checks before implementation, preserve the stated non-goals and safety gates, and do not claim completion until the included validation checks pass.",
+    includes: ["Source census", "Scope selection", "Executable packet spine", "Phase-flow constitution", "Runtime evidence schema", "Architecture/UX/QA review loop", "Fresh-agent replay scorer"],
+    risks: ["Secret leakage", "Scope shrink", "Synthetic proof overclaimed", "Provider/browser blockers hidden as success"],
+    files: ["BUILDPRINT.md", "METHODOLOGY.md", "EXECUTION_PROTOCOL.md", "CONTRACTS.md", "03-phases/phase-flow.md", "05-evidence/evidence-ledger.schema.json", "scripts/eval-mapper-replay.mjs", "scripts/check-mapper-selected-output.mjs", "evals/selected-output-fixtures/*"],
+    checks: ["Every phase starts with implementation grammar", "Runtime evidence rows are schema-valid", "Blocked/synthetic evidence cannot upgrade claims", "No-fake scans require real artifacts", "Architecture/UX/QA reviews answer required headings", "Fresh-agent replay and outcome judge pass or name gaps"],
+    methodology: ["Source-independent distillation", "Phase-flow replay", "Bounded team simulation", "Evidence honesty", "Fresh-agent isolation"],
+    runtimeSpine: ["01-questions.md", "02-project-setup.md", "03-phases/phase-flow.md", "03-phases/<phase-id>.md", "04-evaluation.md", "05-evidence/evidence-ledger.schema.json", ".buildprint/phase-runs/<phase-id>/proof.md", ".buildprint/evidence/evidence-ledger.jsonl"],
+    proofNotes: ["MiroFish map judge: 89, ship-with-notes", "Replay workspace: /tmp/mapper-replay-rDH0JF", "Outcome judge: 0.74, ship-with-notes", "Final flow report: pass true"],
+    copyPrompt: "Use the Agent Buildprint: Buildprint Mapper OS.\n\nBootstrap it with `agb start https://agent-buildprint.com/buildprints/buildprint-mapper-os/package.json ./my-build` or inspect the GitHub folder. Follow BUILDPRINT.md plus METHODOLOGY.md as the authority. Generate a source-independent selected-buildprint packet, preserve scope fidelity, require phase-flow execution, read evidence-ledger.schema.json before runtime evidence, write runtime rows only to .buildprint/evidence/evidence-ledger.jsonl, and do not upgrade blocked, synthetic, credential-limited, or browser-limited proof claims.",
     githubUrl: "https://github.com/DomEscobar/agent-buildprint/tree/main/buildprints/buildprint-mapper-os",
     manifestUrl: "https://agent-buildprint.com/buildprints/buildprint-mapper-os/package.json",
   },

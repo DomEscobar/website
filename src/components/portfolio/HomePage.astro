@@ -21,18 +21,18 @@ const currentWork = {
   title: locale === 'de' ? 'Aktuell baue ich: Agent Buildprint' : 'Currently building: Agent Buildprint',
   description:
     locale === 'de'
-      ? 'Agent Buildprint ist mein aktuelles Hauptprojekt: eine Plattform für geprüfte Architekturpakete, mit denen Coding Agents strukturierter und verlässlicher bauen.'
-      : 'Agent Buildprint is my current main project: a platform for verified architecture packages that help coding agents build with more structure and reliability.',
+      ? 'Agent Buildprint ist mein aktuelles Hauptprojekt: ausführbare Verträge für Coding Agents — mit Phase-Flow, Evidence Ledger, Review-Schleifen und Replay-Gates statt nur Prompt + Spec.'
+      : 'Agent Buildprint is my current main project: executable contracts for coding agents — phase-flow packets, evidence ledgers, review loops, and replay gates instead of just prompt + spec.',
   status: locale === 'de' ? 'ACTIVE BUILD' : 'ACTIVE BUILD',
-  phase: locale === 'de' ? 'agent-ready architecture packages' : 'agent-ready architecture packages',
+  phase: locale === 'de' ? 'phase-flow replay + evidence honesty' : 'phase-flow replay + evidence honesty',
   projectTitle: 'Agent Buildprint',
-  projectUrl: 'https://agent-buildprint.com/',
+  projectUrl: 'https://agent-buildprint.com/buildprints/',
   projectText:
     locale === 'de'
-      ? 'Verified architecture packages for coding agents. Statt mit einem vagen Prompt zu starten, bootstrappen Agenten Plan, Constraints, Tests und Proof-Pfade vor dem ersten Code.'
-      : 'Verified architecture packages for coding agents. Instead of starting from a vague prompt, agents bootstrap the plan, constraints, tests, and proof paths before writing code.',
-  linkLabel: locale === 'de' ? 'Agent Buildprint öffnen' : 'Open Agent Buildprint',
-  meta: ['BUILDPRINT', 'SPEC', 'PLAN', 'TESTS'],
+      ? 'Agenten starten nicht mehr mit einem vagen Auftrag. Sie bootstrappen ein selected-buildprint Paket, lesen die Phase-Flow-Verfassung, schreiben schema-valide Laufzeitbelege und dürfen Blocker nicht als Erfolg verkaufen.'
+      : 'Agents no longer start from a vague assignment. They bootstrap a selected-buildprint packet, read the phase-flow constitution, write schema-valid runtime evidence, and cannot sell blockers as success.',
+  linkLabel: locale === 'de' ? 'Buildprint Registry öffnen' : 'Open Buildprint registry',
+  meta: ['PHASE-FLOW', 'EVIDENCE', 'REVIEWS', 'REPLAY'],
 };
 ---
 
@@ -106,9 +106,9 @@ const currentWork = {
                   <span class="h-2.5 w-2.5 rounded-full bg-green-400/80"></span>
                 </div>
                 <pre class="whitespace-pre-wrap leading-6">$ agb start
-→ plan before code
-→ tests before trust
-→ proof before done</pre>
+→ phase before code
+→ evidence before trust
+→ replay before done</pre>
               </div>
             </div>
 
