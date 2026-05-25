@@ -1,0 +1,194 @@
+---
+title: "Give Your Agent Seatbelts, Not a Longer Prompt"
+description: "A practical field note on using state machines to keep coding agents in the right phase: inspect, plan, edit, test, and stop."
+language: "en"
+slug: "agent-state-machines-seatbelts"
+canonicalSlug: "agent-state-machines-seatbelts"
+publishedAt: "2026-05-25"
+updatedAt: "2026-05-25"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Coding Agents", "Agent Harness", "Developer Workflow", "AI Safety"]
+topic: "AI Agent Workflows"
+summary: "When an agent keeps jumping from planning to editing to testing at the wrong time, the fix is not usually another paragraph of system prompt. Put the workflow into explicit states, give each state a tiny tool policy, and make phase changes visible."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Why use a state machine for an AI agent?"
+    answer: "A state machine makes workflow phases explicit and limits which actions are allowed in each phase, so the agent cannot silently skip from investigation to risky edits."
+  - question: "Is this only for coding agents?"
+    answer: "No. The same pattern works for support bots, research assistants, personal automations, and any workflow where inspect, decide, act, and verify should stay separate."
+  - question: "What is the main risk?"
+    answer: "Too much structure can slow exploratory work. Start with high-risk moments like deletes, deploys, migrations, messages, payments, or production data access."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+A coding agent does not need one more sentence that says “be careful.”
+
+It needs fewer ways to pretend the phase changed by magic.
+
+That is the useful idea behind tools like [Statewright](https://github.com/statewright/statewright): put the agent workflow into explicit states, then limit what the agent can do inside each state.
+
+Not because state machines are glamorous.
+
+Because they are boring in the exact way agent systems need.
+
+## the short version
+
+If your agent can inspect files, edit code, run migrations, restart services, delete artifacts, and summarize success from the same mushy chat state, the prompt is doing too much work.
+
+Split the run into phases.
+
+<FlowGraphic
+  title="Agent seatbelt loop"
+  note="phase changes should be explicit, not vibes"
+  steps={['Inspect', 'Plan', 'Approve', 'Edit', 'Test', 'Stop or recover']}
+/>
+
+Each phase gets its own allowed actions:
+
+<MetricStrip
+  metrics={[
+    { value: '1', label: 'current state the agent must name' },
+    { value: '0', label: 'destructive commands during inspect' },
+    { value: '1', label: 'explicit transition before editing' },
+  ]}
+/>
+
+This sounds small. It changes the shape of the failure.
+
+A prompt says: “please do not edit before planning.”
+
+A state machine says: “editing is not available in this state.”
+
+That is a different kind of control.
+
+## where prompts leak
+
+Long prompts are useful for taste, context, and judgment. They are weak at enforcing phase boundaries over a long run.
+
+The common failure looks like this:
+
+<CompareGrid
+  title="Prompt-only control vs. stateful control"
+  leftLabel="Long prompt"
+  rightLabel="State machine"
+  rows={[
+    { left: '“First inspect, then plan, then edit.”', right: 'Current state is inspect; edit tools are unavailable.' },
+    { left: 'The agent can skip testing if it feels done.', right: 'Completion requires entering test and recording evidence.' },
+    { left: 'Dangerous commands rely on memory and obedience.', right: 'Dangerous commands are blocked or require a transition.' },
+    { left: 'Recovery becomes improvisation.', right: 'Failure moves to a named recover state with allowed next actions.' },
+  ]}
+/>
+
+The point is not to turn every agent into a bureaucracy machine.
+
+The point is to protect the moments where a bad phase jump is expensive: migrations, deploys, production data, customer messages, payments, deletes, permission changes, and multi-file refactors.
+
+## the tiny version you can steal
+
+You do not need a full framework to try the pattern.
+
+Create a `state.json` beside the work:
+
+```json
+{
+  "state": "inspect",
+  "allowed": ["read", "search", "list"],
+  "blocked": ["edit", "delete", "deploy", "send", "restart"],
+  "transition_requires": "written plan with files, risks, and verification gate"
+}
+```
+
+Then put this in the agent instruction:
+
+```txt
+Before every tool call, read the current state.
+
+If the next action is not allowed in that state, stop and request a transition.
+
+Valid states:
+- inspect: read/search/list only
+- plan: write a plan; no file edits
+- edit: scoped file edits only
+- test: run approved checks only; no new feature work
+- recover: summarize failure, smallest next check, and rollback option
+- done: report evidence; no further changes
+
+You may not move from inspect to edit directly.
+You may not mark done without test evidence or an explicit blocker.
+```
+
+That is crude. It is also already better than “be careful.”
+
+The important part is the transition note. Do not let the agent silently promote itself because it feels ready. The phase change should leave a little receipt:
+
+```txt
+Transition request: inspect → edit
+Evidence collected: schema file, affected route, two recent examples
+Files in scope: src/content/blog/*.mdx only
+Risk: draft metadata could leak into sitemap if draft:false
+Verification gate: npm run build + grep generated outputs for slug
+Rollback: revert the new draft file
+```
+
+Now a human, a wrapper script, or a second reviewer has something concrete to approve or reject. The agent is not asking for trust in its vibe. It is asking for a bounded state transition with evidence.
+
+<KeyPoints
+  title="What the state file should protect"
+  items={[
+    'Tool access: which commands or APIs are available right now.',
+    'Scope: which files, routes, accounts, or datasets are in bounds.',
+    'Transition rule: what evidence is required before the next phase.',
+    'Stop rule: when the agent must ask, roll back, or mark a blocker.',
+  ]}
+/>
+
+## where it fails
+
+State machines can make an agent safer, but they can also make it stupid.
+
+If the task is exploratory, over-constraining every step can kill discovery. If the state names are vague, the agent will route around them. If the tool policy is only prose and nothing enforces it, you are back to vibes with nicer labels.
+
+So start narrow.
+
+Use states around the expensive edges first.
+
+<DoDont
+  title="Use / avoid"
+  doLabel="Do"
+  dontLabel="Avoid"
+  doItems={[
+    'start with risky workflows, not every tiny chat task',
+    'make illegal actions boringly explicit',
+    'require evidence before done',
+    'log transitions so failures are reviewable',
+  ]}
+  dontItems={[
+    'encode a 40-step ritual for creative exploration',
+    'pretend prose-only states are hard security',
+    'allow edit and verify to blur together',
+    'let the agent choose a safer-sounding state after the fact',
+  ]}
+/>
+
+The useful mental model is simple:
+
+Prompts are steering.
+
+State machines are seatbelts.
+
+You still need a driver. You still need brakes. You still need judgment.
+
+But when the agent tries to jump from “I looked around” to “I changed production,” the seatbelt should catch before the crash.
+
+## sources
+
+- [Statewright](https://github.com/statewright/statewright)
+- [Code as Agent Harness](https://arxiv.org/abs/2605.18747)
+- [Natural-Language Agent Harnesses](https://arxiv.org/html/2603.25723v2)
