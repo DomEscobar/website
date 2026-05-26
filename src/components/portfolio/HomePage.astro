@@ -4,7 +4,6 @@ import Navbar from '@/components/portfolio/Navbar.astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { formatDate, localizedPath, person, type Locale } from '@/lib/site';
 import { portfolioCopy } from '@/lib/portfolio-content';
-import deckHtml from '@/data/llm-native-lessons.html?raw';
 
 interface Props {
   locale: Locale;
@@ -189,7 +188,7 @@ const aiNative = {
           </div>
           <iframe
             title={aiNative.deckTitle}
-            srcdoc={deckHtml}
+            src="/decks/llm-native-lessons.html"
             sandbox="allow-scripts allow-forms allow-popups"
             loading="lazy"
             class="h-[72vh] min-h-[34rem] w-full bg-[#061421]"
