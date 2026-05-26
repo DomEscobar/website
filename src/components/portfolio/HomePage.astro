@@ -177,23 +177,21 @@ const aiNative = {
           </div>
         </div>
 
-        <div class="mt-8 overflow-hidden rounded-2xl border border-accent/30 bg-[#061421] shadow-[0_30px_120px_hsl(var(--background)/0.45)]" data-motion="reveal">
-          <div class="flex flex-col justify-between gap-3 border-b border-white/10 bg-[#0A1E2D] px-4 py-4 md:flex-row md:items-center md:px-6">
-            <div>
-              <p class="font-mono text-xs uppercase tracking-[0.24em] text-accent">68 slides · self-paced · interactive</p>
-              <h3 class="mt-1 text-xl font-bold text-white md:text-2xl">{aiNative.deckTitle}</h3>
-              <p class="mt-1 text-sm leading-6 text-slate-300">{aiNative.deckText}</p>
-            </div>
-            <p class="rounded-full border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300">{aiNative.note}</p>
+        <a href={localizedPath(locale, '/ai-native-engineering/')} class="group mt-8 block overflow-hidden rounded-2xl border border-accent/30 bg-card/70 p-1 shadow-[0_30px_120px_hsl(var(--accent)/0.10)] transition hover:-translate-y-1 hover:border-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-motion="reveal">
+          <div class="relative overflow-hidden rounded-[0.9rem] border border-border/70 bg-background/80 p-6 md:p-8">
+            <div class="absolute right-[-4rem] top-[-4rem] h-44 w-44 rounded-full bg-accent/15 blur-3xl transition group-hover:bg-accent/25"></div>
+            <p class="font-mono text-xs uppercase tracking-[0.24em] text-accent">68 slides · self-paced · interactive</p>
+            <h3 class="mt-3 text-2xl font-bold tracking-tight text-foreground md:text-4xl">{aiNative.deckTitle}</h3>
+            <p class="mt-3 max-w-2xl leading-7 text-muted-foreground">
+              {locale === 'de'
+                ? 'Öffnet den kompletten Lernpfad mit interaktivem Slide Deck, Kontextmodellen, Task Contracts und operablen AI-Feature-Patterns.'
+                : 'Open the full learning path with the interactive slide deck, context models, Task Contracts, and operable AI-feature patterns.'}
+            </p>
+            <span class="mt-6 inline-flex min-h-11 items-center rounded-full bg-accent px-5 text-sm font-semibold text-accent-foreground transition group-hover:bg-accent/90">
+              {locale === 'de' ? 'AI Native Engineering öffnen' : 'Open AI Native Engineering'} →
+            </span>
           </div>
-          <iframe
-            title={aiNative.deckTitle}
-            src="/decks/llm-native-lessons.html"
-            sandbox="allow-scripts allow-forms allow-popups"
-            loading="lazy"
-            class="h-[72vh] min-h-[34rem] w-full bg-[#061421]"
-          ></iframe>
-        </div>
+        </a>
       </div>
     </section>
 
