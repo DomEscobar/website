@@ -10,9 +10,13 @@ const { locale } = Astro.props;
 const copy = portfolioCopy[locale];
 const homeHref = localizedPath(locale, '/');
 const blogHref = localizedPath(locale, '/blog/');
+const learningHref = `${homeHref}#ai-native-engineering`;
 const switchHref = locale === 'de' ? '/en/' : '/';
 const switchLabel = locale === 'de' ? 'EN' : 'DE';
-const navItems = [{ href: blogHref, label: copy.nav.blog }];
+const navItems = [
+  { href: learningHref, label: 'AI Native' },
+  { href: blogHref, label: copy.nav.blog },
+];
 ---
 
 <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-accent focus:px-4 focus:py-3 focus:text-sm focus:font-semibold focus:text-accent-foreground">
@@ -27,7 +31,7 @@ const navItems = [{ href: blogHref, label: copy.nav.blog }];
           <a href={item.href} class="text-sm font-medium text-muted-foreground transition hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{item.label}</a>
         ))}
       </div>
-      <div class="hidden items-center gap-2 md:flex">
+      <div class="flex items-center gap-2">
         <a href={switchHref} class="rounded-md border border-border px-3 py-2 text-sm font-semibold uppercase transition hover:border-accent hover:bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{switchLabel}</a>
         <details class="group relative md:hidden">
           <summary class="flex min-h-10 min-w-10 cursor-pointer list-none items-center justify-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-foreground transition hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={copy.nav.menu}>
