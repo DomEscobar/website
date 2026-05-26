@@ -2,7 +2,7 @@ export type Buildprint = {
   slug: string;
   title: string;
   creator: string;
-  category: 'Product OS' | 'Agent' | 'Integration' | 'Quality' | 'Feature';
+  category: string;
   stack: string[];
   difficulty: 'Small' | 'Medium' | 'Advanced';
   summary: string;
@@ -118,17 +118,82 @@ export const buildprints: Buildprint[] = [
     slug: "perfect-rag-retrieval-os",
     title: "Perfect RAG / Retrieval OS",
     creator: "Agent Buildprint",
-    category: "Agent",
-    stack: ["TypeScript", "Hybrid retrieval", "Reranking", "Citations", "Evals"],
+    category: "Workflow OS",
+    stack: [
+      "Mapper OS v5",
+      "Hybrid retrieval",
+      "Reranking",
+      "Citations",
+      "RAG evals"
+    ],
     difficulty: "Advanced",
-    summary: "Permission-safe hybrid retrieval, reranking, context packing, grounded answers, refusals, traces, and repeatable evals.",
-    promise: "Build serious RAG beyond “vector DB + prompt” with measurable retrieval quality and citation-grounded answer behavior.",
+    summary: "Executable Mapper OS phase-flow packet for building a serious RAG/Retrieval OS with corpus contracts, ingestion, chunking, hybrid retrieval, permission filtering, reranking, grounded citations, refusal behavior, traces, and eval gates.",
+    promise: "A fresh agent can run the packet from BUILDPRINT.md through phase-flow to implement a permission-safe, citation-grounded retrieval system without reducing the product to vector search plus a prompt.",
     imageTone: "from-blue-400/20 via-cyan-400/10 to-emerald-500/20",
-    includes: ["Hybrid first-stage retrieval", "Permission filtering", "Reranking", "Grounded generation", "Eval report"],
-    risks: ["Permission leakage", "Uncited hallucinations", "Weak retrieval metrics"],
-    files: ["BUILDPRINT.md", "CONTRACTS.md", "EVAL_HARNESS.md", "README.md", "SPEC.md", "TARGET_STACK_ADAPTERS.md", "TEST_MATRIX.md", "PLAN.md", "VALIDATION_TEMPLATE.md", "checks/acceptance.md"],
-    checks: ["Refuses insufficient evidence", "Citations point to retrieved chunks", "Permission filters hide restricted chunks", "Eval reports recall/MRR behavior"],
-    copyPrompt: "Use the Agent Buildprint: Perfect RAG / Retrieval OS.\n\nBootstrap it with `agb start https://agent-buildprint.com/buildprints/perfect-rag-retrieval-os/package.json ./my-build` or inspect the GitHub folder. Follow BUILDPRINT.md as the authority spine, read the supporting contracts/checks before implementation, preserve the stated non-goals and safety gates, and do not claim completion until the included validation checks pass.",
+    includes: [
+      "BUILDPRINT.md canonical start",
+      "01-questions.md alignment gate",
+      "02-project-setup.md architecture, team, authority, handoff, AGENTS.md, quality, safety, and phase-start contract",
+      "blueprint.yaml executable-blueprint v5 machine contract",
+      "03-phases/phase-flow.md orchestration protocol",
+      "Four implementation phases with proof gates",
+      "04-evaluation.md retrieval, answer, operational, blocker, and claim-upgrade rules",
+      "05-evidence seed ledger and runtime evidence schema"
+    ],
+    risks: [
+      "Vector-only false confidence",
+      "Hallucinated uncited answers",
+      "Permission leakage",
+      "Eval-free quality drift",
+      "Reranker latency/cost creep",
+      "Live provider claims from deterministic proof",
+      "Advanced-tech hype without measured gain"
+    ],
+    files: [
+      "BUILDPRINT.md",
+      "01-questions.md",
+      "02-project-setup.md",
+      "blueprint.yaml",
+      "03-phases/phase-index.yaml",
+      "03-phases/phase-flow.md",
+      "04-evaluation.md",
+      "05-evidence/evidence-ledger.schema.json",
+      "05-evidence/evidence-ledger.jsonl"
+    ],
+    checks: [
+      "Mapper OS selected-output structural check passes",
+      "Packet uses BUILDPRINT.md as canonical start",
+      "Every phase starts with Mapper OS phase-flow entry grammar",
+      "Runtime evidence is separated from packaged seed evidence",
+      "Evidence schema blocks missing, blocked, synthetic, partial, sandbox, network-limited, and credential-limited rows from upgrading claims",
+      "Publication copy reflects phase-flow methodology rather than legacy proof-only package"
+    ],
+    copyPrompt: "Use the Perfect RAG / Retrieval OS Buildprint as a Mapper OS phase-flow packet. Start at BUILDPRINT.md, then read 01-questions.md, 02-project-setup.md, blueprint.yaml, 03-phases/phase-index.yaml, 03-phases/phase-flow.md, the active phase file, 04-evaluation.md, and the seed evidence schema. Complete setup before phase work, create .buildprint phase-run artifacts, and append runtime evidence only to .buildprint/evidence/evidence-ledger.jsonl. Implement corpus contracts, ingestion/chunking/indexing, hybrid lexical/sparse plus dense retrieval, fusion/dedupe, permission filtering before context packing, reranking, token-budgeted grounded answers with citations, insufficient-evidence refusal, traces, and eval gates. Use deterministic proof mode unless live providers are explicitly configured and separately proven. Do not call vector-only retrieval complete.",
+    methodology: [
+      "Setup gate",
+      "Phase-flow execution",
+      "Runtime evidence ledger",
+      "Claim-safe validation"
+    ],
+    runtimeSpine: [
+      "BUILDPRINT.md",
+      "01-questions.md",
+      "02-project-setup.md",
+      "blueprint.yaml",
+      "03-phases/phase-index.yaml",
+      "03-phases/phase-flow.md",
+      "03-phases/<active-phase>.md",
+      "04-evaluation.md",
+      "05-evidence/evidence-ledger.schema.json",
+      ".buildprint/phase-runs/<phase-id>/proof.md",
+      ".buildprint/evidence/evidence-ledger.jsonl"
+    ],
+    proofNotes: [
+      "Phase-flow packet with setup gate, role handoffs, proof gates, and evidence honesty.",
+      "The packet explicitly rejects vector-only RAG and requires measurable retrieval behavior.",
+      "Deterministic proof mode is separated from live embedding, search, reranker, and generator claims.",
+      "Tenant/private filtering is a server-side proof gate before context packing and answer generation."
+    ],
     githubUrl: "https://github.com/DomEscobar/agent-buildprint/tree/main/buildprints/perfect-rag-retrieval-os",
     manifestUrl: "https://agent-buildprint.com/buildprints/perfect-rag-retrieval-os/package.json",
   },
@@ -136,17 +201,87 @@ export const buildprints: Buildprint[] = [
     slug: "portable-ai-shorts-production-studio",
     title: "Portable AI Shorts Production Studio",
     creator: "Agent Buildprint",
-    category: "Product OS",
-    stack: ["Video", "Gemini research", "Voice", "FFmpeg", "Provider adapters"],
+    category: "Mapped Project",
+    stack: [
+      "Product analysis",
+      "UGC scripts",
+      "Provider adapters",
+      "Async jobs",
+      "Media composition",
+      "Gallery and publish handoff"
+    ],
     difficulty: "Advanced",
-    summary: "A portable studio for vertical UGC-style marketing video drafts from a product URL or manual product description.",
-    promise: "Build an honest AI shorts production pipeline with provider boundaries, privacy gates, generation stages, and draft-status clarity.",
+    summary: "Mapper OS phase-flow Buildprint for a portable AI shorts production studio with product URL/manual input, UGC scripts, deterministic provider adapters, pollable jobs, 1080x1920 MP4 fixture media, private gallery, consent-gated publish handoff, and evidence-honest validation.",
+    promise: "A Mapper OS executable packet that preserves the full AI shorts production workflow while keeping provider, media, browser, persistence, gallery, publishing, and security claims tied to phase proof and runtime evidence.",
     imageTone: "from-orange-400/20 via-rose-400/10 to-purple-500/20",
-    includes: ["Product analysis", "Viral script generation", "Voice/actor choices", "Provider adapters", "FFmpeg composition"],
-    risks: ["Publishing private media", "Provider key mishandling", "Claiming draft videos are production-ready"],
-    files: ["BUILDPRINT.md", "CONTRACTS.md", "PARITY_CLAIMS.md", "PLAN.md", "QA_PLAN.md", "SOURCE_TRACE.md", "SPEC.md", "README.md", "TEST_MATRIX.md", "VALIDATION_TEMPLATE.md", "checks/acceptance.md"],
-    checks: ["Privacy/publication gates are explicit", "Provider paths can run in mock mode", "Status polling exposes failures", "Final exports are gated"],
-    copyPrompt: "Use the Agent Buildprint: Portable AI Shorts Production Studio.\n\nBootstrap it with `agb start https://agent-buildprint.com/buildprints/portable-ai-shorts-production-studio/package.json ./my-build` or inspect the GitHub folder. Follow BUILDPRINT.md as the authority spine, read the supporting contracts/checks before implementation, preserve the stated non-goals and safety gates, and do not claim completion until the included validation checks pass.",
+    includes: [
+      "BUILDPRINT.md canonical start",
+      "01-questions.md AI best-judgment alignment gate",
+      "02-project-setup.md with architecture, team model, AGENTS.md plan, safety, gates, and phase start gate",
+      "blueprint.yaml executable-blueprint v5 machine contract",
+      "03-phases/phase-flow.md orchestration protocol",
+      "Five implementation phase files",
+      "04-evaluation.md claim upgrade rules",
+      "05-evidence/evidence-ledger.schema.json honest evidence schema",
+      "Seed-only 05-evidence/evidence-ledger.jsonl",
+      "Compatibility docs for specification, contracts, plan, test matrix, validation, and acceptance"
+    ],
+    risks: [
+      "Accidentally implying OpenShorts clone or drop-in replacement parity",
+      "Provider/API/live media success overclaiming",
+      "Rendering-quality parity overclaiming",
+      "Social platform publishing reliability overclaiming",
+      "Public gallery exposure without consent and access controls",
+      "User likeness, uploaded media, URL egress, and copyright under-specification",
+      "In-memory proof storage being misreported as production durability"
+    ],
+    files: [
+      "BUILDPRINT.md",
+      "01-questions.md",
+      "02-project-setup.md",
+      "blueprint.yaml",
+      "03-phases/phase-index.yaml",
+      "03-phases/phase-flow.md",
+      "04-evaluation.md",
+      "05-evidence/evidence-ledger.schema.json",
+      "05-evidence/evidence-ledger.jsonl"
+    ],
+    checks: [
+      "Mapper OS selected-output spine exists and starts from BUILDPRINT.md",
+      "Every phase starts with the required Mapper OS phase implementation heading",
+      "Every phase requires phase-flow, .buildprint/next-agent.md, and current project AGENTS.md",
+      "02-project-setup.md defines architecture, team operating model, execution authority, delegation, AGENTS.md plan, quality gates, safety, assumptions, and phase start gate",
+      "Packaged evidence ledger is seed-only and runtime evidence routes to .buildprint/evidence/evidence-ledger.jsonl",
+      "Evidence schema requires artifact_id, type, phase_id, status, source, proves, proof_type, provider_mode, and upgrades_claim",
+      "Blocked, missing, synthetic, partial, sandbox-limited, network-limited, credential-limited, or dry-run proof cannot upgrade claims",
+      "Browser, provider, media, persistence, billing-free publishing handoff, security, memory/retrieval-adjacent context, and operational boundaries are preserved as explicit contracts"
+    ],
+    copyPrompt: "Use the Portable AI Shorts Production Studio Buildprint. First bootstrap exact snapshots: agb start https://agent-buildprint.com/buildprints/portable-ai-shorts-production-studio/package.json . If agb is not installed, clone https://github.com/DomEscobar/agent-buildprint and run node agent-buildprint/bin/agb.js start https://agent-buildprint.com/buildprints/portable-ai-shorts-production-studio/package.json . Then read BUILDPRINT.md, 01-questions.md, 02-project-setup.md, blueprint.yaml, 03-phases/phase-index.yaml, 03-phases/phase-flow.md, the active phase file, 04-evaluation.md, and 05-evidence/evidence-ledger.jsonl. Use Mapper OS phase-flow artifacts before implementation and write runtime evidence only to .buildprint/evidence/evidence-ledger.jsonl. Build the full browser AI shorts production studio proof with deterministic mock/no-network providers, pollable jobs, a playable 1080x1920 MP4 fixture, private gallery, consent-gated publish handoff, browser QA, and honest claim boundaries.",
+    methodology: [
+      "Setup gate",
+      "Phase-flow execution",
+      "Runtime evidence ledger",
+      "Claim-safe validation"
+    ],
+    runtimeSpine: [
+      "BUILDPRINT.md",
+      "01-questions.md",
+      "02-project-setup.md",
+      "blueprint.yaml",
+      "03-phases/phase-index.yaml",
+      "03-phases/phase-flow.md",
+      "03-phases/<active-phase>.md",
+      "04-evaluation.md",
+      "05-evidence/evidence-ledger.schema.json",
+      ".buildprint/phase-runs/<phase-id>/proof.md",
+      ".buildprint/evidence/evidence-ledger.jsonl"
+    ],
+    proofNotes: [
+      "Phase-flow executable packet with proof-gated implementation phases.",
+      "Seed evidence is separated from runtime proof and blockers cannot upgrade claims.",
+      "Default proof uses deterministic no-network adapters; live providers are optional and gated.",
+      "OpenShorts-inspired scope is preserved without claiming clone, provider, rendering, or publishing parity."
+    ],
     githubUrl: "https://github.com/DomEscobar/agent-buildprint/tree/main/buildprints/portable-ai-shorts-production-studio",
     manifestUrl: "https://agent-buildprint.com/buildprints/portable-ai-shorts-production-studio/package.json",
   },
@@ -190,17 +325,92 @@ export const buildprints: Buildprint[] = [
     slug: "portable-personal-agent-chat-os",
     title: "Portable Personal Agent Chat OS",
     creator: "Agent Buildprint",
-    category: "Agent",
-    stack: ["Self-hosted agent", "Streaming UI", "Tools", "Skills", "Memory"],
+    category: "Mapped Project",
+    stack: [
+      "Streaming chat",
+      "Provider router",
+      "Tools / Skills / MCP",
+      "Memory and compaction",
+      "Subagents",
+      "Telemetry",
+      "WebUI/API workbench"
+    ],
     difficulty: "Advanced",
-    summary: "Self-hosted personal agent chatbot with provider routing, streaming events, policy-gated tools, skills, memory, teams, and telemetry.",
-    promise: "Build the control surface for a local personal agent runtime with explicit policies, memory, tools, subagents, and WebUI/API boundaries.",
+    summary: "Mapper OS phase-flow packet for building a clean-room, self-hosted personal agent chatbot OS with streaming chat, provider routing, tools, skills, MCP, memory, subagents, telemetry, and WebUI/API workbench surfaces.",
+    promise: "A phase-flow Buildprint that lets a downstream agent implement a portable personal agent chatbot OS while keeping deterministic proof separate from live/external claims.",
     imageTone: "from-emerald-400/20 via-cyan-400/10 to-blue-500/20",
-    includes: ["Provider router", "Streaming agent loop", "Tool/skill registry", "Memory context", "Team bus telemetry"],
-    risks: ["Unsafe tool execution", "Memory leakage", "Opaque token costs"],
-    files: ["AGENT_RUNTIME.md", "BUILDPRINT.md", "CONTRACTS.md", "HEAD_TO_FOOT_QA.md", "MEMORY_CONTEXT.md", "PARITY_CLAIMS.md", "PLAN.md", "README.md", "SPEC.md", "TEST_MATRIX.md", "VALIDATION_TEMPLATE.md", "checks/acceptance.md"],
-    checks: ["Tools pass through policy mediation", "Memory assembly order is explicit", "Streaming events cover failures", "Token telemetry is visible"],
-    copyPrompt: "Use the Agent Buildprint: Portable Personal Agent Chat OS.\n\nBootstrap it with `agb start https://agent-buildprint.com/buildprints/portable-personal-agent-chat-os/package.json ./my-build` or inspect the GitHub folder. Follow BUILDPRINT.md as the authority spine, read the supporting contracts/checks before implementation, preserve the stated non-goals and safety gates, and do not claim completion until the included validation checks pass.",
+    includes: [
+      "BUILDPRINT.md canonical entry",
+      "01-questions.md setup questions",
+      "02-project-setup.md architecture and operating contract",
+      "blueprint.yaml machine contract",
+      "03-phases/phase-index.yaml phase index",
+      "03-phases/phase-flow.md orchestration protocol",
+      "Phase files for storage, runtime, tools/MCP, memory/team/telemetry, safety, and WebUI/API",
+      "04-evaluation.md evidence honesty gates",
+      "05-evidence/evidence-ledger.schema.json",
+      "Seed-only evidence ledger"
+    ],
+    risks: [
+      "Overclaiming full Emperor Agent clone parity",
+      "Unsafe shell/filesystem/network/browser tools",
+      "Provider API drift",
+      "Context truncation losing user instructions",
+      "Skill injection bloat",
+      "MCP timeout/security failures",
+      "In-memory state being mistaken for durable persistence",
+      "Telemetry hidden from UI",
+      "Hosted auth, billing, publishing, media, or retrieval claims without proof"
+    ],
+    files: [
+      "BUILDPRINT.md",
+      "01-questions.md",
+      "02-project-setup.md",
+      "blueprint.yaml",
+      "03-phases/phase-index.yaml",
+      "03-phases/phase-flow.md",
+      "04-evaluation.md",
+      "05-evidence/evidence-ledger.schema.json",
+      "05-evidence/evidence-ledger.jsonl"
+    ],
+    checks: [
+      "Mapper selected-output structural check passes",
+      "Executable packet starts from BUILDPRINT.md",
+      "02-project-setup.md defines architecture, team model, execution authority, handoffs, AGENTS.md plan, quality gates, safety, assumptions, and phase start gate",
+      "Every phase starts with the required implementation heading and routes through phase-flow artifacts",
+      "Packaged evidence ledger is seed-only",
+      "Runtime evidence belongs only in .buildprint/evidence/evidence-ledger.jsonl",
+      "Evidence schema blocks blocked/missing/synthetic/partial rows from upgrading claims",
+      "Publication copy prompt names the executable read order",
+      "Legacy document sludge removed or reduced to compatibility spine files"
+    ],
+    copyPrompt: "Use the Portable Personal Agent Chat OS Mapper OS packet. Bootstrap exact snapshots with agb start https://agent-buildprint.com/buildprints/portable-personal-agent-chat-os/package.json . Then read BUILDPRINT.md, 01-questions.md, 02-project-setup.md, blueprint.yaml, 03-phases/phase-index.yaml, 03-phases/phase-flow.md, the active phase file, 04-evaluation.md, and 05-evidence/evidence-ledger.jsonl. Treat BUILDPRINT.md as canonical. Run every phase through 03-phases/phase-flow.md, create .buildprint/phase-runs/<phase-id>/ artifacts, read .buildprint/next-agent.md and current project AGENTS.md before phase work, and append runtime proof only to .buildprint/evidence/evidence-ledger.jsonl. Build the clean-room personal agent chatbot OS with streaming chat, provider routing, tools, skills, MCP adapter, memory/compaction, subagent delegation, token telemetry, WebUI/API workbench, and safety-gated tool policy. Use deterministic providers/tools by default. Do not claim Emperor Agent clone, exact UI parity, live provider parity, real MCP parity, shell/browser/network safety, production auth, billing, publishing, or hosted SaaS unless separately validated.",
+    methodology: [
+      "Setup gate",
+      "Phase-flow execution",
+      "Runtime evidence ledger",
+      "Claim-safe validation"
+    ],
+    runtimeSpine: [
+      "BUILDPRINT.md",
+      "01-questions.md",
+      "02-project-setup.md",
+      "blueprint.yaml",
+      "03-phases/phase-index.yaml",
+      "03-phases/phase-flow.md",
+      "03-phases/<active-phase>.md",
+      "04-evaluation.md",
+      "05-evidence/evidence-ledger.schema.json",
+      ".buildprint/phase-runs/<phase-id>/proof.md",
+      ".buildprint/evidence/evidence-ledger.jsonl"
+    ],
+    proofNotes: [
+      "Mapper OS converted: Converted to executable-blueprint v5 phase-flow methodology with seed-only packaged evidence and honest runtime evidence rules.",
+      "Converted to executable-blueprint v5 with phase-run artifacts and review contracts.",
+      "Preserves personal agent OS behavior without copying source implementation or claiming exact clone parity.",
+      "Runtime evidence is separated from seed evidence and blocked proof cannot upgrade claims.",
+      "Shell, browser, network, filesystem writes, live providers, and real MCP are explicit approval/proof boundaries."
+    ],
     githubUrl: "https://github.com/DomEscobar/agent-buildprint/tree/main/buildprints/portable-personal-agent-chat-os",
     manifestUrl: "https://agent-buildprint.com/buildprints/portable-personal-agent-chat-os/package.json",
   },
