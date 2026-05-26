@@ -1,0 +1,241 @@
+---
+title: "Agents Don’t Need ‘Keep Going’. They Need Exit Conditions."
+description: "Claude Code /goal is a useful signal, but the bigger pattern is tool-agnostic: reliable agents need observable stop rules, evidence, bounded scope, and blocker exits."
+language: "en"
+slug: "agents-need-exit-conditions"
+canonicalSlug: "agents-need-exit-conditions"
+publishedAt: "2026-05-26"
+updatedAt: "2026-05-26"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Agent Harness", "Developer Workflow", "AI Engineering", "Evals"]
+topic: "AI Agent Workflows"
+summary: "The useful lesson behind Claude Code /goal is not that agents can run forever. It is that long-running agent work needs an explicit, observable exit condition: what proves done, what stays in scope, and when to stop blocked."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Is this post only about Claude Code /goal?"
+    answer: "No. Claude Code /goal is one concrete example of a broader agent pattern: run work against an observable stop rule instead of vague instructions like keep going."
+  - question: "What makes a good agent exit condition?"
+    answer: "A good exit condition names the acceptance checks, the evidence that must be visible, the scope constraints, and the blocker condition that stops the run instead of looping forever."
+  - question: "Can model-judged exit conditions replace tests?"
+    answer: "No. A model can evaluate transcript evidence, but deterministic checks, tests, validators, and human approval are still needed for high-risk work."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+
+The least interesting version of autonomous agents is “the model keeps going.”
+
+That sounds powerful until you watch it in production.
+
+An agent that keeps going without a crisp stopping rule does not become reliable. It becomes a very polite loop with tool access.
+
+The more useful pattern is smaller and sharper:
+
+> Agents do not need infinite continuation. They need explicit exit conditions.
+
+Claude Code’s [`/goal`](https://docs.anthropic.com/en/docs/claude-code/goal) command is a good recent example. It lets you set a session goal. After each turn, a smaller evaluator checks whether the goal condition appears satisfied from the conversation transcript. If not, Claude continues. If yes, the goal clears.
+
+That is interesting.
+
+But the real lesson is not Claude-specific.
+
+It is a general design move for agent systems: replace “keep working until done” with “continue until this observable condition is met, or stop with a named blocker.”
+
+## The short version
+
+A good agent loop needs four things:
+
+<FlowGraphic
+  title="Exit-condition loop"
+  note="continuation should be earned by missing evidence, not vibes"
+  steps={['Task', 'Work turn', 'Evidence surfaced', 'Exit condition checked', 'Continue, stop, or report blocker']}
+/>
+
+The important part is the evidence step.
+
+A stop rule is only as good as what the evaluator can see. If the agent says “tests passed” but never shows the command, output, changed files, or remaining risks, the loop is grading a story.
+
+That is the failure mode to avoid.
+
+Do not ask the agent to “finish the refactor.” Ask it to produce enough evidence that an external checker, human reviewer, or smaller model can tell whether the refactor actually reached the finish line.
+
+## Why “keep going” is a bad control surface
+
+“Keep going” feels natural because humans use it casually.
+
+For agents, it is under-specified control.
+
+<CompareGrid
+  title="Vague continuation vs. exit condition"
+  leftLabel="Keep going"
+  rightLabel="Exit condition"
+  rows={[
+    { left: 'The agent decides what done means as it goes.', right: 'Done is named before the loop starts.' },
+    { left: 'Scope can silently expand to make progress feel real.', right: 'Allowed files, tools, accounts, or data are bounded.' },
+    { left: 'The model can stop when it feels confident.', right: 'Completion requires visible evidence.' },
+    { left: 'Blocked work turns into more attempts.', right: 'A blocker condition ends the loop honestly.' },
+  ]}
+/>
+
+The danger is not only that the agent stops too early.
+
+The opposite is often worse: it keeps optimizing toward a partial goal while quietly damaging the surrounding system.
+
+A coding agent can make tests green by weakening the test. A research agent can keep collecting sources long after the decision is clear. A support agent can keep “being helpful” after it should escalate. A personal assistant can keep retrying an external action that should require approval.
+
+Continuation is not intelligence.
+
+Continuation is a policy decision.
+
+## A tool-agnostic template you can steal
+
+Use this shape for any long-running agent: Claude Code, Codex, Cursor, OpenClaw, a custom LangGraph flow, a background worker, or a team-internal harness.
+
+```txt
+Continue until:
+- [observable acceptance check]
+- [evidence must be shown in transcript/log/artifact]
+- [scope constraints are preserved]
+- [risks or remaining gaps are reported]
+
+Stop early if:
+- the check cannot run
+- required access is missing
+- the scope would need to expand
+- the same failure repeats N times
+- a destructive/external action requires approval
+```
+
+For a coding task:
+
+```txt
+Exit condition:
+- npm test exits 0
+- npm run build exits 0
+- git diff only touches src/auth and test/auth
+- output includes exact commands run and remaining risks
+
+Stop if blocked after 12 turns, or if the fix requires schema, billing, auth, deployment, or production-data changes outside the named scope.
+```
+
+For research:
+
+```txt
+Exit condition:
+- at least 5 primary sources inspected
+- each key claim has a source URL
+- confidence and contradictions are listed
+- recommendation is one paragraph, not a source dump
+
+Stop if sources disagree on the central claim or if only secondary summaries are available.
+```
+
+For customer support automation:
+
+```txt
+Exit condition:
+- user intent classified
+- account state checked
+- safe answer drafted from approved docs
+- escalation reason included if confidence is below threshold
+
+Stop before refunds, plan changes, legal claims, or account deletion.
+```
+
+Same pattern. Different tools.
+
+## The evaluator cannot rescue bad evidence
+
+Claude Code’s `/goal` docs make one limitation explicit: the goal evaluator does not run tools itself. It judges what appears in the transcript.
+
+That limitation is not a footnote. It is the whole design lesson.
+
+If the worker agent does not surface proof, the evaluator is blind.
+
+<KeyPoints
+  title="Evidence an exit condition can actually use"
+  items={[
+    'Exact commands run, with exit status or relevant output.',
+    'Files changed, not just “I updated the code.”',
+    'Acceptance checklist with pass, fail, blocked, or skipped.',
+    'Scope confirmation: what was intentionally not touched.',
+    'Remaining risks, especially when the proof is partial.',
+  ]}
+/>
+
+This is why model-judged exit conditions should pair with deterministic gates whenever possible.
+
+A model can decide whether the transcript claims the build passed.
+
+A build command decides whether the build passed.
+
+Do not confuse those layers.
+
+## Where this fits in the agent stack
+
+Exit conditions are one seatbelt, not the whole car.
+
+They work best with the other boring pieces of agent reliability:
+
+- state machines for phase boundaries
+- scoped tool permissions
+- approval gates for external or destructive actions
+- deterministic tests and validators
+- durable run logs
+- recovery states and rollback plans
+
+The exit condition answers one question:
+
+> Under what evidence should this loop stop?
+
+It does not answer every safety question.
+
+That is why “Claude can now work while you sleep” is the weaker framing. Sometimes that is true. But the better framing is less cinematic and more operational:
+
+> The agent can continue only while the exit condition is not yet proven.
+
+That is a different promise.
+
+## Do this, not that
+
+<DoDont
+  title="Exit-condition rules"
+  doLabel="Do"
+  dontLabel="Avoid"
+  doItems={[
+    'write the stop rule before the loop starts',
+    'make proof visible in transcript, logs, or artifacts',
+    'include scope constraints, not only success checks',
+    'define a blocked exit so the agent can stop honestly',
+  ]}
+  dontItems={[
+    'use fuzzy goals like “make it better” or “finish the feature”',
+    'let the agent grade claims it never surfaced evidence for',
+    'treat model evaluation as a replacement for tests',
+    'allow infinite retries after the same failure repeats',
+  ]}
+/>
+
+The tiny mental model:
+
+```txt
+Bad: keep going until done
+Better: continue until evidence proves done
+Best: continue until evidence proves done, or stop when the proof cannot be produced safely
+```
+
+That last clause matters.
+
+A mature agent does not only know how to continue.
+
+It knows how to stop.
+
+## Sources
+
+- [Claude Code `/goal` documentation](https://docs.anthropic.com/en/docs/claude-code/goal)
+- [Claude Code hooks reference](https://docs.anthropic.com/en/docs/claude-code/hooks)
+- [Claude Code release notes](https://docs.anthropic.com/en/release-notes/claude-code)
