@@ -10,40 +10,90 @@ interface Props {
 const { locale } = Astro.props;
 const isDe = locale === 'de';
 const path = '/ai-native-engineering/';
-const title = isDe ? 'AI Native Engineering | Hücki' : 'AI Native Engineering | Hücki';
+const title = isDe
+  ? 'AI Native Engineering: Developer Course | Hücki'
+  : 'AI Native Engineering: Developer Course | Hücki';
 const description = isDe
-  ? 'Ein interaktiver Lernpfad für LLM-native Softwareentwicklung: Tokens, Kontext, Task Contracts, Dekomposition, Evals und produktionsreife AI-Features.'
-  : 'An interactive learning path for LLM-native software engineering: tokens, context, Task Contracts, decomposition, evals, and production-grade AI features.';
+  ? 'Ein öffentlicher Developer-Kurs für LLM-native Softwareentwicklung: Tokens, Kontext, Task Contracts, Dekomposition, Evals, Rollout und produktionsreife AI-Features.'
+  : 'A public developer course for LLM-native software engineering: tokens, context, Task Contracts, decomposition, evals, rollout, and production-grade AI features.';
 
 const copy = isDe
   ? {
-      eyebrow: 'AI Native Engineering',
+      eyebrow: 'AI Native Engineering · Developer Course',
       title: 'Vom Prompt-Schreiber zum AI-System-Builder.',
-      intro: 'Ein selbstgeführter Lernpfad für Entwickler:innen, die AI-Features nicht nur demoen, sondern betreiben wollen — mit Kontextbudgets, Task Contracts, Dekomposition, Evals und Fallbacks.',
+      intro: 'Ein selbstgeführter Lernpfad für Softwareentwickler:innen, die AI-Features nicht nur demoen, sondern betreiben wollen — mit Kontextbudgets, Task Contracts, Dekomposition, Evals, Rollout, Observability und Fallbacks.',
+      meta: 'Von Dominic Hückmann · zuletzt geprüft Mai 2026 · 45–60 Minuten',
       deckTitle: 'Becoming LLM-Native',
-      deckText: 'Das interaktive Reveal.js Deck läuft hier als statisches Asset in einem Sandbox-iframe. Die Seite bleibt leicht, indexierbar und verlinkbar; der Slide-Modus bleibt vollständig nutzbar.',
+      deckText: 'Das interaktive Reveal.js Deck läuft hier als statisches Asset in einem Sandbox-iframe. Die Seite erklärt die Lernkurve; der Slide-Modus enthält die vollständigen Details und Referenz-Tabellen.',
       note: 'Pfeiltasten nutzen · Mobile besser quer',
       back: 'Zur Startseite',
+      openDeck: 'Deck direkt öffnen',
+      forTitle: 'Für wen ist das?',
+      forText: 'Für Softwareentwickler:innen, Tech Leads und AI-Feature-Teams. Nicht für generische Business-Prompting-Tipps, sondern für Teams, die LLMs, Coding Agents oder AI-gestützte Produktfeatures verantwortbar in Software einbauen.',
+      curveTitle: 'Die Lernkurve',
+      ctaTitle: 'Willst du daraus ein Team-Betriebsmodell machen?',
+      ctaText: 'Der Kurs führt zu einem praktischen Operating Model: Task Contracts, Eval-Sets, Tool-Gates, Rollout-Regeln, Incident Playbooks und Agent Buildprints.',
+      ctaButton: 'Projekt oder Workshop anfragen',
       cards: [
-        ['01', 'Tokens & Attention', 'Warum Kontextfenster, Positionseffekte und lost-in-the-middle konkrete Architekturentscheidungen sind.'],
-        ['02', 'Context Engineering', 'Wie Task Contracts, Schemas und Quellenregeln zuverlässiger sind als längere Prompts.'],
-        ['03', 'Agentic Delivery', 'Wie Evals, Traces, Tool-Gates und Incident Playbooks aus AI-Demos betreibbare Systeme machen.'],
+        ['01', 'Mechanics', 'Tokens, Kontextfenster, Positionseffekte und Präzisionsfallen erklären, warum naive Prompts brechen.'],
+        ['02', 'Contracts', 'Task Contracts, Schemas, Quellenregeln und Tool-Grenzen machen AI-Arbeit testbarer.'],
+        ['03', 'Workflows', 'Dekomposition, Pipelines und Skills verhindern, dass große Aufgaben zu Mega-Prompts verkommen.'],
+        ['04', 'Operations', 'Evals, Logs, Rollout, Fallbacks, Incident Playbooks und Ownership machen AI-Features betreibbar.'],
       ],
+      takeaways: [
+        'Prompting ist nicht tot; prompt-only Denken ist zu klein.',
+        'Wichtige AI-Arbeit beginnt mit Kontextgrenzen, nicht mit cleveren Formulierungen.',
+        'Jede riskante AI-Ausgabe braucht Evidence, Eval und eine Stop-/Fallback-Regel.',
+        'Coding Agents brauchen ein Repo-Betriebssystem: AGENTS.md, Skills, Tool-Gates und Reviews.',
+        'Production AI ist Produktarbeit: Kosten, Latenz, UX-Vertrauen, Rollout und Incident Response zählen mit.',
+      ],
+      related: [
+        ['Prompting 2026: Context Engineering', '/blog/prompting-2026-context-engineering/'],
+        ['Prompt Decomposition: Aufgaben richtig zerlegen', '/blog/prompting-2026-decomposition-skills-evals/'],
+        ['LLM-native Entwickler brauchen mehr als Prompts', '/blog/llm-native-entwickler-operational-maturity/'],
+        ['Agent Buildprints öffnen', '/buildprints/'],
+      ],
+      sources: ['Lost in the Middle', 'ReAct', 'Tree of Thoughts', 'DSPy', 'OWASP LLM Top 10', 'NIST AI RMF', 'Anthropic / OpenAI / Google prompting docs'],
     }
   : {
-      eyebrow: 'AI Native Engineering',
+      eyebrow: 'AI Native Engineering · Developer Course',
       title: 'From prompt writer to AI system builder.',
-      intro: 'A self-paced learning path for developers who want to operate AI features, not just demo them — covering context budgets, Task Contracts, decomposition, evals, and fallbacks.',
+      intro: 'A self-paced learning path for software developers who want to operate AI features, not just demo them — covering context budgets, Task Contracts, decomposition, evals, rollout, observability, and fallbacks.',
+      meta: 'By Dominic Hückmann · last reviewed May 2026 · 45–60 minutes',
       deckTitle: 'Becoming LLM-Native',
-      deckText: 'The interactive Reveal.js deck runs here as a static asset inside a sandboxed iframe. The page stays lightweight, indexable, and linkable; slide mode stays fully usable.',
+      deckText: 'The interactive Reveal.js deck runs here as a static asset inside a sandboxed iframe. This page explains the learning curve; slide mode keeps the full details and reference tables.',
       note: 'Use arrow keys · Mobile works best landscape',
       back: 'Back to homepage',
+      openDeck: 'Open deck directly',
+      forTitle: 'Who is this for?',
+      forText: 'For software developers, tech leads, and AI-feature teams. This is not generic business prompting advice; it is for teams responsible for putting LLMs, coding agents, or AI-assisted product features into software safely.',
+      curveTitle: 'The learning curve',
+      ctaTitle: 'Want to turn this into a team operating model?',
+      ctaText: 'The course points toward a practical operating model: Task Contracts, eval sets, tool gates, rollout rules, incident playbooks, and Agent Buildprints.',
+      ctaButton: 'Ask about a project or workshop',
       cards: [
-        ['01', 'Tokens & Attention', 'Why context windows, position effects, and lost-in-the-middle are concrete architecture constraints.'],
-        ['02', 'Context Engineering', 'How Task Contracts, schemas, and source boundaries beat longer prompts.'],
-        ['03', 'Agentic Delivery', 'How evals, traces, tool gates, and incident playbooks turn AI demos into operable systems.'],
+        ['01', 'Mechanics', 'Tokens, context windows, position effects, and precision traps explain why naive prompts break.'],
+        ['02', 'Contracts', 'Task Contracts, schemas, source boundaries, and tool limits make AI work testable.'],
+        ['03', 'Workflows', 'Decomposition, pipelines, and skills prevent large tasks from becoming mega-prompts.'],
+        ['04', 'Operations', 'Evals, logs, rollout, fallbacks, incident playbooks, and ownership make AI features operable.'],
       ],
+      takeaways: [
+        'Prompting is not dead; prompt-only thinking is too small.',
+        'Important AI work starts with context boundaries, not clever phrasing.',
+        'Every risky AI output needs evidence, an eval, and a stop/fallback rule.',
+        'Coding agents need a repo operating system: AGENTS.md, skills, tool gates, and reviews.',
+        'Production AI is product work: cost, latency, UX trust, rollout, and incident response count too.',
+      ],
+      related: [
+        ['Prompting 2026: Context Engineering', '/blog/prompting-2026-context-engineering-en/'],
+        ['Prompt Decomposition: Break AI tasks down correctly', '/blog/prompting-2026-decomposition-skills-evals-en/'],
+        ['The LLM-native developer needs more than prompts', '/blog/llm-native-developer-operational-maturity/'],
+        ['Open Agent Buildprints', '/buildprints/'],
+      ],
+      sources: ['Lost in the Middle', 'ReAct', 'Tree of Thoughts', 'DSPy', 'OWASP LLM Top 10', 'NIST AI RMF', 'Anthropic / OpenAI / Google prompting docs'],
     };
+
+const contactHref = `mailto:${person.email}?subject=${encodeURIComponent('AI Native Engineering workshop / project')}`;
 ---
 
 <BaseLayout
@@ -60,8 +110,8 @@ const copy = isDe
     inLanguage: isDe ? 'de-DE' : 'en-US',
     author: { '@type': 'Person', name: person.name },
     educationalLevel: 'Professional',
-    learningResourceType: 'Slide deck',
-    about: ['LLM-native development', 'AI engineering', 'Context engineering', 'AI agents'],
+    learningResourceType: 'Developer course',
+    about: ['LLM-native development', 'AI engineering', 'Context engineering', 'AI agents', 'AI evaluation', 'Production AI'],
   }]}
 >
   <Navbar locale={locale} />
@@ -72,10 +122,12 @@ const copy = isDe
         <div>
           <p class="text-sm font-semibold uppercase tracking-[0.28em] text-accent">{copy.eyebrow}</p>
           <h1 class="mt-5 max-w-5xl text-5xl font-bold leading-[0.95] tracking-tight text-foreground md:text-7xl">{copy.title}</h1>
+          <p class="mt-5 text-sm font-medium text-muted-foreground">{copy.meta}</p>
           <p class="mt-7 max-w-3xl text-lg leading-8 text-muted-foreground md:text-xl md:leading-9">{copy.intro}</p>
         </div>
         <aside class="rounded-2xl border border-accent/30 bg-card/70 p-5 shadow-[0_24px_80px_hsl(var(--accent)/0.10)]">
-          <div class="space-y-3">
+          <p class="text-xs font-semibold uppercase tracking-[0.22em] text-accent">{copy.curveTitle}</p>
+          <div class="mt-4 space-y-3">
             {copy.cards.map(([num, cardTitle, text]) => (
               <div class="rounded-lg border border-border/70 bg-background/55 p-4">
                 <p class="font-mono text-xs text-accent">{num}</p>
@@ -88,6 +140,19 @@ const copy = isDe
       </div>
     </section>
 
+    <section class="mx-auto mt-12 grid max-w-7xl gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+      <div class="rounded-2xl border border-border/70 bg-card/60 p-6 md:p-8">
+        <h2 class="text-2xl font-bold tracking-tight">{copy.forTitle}</h2>
+        <p class="mt-4 leading-8 text-muted-foreground">{copy.forText}</p>
+      </div>
+      <div class="rounded-2xl border border-border/70 bg-card/60 p-6 md:p-8">
+        <h2 class="text-2xl font-bold tracking-tight">Key takeaways</h2>
+        <ul class="mt-4 grid gap-3 text-muted-foreground md:grid-cols-2">
+          {copy.takeaways.map((item) => <li class="rounded-lg border border-border/70 bg-background/45 p-4 leading-7">{item}</li>)}
+        </ul>
+      </div>
+    </section>
+
     <section class="mx-auto mt-12 max-w-7xl">
       <div class="mb-5 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
@@ -95,17 +160,43 @@ const copy = isDe
           <h2 class="mt-3 text-3xl font-bold tracking-tight md:text-5xl">{copy.deckTitle}</h2>
           <p class="mt-4 max-w-3xl leading-8 text-muted-foreground">{copy.deckText}</p>
         </div>
-        <p class="rounded-full border border-border bg-card px-4 py-2 text-sm text-muted-foreground">{copy.note}</p>
+        <div class="flex flex-wrap gap-3">
+          <p class="rounded-full border border-border bg-card px-4 py-2 text-sm text-muted-foreground">{copy.note}</p>
+          <a href="/decks/llm-native-lessons.html" class="rounded-full border border-accent/50 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent transition hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{copy.openDeck}</a>
+        </div>
       </div>
       <div class="overflow-hidden rounded-2xl border border-accent/30 bg-[#061421] shadow-[0_30px_120px_hsl(var(--background)/0.45)]">
         <iframe
           title={copy.deckTitle}
           src="/decks/llm-native-lessons.html"
-          sandbox="allow-scripts allow-forms allow-popups"
+          sandbox="allow-scripts"
           loading="lazy"
           class="h-[72vh] min-h-[34rem] w-full bg-[#061421]"
         ></iframe>
       </div>
+    </section>
+
+    <section class="mx-auto mt-12 grid max-w-7xl gap-6 lg:grid-cols-2">
+      <div class="rounded-2xl border border-border/70 bg-card/60 p-6 md:p-8">
+        <h2 class="text-2xl font-bold tracking-tight">Related reading</h2>
+        <div class="mt-5 grid gap-3">
+          {copy.related.map(([label, href]) => (
+            <a href={localizedPath(locale, href)} class="rounded-lg border border-border/70 bg-background/45 p-4 font-semibold text-foreground transition hover:border-accent/70 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{label} →</a>
+          ))}
+        </div>
+      </div>
+      <div class="rounded-2xl border border-border/70 bg-card/60 p-6 md:p-8">
+        <h2 class="text-2xl font-bold tracking-tight">Sources covered</h2>
+        <div class="mt-5 flex flex-wrap gap-2">
+          {copy.sources.map((source) => <span class="rounded-full border border-border bg-background px-3 py-1 text-sm text-muted-foreground">{source}</span>)}
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto mt-12 max-w-7xl rounded-2xl border border-accent/30 bg-card/70 p-6 md:p-8">
+      <h2 class="text-2xl font-bold tracking-tight md:text-3xl">{copy.ctaTitle}</h2>
+      <p class="mt-4 max-w-3xl leading-8 text-muted-foreground">{copy.ctaText}</p>
+      <a href={contactHref} class="mt-6 inline-flex min-h-11 items-center rounded-full bg-accent px-5 text-sm font-semibold text-accent-foreground transition hover:bg-accent/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{copy.ctaButton}</a>
     </section>
   </main>
 </BaseLayout>

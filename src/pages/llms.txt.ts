@@ -62,7 +62,12 @@ export const GET: APIRoute = async () => {
     `- [English homepage](${absoluteUrl('/en/')}): English entry point and professional summary.`,
     `- [German blog](${absoluteUrl('/blog/')}): German AI-first engineering articles.`,
     `- [English blog](${absoluteUrl('/en/blog/')}): English AI-first engineering articles.`,
+    `- [AI Native Engineering course](${absoluteUrl('/en/ai-native-engineering/')}): public developer course on LLM-native engineering: tokens, context engineering, Task Contracts, decomposition, evals, rollout, observability, UX trust, incident playbooks, coding-agent harnesses, and production AI operations. German version: ${absoluteUrl('/ai-native-engineering/')}.`,
     `- [Buildprint registry](${absoluteUrl('/buildprints/')}): executable implementation contracts for agents and developers.`,
+
+    '',
+    '## Featured Learning Resource',
+    `- [AI Native Engineering: From prompt writer to AI system builder](${absoluteUrl('/en/ai-native-engineering/')}): self-paced developer course by ${person.name}, last reviewed May 2026. The course teaches a learning curve from mechanics (tokens, context, position effects) to contracts (schemas, source boundaries, tools), workflows (decomposition, pipelines, skills), and operations (evals, traces, rollout, cost/latency, UX trust, incident response, ownership).`,
     '',
     '## Feeds and Machine-Readable Indexes',
     `- [RSS feed](${absoluteUrl('/rss.xml')}): Reverse-chronological blog feed.`,

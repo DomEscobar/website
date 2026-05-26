@@ -116,11 +116,11 @@
 <div class="reveal"><div class="slides">
 <!-- ===== SLIDE 1: TITLE ===== -->
 <section class="title-slide" data-background-color="#061421">
-  <div class="brand-block">INTERNAL&nbsp;&nbsp;DEV&nbsp;&nbsp;LEARNING&nbsp;&nbsp;·&nbsp;&nbsp;AI&nbsp;&nbsp;ENGINEERING</div>
+  <div class="brand-block">AI&nbsp;&nbsp;NATIVE&nbsp;&nbsp;ENGINEERING&nbsp;&nbsp;·&nbsp;&nbsp;DEVELOPER&nbsp;&nbsp;COURSE</div>
   <h1>Becoming<br/><span class="accent">LLM-Native</span></h1>
   <div class="accent-line"></div>
   <div class="subtitle">From prompt writer to AI system builder</div>
-  <div class="meta">SELF-PACED READING &nbsp;·&nbsp; EST. 45 MIN &nbsp;·&nbsp; 2026</div>
+  <div class="meta">SELF-PACED DEVELOPER COURSE &nbsp;·&nbsp; EST. 45–60 MIN &nbsp;·&nbsp; LAST REVIEWED MAY 2026</div>
 </section>
 
 <!-- ===== SLIDE 2: HOW TO READ ===== -->
@@ -244,6 +244,26 @@
   </div>
 </section>
 
+<!-- ===== SLIDE 5B: LEARNING CURVE ===== -->
+<section>
+ <div class="header-bar"><span class="brand">AI-NATIVE</span><span>Learning curve</span></div>
+ <h2>The learning curve: from prompt to operated system</h2>
+ <p class="muted">This course is for software developers. Each part adds one layer; do not skip the layers below it.</p>
+ <div class="pipeline" style="margin-top:24px;">
+ <div class="step"><span class="icon">01</span><strong>Mechanics</strong><small>tokens, context, position effects</small></div>
+ <div class="arrow">→</div>
+ <div class="step"><span class="icon">02</span><strong>Contracts</strong><small>context, schemas, tools, evals</small></div>
+ <div class="arrow">→</div>
+ <div class="step"><span class="icon">03</span><strong>Workflows</strong><small>decomposition, pipelines, skills</small></div>
+ <div class="arrow">→</div>
+ <div class="step"><span class="icon">04</span><strong>Operations</strong><small>risk, logs, rollout, incidents</small></div>
+ </div>
+ <div class="card al" style="margin-top:16px;">
+ <p style="margin:0;font-size:0.9em;"><strong>Rule:</strong> mechanics explain failure modes; they do not guarantee behavior. Every important claim in your own system still needs target-model evals and production evidence.</p>
+ </div>
+ <div class="takeaway"><strong>Takeaway:</strong> The goal is not to memorize prompt tricks. The goal is to build AI features whose behavior can be bounded, observed, evaluated, and rolled back.</div>
+</section>
+
 <!-- ===================== PART 0: FUNDAMENTALS ===================== -->
 
 <!-- ===== SLIDE 6: SECTION DIVIDER ===== -->
@@ -301,7 +321,7 @@
       </div>
     </div>
   </div>
-  <div class="takeaway"><strong>Takeaway:</strong> Models think in tokens, not characters or words. Never ask a model to count letters — it cannot.</div>
+  <div class="takeaway"><strong>Takeaway:</strong> Models process tokens, not characters or words. Do not rely on raw model output for character-level precision — use a tool when correctness matters.</div>
 </section>
 
 <!-- ===== SLIDE 8: WHY TOKENS MATTER ===== -->
@@ -446,18 +466,18 @@
         <p style="margin:8px 0 0;color:var(--c-grey2);font-size:0.9em;">This is a simplified illustration. Real attention is per-head across layers.</p>
       </div>
       <div class="card al" style="margin-top:8px;">
-        <p style="margin:0;font-size:0.85em;">Attention is a zero-sum competition. Every token you add dilutes every other token.</p>
+        <p style="margin:0;font-size:0.85em;">As a practical mental model, attention is competitive: irrelevant tokens can pull weight away from what matters. Real attention is per-head and per-layer, but the engineering lesson holds.</p>
       </div>
     </div>
   </div>
-  <div class="takeaway"><strong>Takeaway:</strong> Attention is finite and competitive. Irrelevant context does not just sit there — it steals attention from what matters.</div>
+  <div class="takeaway"><strong>Takeaway:</strong> Attention is finite and competitive enough to matter in practice. Irrelevant context does not sit there harmlessly — it can reduce reliability, increase latency, and raise cost.</div>
 </section>
 
 <!-- ===== SLIDE 11: U-SHAPE / LOST IN THE MIDDLE ===== -->
 <section>
   <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Part 0 &mdash; Lost in the middle</span></div>
   <h2>The U-shape: lost in the middle</h2>
-  <p class="muted">Models attend strongly to the <strong>start</strong> and <strong>end</strong> of context. The <strong>middle</strong> gets significantly less attention. This is one of the most impactful findings for prompt design. <span class="small">(Liu et al., 2023 — "Lost in the Middle")</span></p>
+  <p class="muted">Many long-context evaluations show a position effect: relevant information near the <strong>start</strong> or <strong>end</strong> is often easier to use than information buried in the <strong>middle</strong>. Treat this as an engineering risk, not a universal law. <span class="small">(Liu et al., 2023 — "Lost in the Middle")</span></p>
   <div class="two-col" style="margin-top:14px;">
     <div>
       <div class="caption">U-SHAPED ATTENTION ACROSS THE CONTEXT WINDOW</div>
@@ -509,7 +529,7 @@
       </div>
     </div>
   </div>
-  <div class="takeaway"><strong>Takeaway:</strong> Never put a critical instruction in the middle of a long prompt. Put it at the start or repeat it at the end.</div>
+  <div class="takeaway"><strong>Takeaway:</strong> Do not rely on a critical instruction buried in the middle of a long prompt. Put it at the start, repeat it near the end, and verify behavior with evals.</div>
 </section>
 
 <!-- ===== SLIDE 12: POSITION EFFECTS ===== -->
@@ -552,7 +572,7 @@
       </tr>
     </tbody>
   </table>
-  <div class="takeaway"><strong>Takeaway:</strong> Treat prompt structure like visual hierarchy in UI design. The most important content goes first and last, never in the middle.</div>
+  <div class="takeaway"><strong>Takeaway:</strong> Treat prompt structure like visual hierarchy in UI design. The most important content goes first and/or near the end, and behavior still needs evals on the target model.</div>
 </section>
 
 <!-- ===== SLIDE 13: RECENCY BIAS + NEGATION ===== -->
@@ -567,7 +587,7 @@
         <ul style="font-size:0.85em;">
           <li>Putting examples <em>before</em> the task causes the model to treat the example as the target</li>
           <li>"Ignore all previous instructions" attacks in prompt injection exploit this</li>
-          <li>Later user messages can override earlier system prompt rules</li>
+          <li>Later user messages can exert strong influence and trigger failures despite higher-priority instructions</li>
           <li>The end of a long conversation matters more than the beginning</li>
         </ul>
       </div>
@@ -647,7 +667,7 @@
     <div>
       <div class="card al">
         <h4>The practical lesson</h4>
-        <p style="font-size:0.85em;">Never ask an LLM to:</p>
+        <p style="font-size:0.85em;">Do not rely on raw LLM output to:</p>
         <ul class="x-list check-list" style="font-size:0.85em;">
           <li>Count specific letters in a word</li>
           <li>Do precise arithmetic on large numbers</li>
@@ -667,7 +687,22 @@
       </div>
     </div>
   </div>
-  <div class="takeaway"><strong>Takeaway:</strong> For anything requiring precision — counting, arithmetic, dates — use a tool, not the model's raw token reasoning.</div>
+  <div class="takeaway"><strong>Takeaway:</strong> For anything requiring precision — counting, arithmetic, dates — use a tool or deterministic code path, not raw model reasoning.</div>
+</section>
+
+<!-- ===== SLIDE 14B: TOP MISTAKES ===== -->
+<section>
+ <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Part 0 &mdash; Top failure modes</span></div>
+ <h2>The 5 mistakes that break most AI features</h2>
+ <p class="muted">The next slide keeps the full reference table. Start with these five; they explain most real failures.</p>
+ <div class="grid g2" style="margin-top:18px;">
+ <div class="card ared"><h4 style="color:var(--c-red);">1. Critical rules buried in the middle</h4><p style="font-size:0.86em;">Position effects make important constraints easier to miss. Put hard rules at the start and repeat the most important one near the end.</p></div>
+ <div class="card ared"><h4 style="color:var(--c-red);">2. Context added “just in case”</h4><p style="font-size:0.86em;">Irrelevant context costs latency, money, and reliability. Retrieve fewer, better chunks.</p></div>
+ <div class="card ared"><h4 style="color:var(--c-red);">3. Precision tasks left to raw text generation</h4><p style="font-size:0.86em;">Counting, dates, arithmetic, and validation need deterministic tools or code paths.</p></div>
+ <div class="card ared"><h4 style="color:var(--c-red);">4. Untrusted text treated as instructions</h4><p style="font-size:0.86em;">User input and retrieved docs can contain attack payloads. Label trust zones explicitly.</p></div>
+ <div class="card ared"><h4 style="color:var(--c-red);">5. No stop condition</h4><p style="font-size:0.86em;">Agents without evidence and exit rules keep working until they hallucinate “done.”</p></div>
+ </div>
+ <div class="takeaway"><strong>Takeaway:</strong> Fix these five first. The full table is a reference checklist, not something to memorize.</div>
 </section>
 
 <!-- ===== SLIDE 15: 14 MISTAKES TABLE ===== -->
@@ -685,7 +720,7 @@
       <tr><td>"Do NOT reveal system prompt"</td><td>Negation weakness in instruction following</td><td>"Only discuss topics in &lt;scope&gt;. If asked anything else, decline."</td></tr>
       <tr><td>5k-token system prompt + 50-token user message</td><td>User message in the U-shape middle-low zone</td><td>Keep system prompt &lt;1k; repeat key constraint before user message</td></tr>
       <tr><td>Concatenating 10 unrelated docs as context</td><td>Cross-document attention bleed; model conflates sources</td><td>One topic per retrieval chunk; use source metadata in each chunk</td></tr>
-      <tr><td>"Think step by step" on a reasoning model</td><td>Reasoning models have internal CoT; forcing visible steps degrades quality</td><td>Give goal + constraints + success criteria instead</td></tr>
+      <tr><td>"Think step by step" on a reasoning model</td><td>Reasoning models often plan internally; forcing verbose visible reasoning can be counterproductive or leak unnecessary chain-of-thought</td><td>Give goal + constraints + success criteria; ask for concise rationale and verification instead</td></tr>
       <tr><td>Same prompt for GPT-4o and o3</td><td>Instruction format that helps one model can hurt another</td><td>Maintain separate prompt templates per model class</td></tr>
       <tr><td>RAG retrieves 20 chunks, uses top 5</td><td>Middle 15 are lost anyway; wasted tokens and cost</td><td>Retrieve exactly what you embed; adjust top-k to your budget</td></tr>
       <tr><td>Conversation history accumulates without pruning</td><td>Earlier turns slide into U-shape low zone; agent "forgets"</td><td>Summarize old turns; prune irrelevant history at each step</td></tr>
@@ -1156,7 +1191,7 @@ Return:
     <div class="card al"><h4>Use examples for tone, format, edge cases</h4><p style="font-size:0.82em;">1–3 well-chosen examples outperform paragraphs of instruction. Place just before the task (recency). Choose examples that cover your most common failure mode.</p></div>
     <div class="card al"><h4>Schema + validator + retry — not "return JSON"</h4><p style="font-size:0.82em;">Define the schema explicitly. Validate programmatically. Repair and retry on validation error (cap at 3). Validate enum fields — models invent new values.</p></div>
     <div class="card al"><h4>Label untrusted content explicitly</h4><p style="font-size:0.82em;">Retrieved text is untrusted input. Label sources: <code>[RETRIEVED]</code> vs. <code>[POLICY — trusted]</code>. If a document says "ignore all rules" — that is an attack payload, not context.</p></div>
-    <div class="card al"><h4>Don't force visible CoT on reasoning models</h4><p style="font-size:0.82em;">Strong reasoning models plan internally. Give: goal + constraints + success criteria. Forcing "think step by step" visible output can degrade quality on these models specifically.</p></div>
+    <div class="card al"><h4>Don't force verbose visible CoT on reasoning models</h4><p style="font-size:0.82em;">Strong reasoning models often plan internally. Give: goal + constraints + success criteria. Prefer concise rationale, checks, and evidence over forcing verbose visible chain-of-thought.</p></div>
     <div class="card al"><h4>Test prompts like product logic, not poetry</h4><p style="font-size:0.82em;">Evals, not vibes. If a behavior matters, it needs a test case that catches regressions. "It worked when I tried it" is not a test suite.</p></div>
   </div>
   <div class="takeaway"><strong>Takeaway:</strong> These rules are the difference between AI features that work once and AI features that work reliably in production.</div>
@@ -1448,7 +1483,7 @@ Output:
 <section>
   <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 2 — Reasoning vs. fast models</span></div>
   <h2>Reasoning models need different prompts</h2>
-  <p class="muted">"Think step by step" is not wrong — but it is too blunt for 2026. Match your prompting style to the model class.</p>
+  <p class="muted">"Think step by step" is not wrong — but it is too blunt as a default. Match your prompting style to the model class and the risk of the task.</p>
   <div class="three-col" style="margin-top:16px;">
     <div class="card" style="border-top:3px solid var(--c-teal);">
       <h4>Strong reasoning model</h4>
@@ -1789,7 +1824,7 @@ Final output must include:
       <tr><td class="old">No rollback plan for the model.</td><td class="new">Prompt version rollback tested. Previous model snapshot available if needed.</td></tr>
     </tbody>
   </table>
-  <div class="takeaway"><strong>Takeaway:</strong> Demo AI and production AI require fundamentally different disciplines. The prompt is 5% of the work. The harness is 95%.</div>
+  <div class="takeaway"><strong>Takeaway:</strong> Demo AI and production AI require fundamentally different disciplines. Rule of thumb: the prompt is only a small part of the work. The harness is where production reliability comes from.</div>
 </section>
 
 <section>
@@ -2244,6 +2279,68 @@ Incident playbook: owned by @alice
 </section>
 
 <section>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — Cost &amp; latency</span></div>
+  <h2>Concern 5: Cost and latency are product behavior</h2>
+  <p class="muted">For developers, “works” is not enough. It must fit the latency, cost, and reliability envelope of the feature.</p>
+  <div class="three-col" style="margin-top:18px;">
+    <div class="card al"><h4>Route by task</h4><p style="font-size:0.86em;">Use small/fast models for classification, extraction, and formatting. Reserve expensive reasoning models for hard decisions.</p></div>
+    <div class="card al"><h4>Cache deliberately</h4><p style="font-size:0.86em;">Cache stable retrieval, policy summaries, embeddings, and repeated tool calls. Do not cache private or user-specific output blindly.</p></div>
+    <div class="card al"><h4>Budget per feature</h4><p style="font-size:0.86em;">Track input tokens, output tokens, latency, retries, and tool calls per request. Alert on spikes.</p></div>
+  </div>
+  <div class="takeaway"><strong>Takeaway:</strong> Cost and latency are not afterthoughts. They are part of the AI feature contract.</div>
+</section>
+
+<section>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — Rollout</span></div>
+  <h2>Concern 6: Rollout strategy before real users</h2>
+  <p class="muted">AI behavior changes with model, data, prompt, and context. Roll it out like a risky product change, not like static copy.</p>
+  <div class="pipeline" style="margin-top:22px;">
+    <div class="step"><span class="icon">1</span><strong>Shadow</strong><small>run without user impact</small></div><div class="arrow">→</div>
+    <div class="step"><span class="icon">2</span><strong>Internal beta</strong><small>trusted reviewers</small></div><div class="arrow">→</div>
+    <div class="step"><span class="icon">3</span><strong>Canary</strong><small>small % traffic</small></div><div class="arrow">→</div>
+    <div class="step"><span class="icon">4</span><strong>Full rollout</strong><small>with rollback switch</small></div>
+  </div>
+  <div class="card al"><p style="margin:0;font-size:0.9em;"><strong>Minimum rollout gate:</strong> feature flag, prompt/model version pin, eval run, logging, and a tested rollback path.</p></div>
+  <div class="takeaway"><strong>Takeaway:</strong> Never discover AI failure modes for the first time at 100% production traffic.</div>
+</section>
+
+<section>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — Observability</span></div>
+  <h2>Concern 7: If you cannot trace it, you cannot debug it</h2>
+  <p class="muted">A useful AI trace explains why a result happened: model, prompt, context, tools, evidence, and cost.</p>
+  <div class="card" style="background:var(--c-deep);">
+    <pre style="margin:0;border:none;background:transparent;"><code>{
+  "run_id": "refundo_2026_05_26_001",
+  "model": "provider/model/version",
+  "prompt_version": "refund-v12",
+  "retrieval_index": "policy-active-2026-05",
+  "trusted_sources": ["policy §3.1"],
+  "untrusted_inputs": ["customer_message"],
+  "tools_called": ["read_policy", "lookup_order"],
+  "confidence": "medium",
+  "fallback_taken": false,
+  "input_tokens": 4210,
+  "output_tokens": 380,
+  "latency_ms": 1840
+}</code></pre>
+  </div>
+  <div class="takeaway"><strong>Takeaway:</strong> Logs are not bureaucracy. They are how you debug model drift, stale context, bad retrieval, cost spikes, and wrong answers.</div>
+</section>
+
+<section>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — UX trust</span></div>
+  <h2>Concern 8: UX must calibrate trust</h2>
+  <p class="muted">A correct backend can still create a dangerous product if the UI makes uncertain model output look authoritative.</p>
+  <div class="grid g2" style="margin-top:18px;">
+    <div class="card al"><h4>Show evidence</h4><p style="font-size:0.86em;">Citations, quotes, diffs, screenshots, or tool results. Let humans inspect the basis of the answer.</p></div>
+    <div class="card al"><h4>Show uncertainty honestly</h4><p style="font-size:0.86em;">Use confidence to route behavior, not to decorate an answer. Low confidence should change the flow.</p></div>
+    <div class="card al"><h4>Prefer drafts for risky output</h4><p style="font-size:0.86em;">Emails, refunds, code changes, and public posts need review, diff, approval, and undo.</p></div>
+    <div class="card al"><h4>Escalate visibly</h4><p style="font-size:0.86em;">When the model cannot prove an answer, the UI should make escalation normal — not a failure.</p></div>
+  </div>
+  <div class="takeaway"><strong>Takeaway:</strong> Human-in-the-loop is a UX design problem, not only a backend policy.</div>
+</section>
+
+<section>
   <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — Summary</span></div>
   <h2>Lesson 3 — 3 things to remember</h2>
   <div class="three-col" style="margin-top:28px;">
@@ -2507,12 +2604,12 @@ Incident playbook: owned by @alice
 </section>
 
 <section class="title-slide" data-background-color="#061421">
-  <div class="brand-block">INTERNAL&nbsp;&nbsp;DEV&nbsp;&nbsp;LEARNING&nbsp;&nbsp;&middot;&nbsp;&nbsp;AI&nbsp;&nbsp;ENGINEERING</div>
+  <div class="brand-block">AI&nbsp;&nbsp;NATIVE&nbsp;&nbsp;ENGINEERING&nbsp;&nbsp;&middot;&nbsp;&nbsp;DEVELOPER&nbsp;&nbsp;COURSE</div>
   <h1 style="margin-top:0.8em;">You made it.<br/><span class="accent">Now go build.</span></h1>
   <div class="accent-line"></div>
   <div class="subtitle">Questions? Share in your team chat.<br/>Found a gap? Add it to your eval set.</div>
   <div class="meta" style="margin-top:3vh;">
-    <p style="margin:0;font-size:1em;color:var(--c-grey2);">This deck is a living document. When something in it becomes wrong or outdated — update it.</p>
+    <p style="margin:0;font-size:1em;color:var(--c-grey2);">This course is a living document. When something becomes wrong, outdated, or too absolute — update it and rerun the relevant evals.</p>
   </div>
 </section>
 
