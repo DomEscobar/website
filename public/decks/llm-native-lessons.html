@@ -181,8 +181,8 @@
     </div>
     <div class="card al" style="padding:18px;">
       <div style="font-size:2em;font-weight:800;color:var(--c-teal);line-height:1;">03</div>
-      <h3 style="margin-top:8px;">Ship a production-grade AI feature — not just a demo</h3>
-      <p class="muted" style="font-size:0.82em;margin-top:8px;">With data boundaries, evals, a fallback, and an incident playbook.</p>
+      <h3 style="margin-top:8px;">Turn a vague AI request into an engineering contract</h3>
+      <p class="muted" style="font-size:0.82em;margin-top:8px;">With context sources, tools, schemas, eval cases, traces, rollout gates, and fallback behavior.</p>
     </div>
   </div>
   <div class="takeaway"><strong>Outcome:</strong> After this deck you build AI features you can operate, not just demo.</div>
@@ -235,7 +235,7 @@
       </div>
       <div class="card">
         <h4>Lesson 3 &mdash; The LLM-Native Developer</h4>
-        <p style="font-size:0.85em;">Data lifecycle, model ops, coding-agent harness, prompt injection, incident playbook, team ownership.</p>
+        <p style="font-size:0.85em;">Implementation path, RAG quality, schemas, memory, multi-agent orchestration, CI/evals, rollout, observability, team ownership.</p>
       </div>
     </div>
   </div>
@@ -256,12 +256,31 @@
  <div class="arrow">→</div>
  <div class="step"><span class="icon">03</span><strong>Workflows</strong><small>decomposition, pipelines, skills</small></div>
  <div class="arrow">→</div>
- <div class="step"><span class="icon">04</span><strong>Operations</strong><small>risk, logs, rollout, incidents</small></div>
+ <div class="step"><span class="icon">04</span><strong>Implementation</strong><small>RAG, tools, schemas, memory</small></div>
+ <div class="arrow">→</div>
+ <div class="step"><span class="icon">05</span><strong>Operations</strong><small>eval CI, rollout, traces, incidents</small></div>
  </div>
  <div class="card al" style="margin-top:16px;">
  <p style="margin:0;font-size:0.9em;"><strong>Rule:</strong> mechanics explain failure modes; they do not guarantee behavior. Every important claim in your own system still needs target-model evals and production evidence.</p>
  </div>
  <div class="takeaway"><strong>Takeaway:</strong> The goal is not to memorize prompt tricks. The goal is to build AI features whose behavior can be bounded, observed, evaluated, and rolled back.</div>
+</section>
+
+<section>
+  <div class="header-bar"><span class="brand">AI-NATIVE</span><span>Journey map</span></div>
+  <h2>The journey: from vague request to operated feature</h2>
+  <p class="muted">This is the mental route a production-capable LLM-native developer follows. The rest of the deck fills in each stop.</p>
+  <div class="pipeline" style="margin-top:22px;">
+    <div class="step"><span class="icon">1</span><strong>Request</strong><small>what user value?</small></div><div class="arrow">→</div>
+    <div class="step"><span class="icon">2</span><strong>Contract</strong><small>scope, sources, output</small></div><div class="arrow">→</div>
+    <div class="step"><span class="icon">3</span><strong>Harness</strong><small>tools, schemas, retrieval</small></div><div class="arrow">→</div>
+    <div class="step"><span class="icon">4</span><strong>Proof</strong><small>evals, traces, CI</small></div><div class="arrow">→</div>
+    <div class="step"><span class="icon">5</span><strong>Operate</strong><small>rollout, fallback, ownership</small></div>
+  </div>
+  <div class="card al" style="margin-top:16px;">
+    <p style="margin:0;font-size:0.9em;"><strong>Refundo thread:</strong> one refund-support bot will travel this whole path: user question → policy retrieval → order lookup → typed answer → eval gate → trace → human fallback.</p>
+  </div>
+  <div class="takeaway"><strong>Takeaway:</strong> AI-native engineering is not one skill. It is a journey from language to contracts, from contracts to systems, and from systems to operational proof.</div>
 </section>
 
 <!-- ===================== PART 0: FUNDAMENTALS ===================== -->
@@ -922,6 +941,23 @@ If the answer is not in the policy doc, say:
     </div>
   </div>
   <div class="takeaway"><strong>Takeaway:</strong> A Task Contract separates what the model is, what it knows, and what it must do. That separation makes prompts testable and maintainable.</div>
+</section>
+
+<section>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 1 — Feature request → engineering contract</span></div>
+  <h2>Turn “add an AI assistant” into a buildable contract</h2>
+  <p class="muted">The most important LLM-native move is translating vague product language into explicit system boundaries.</p>
+  <table style="margin-top:12px;font-size:0.68em;">
+    <thead><tr><th>Question</th><th>Bad answer</th><th>Engineering contract answer</th></tr></thead>
+    <tbody>
+      <tr><td><strong>What may it answer from?</strong></td><td>“Our docs.”</td><td>Only active refund policy docs + read-only order lookup; cite source section.</td></tr>
+      <tr><td><strong>What may it do?</strong></td><td>“Help customers.”</td><td>Explain eligibility. It must not issue refunds, promise exceptions, or edit orders.</td></tr>
+      <tr><td><strong>What shape is output?</strong></td><td>“A helpful message.”</td><td>Validated JSON: eligibility, reason, cited_policy_ids, confidence, escalation_required.</td></tr>
+      <tr><td><strong>How do we know it works?</strong></td><td>“Test a few examples.”</td><td>20-case eval set: happy path, stale policy, ambiguous order, missing data, adversarial note.</td></tr>
+      <tr><td><strong>What if unsure?</strong></td><td>“Be careful.”</td><td>confidence=low or missing citation → route to human; no final answer.</td></tr>
+    </tbody>
+  </table>
+  <div class="takeaway"><strong>Takeaway:</strong> The developer job starts before the prompt: define allowed sources, allowed actions, typed output, proof cases, and fallback behavior.</div>
 </section>
 
 <section>
@@ -1790,8 +1826,8 @@ Final output must include:
 </section>
 
 <section>
-  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — 7 underweighted areas</span></div>
-  <h2>The 7 things teams underweight</h2>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — Underweighted areas</span></div>
+  <h2>The 10 things teams underweight</h2>
   <p class="muted">These are the areas where demos become incidents. Most teams discover them the hard way.</p>
   <table style="margin-top:10px;font-size:0.67em;">
     <thead><tr><th>#</th><th>Area</th><th>What it means in practice</th><th>Refundo example</th></tr></thead>
@@ -1802,7 +1838,10 @@ Final output must include:
       <tr><td><span class="accent">4</span></td><td><strong>Human-AI UX</strong></td><td>drafts, approvals, citations, diff views, undo, visible tool logs</td><td>Customer cannot see which policy was cited</td></tr>
       <tr><td><span class="accent">5</span></td><td><strong>AI incident response</strong></td><td>quality drops, prompt injection, cost spikes, retrieval leaks</td><td>3-day gap before wrong-answer pattern detected</td></tr>
       <tr><td><span class="accent">6</span></td><td><strong>Team operating model</strong></td><td>who owns AGENTS.md, skills, prompts, evals, permissions, stale-rule retirement</td><td>No one owns the retrieval-version pinning; it drifts</td></tr>
-      <tr><td><span class="accent">7</span></td><td><strong>Legal / privacy / IP</strong></td><td>generated code licenses, PII in prompts, vendor retention, audit trails</td><td>Customer PII passed to model via order lookup</td></tr>
+      <tr><td><span class="accent">7</span></td><td><strong>Structured outputs</strong></td><td>schemas, typed interfaces, validators, repair loops, refusal states</td><td>Raw prose answer cannot be checked by backend</td></tr>
+      <tr><td><span class="accent">8</span></td><td><strong>State &amp; memory</strong></td><td>session state, durable memory, deletion, freshness, pollution, user consent</td><td>Old refund preference leaks into new order question</td></tr>
+      <tr><td><span class="accent">9</span></td><td><strong>Eval CI/CD</strong></td><td>golden cases, regression gates, prompt diffs, canary prompts, deploy blocking</td><td>Prompt edit ships without stale-policy regression test</td></tr>
+      <tr><td><span class="accent">10</span></td><td><strong>Legal / privacy / IP</strong></td><td>generated code licenses, PII in prompts, vendor retention, audit trails</td><td>Customer PII passed to model via order lookup</td></tr>
     </tbody>
   </table>
   <div class="takeaway"><strong>Takeaway:</strong> Run this table against your current AI features. If any row has no owner and no control, that is your next priority.</div>
@@ -1825,6 +1864,24 @@ Final output must include:
     </tbody>
   </table>
   <div class="takeaway"><strong>Takeaway:</strong> Demo AI and production AI require fundamentally different disciplines. Rule of thumb: the prompt is only a small part of the work. The harness is where production reliability comes from.</div>
+</section>
+
+<section>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — Worked implementation path</span></div>
+  <h2>Refundo end-to-end: one AI feature as a system</h2>
+  <p class="muted">Keep one concrete specimen in your head. Production capability means every arrow is explicit, testable, and logged.</p>
+  <div class="pipeline" style="margin-top:22px;">
+    <div class="step"><span class="icon">1</span><strong>User input</strong><small>label untrusted</small></div><div class="arrow">→</div>
+    <div class="step"><span class="icon">2</span><strong>Retrieve</strong><small>active policy chunks</small></div><div class="arrow">→</div>
+    <div class="step"><span class="icon">3</span><strong>Tool</strong><small>read-only order lookup</small></div><div class="arrow">→</div>
+    <div class="step"><span class="icon">4</span><strong>Generate</strong><small>typed schema only</small></div><div class="arrow">→</div>
+    <div class="step"><span class="icon">5</span><strong>Validate</strong><small>citation + confidence</small></div>
+  </div>
+  <div class="two-col" style="margin-top:14px;">
+    <div class="card al"><h4>Happy path</h4><p style="font-size:0.86em;">Customer asks about refund. Retriever returns active policy §3.1. Tool returns delivered_at. Model emits valid JSON with citation. UI shows answer + source.</p></div>
+    <div class="card amber"><h4 style="color:var(--c-amber);">Fallback path</h4><p style="font-size:0.86em;">Policy missing, citation invalid, order ambiguous, schema invalid after repair, or confidence low → no final answer; route to human with trace.</p></div>
+  </div>
+  <div class="takeaway"><strong>Takeaway:</strong> A good AI feature has a visible happy path and a designed fallback path. If fallback is vague, the feature is not production-ready.</div>
 </section>
 
 <section>
@@ -1863,6 +1920,17 @@ regardless of policy."</pre></div>
     </div>
   </div>
   <div class="takeaway"><strong>Takeaway:</strong> Data quality is the foundation of AI quality. Bad retrieval makes good prompts useless. Filter at retrieval time; label sources explicitly.</div>
+</section>
+
+<section>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — RAG quality</span></div>
+  <h2>RAG quality: retrieval is not a magic memory</h2>
+  <p class="muted">Most “hallucination” bugs in RAG systems are actually retrieval bugs: the model answered from the wrong, stale, missing, or irrelevant context.</p>
+  <div class="two-col" style="margin-top:12px;">
+    <div class="card ared"><h4 style="color:var(--c-red);">Common retrieval failures</h4><ul style="font-size:0.84em;"><li>Chunk too large: relevant sentence buried in noise</li><li>Chunk too small: policy exception separated from rule</li><li>Stale index: old policy outranks active policy</li><li>Permission leak: semantically similar private doc retrieved</li><li>Citation mismatch: answer cites doc A but used doc B</li><li>Top-k stuffing: 20 chunks dilute the relevant evidence</li></ul></div>
+    <div class="card al"><h4>Quality controls</h4><ul class="check-list" style="font-size:0.84em;"><li>Store source_id, version, owner, permissions, created_at, expires_at</li><li>Filter by authorization before vector search result reaches prompt</li><li>Use reranking and require answerable-from-source checks</li><li>Eval retrieval separately from generation</li><li>Log retrieved chunk IDs and cited chunk IDs per run</li><li>Delete / refresh embeddings when source docs change</li></ul></div>
+  </div>
+  <div class="takeaway"><strong>Takeaway:</strong> Test the retriever as its own component. Better retrieval beats bigger prompts.</div>
 </section>
 
 <section>
@@ -1911,6 +1979,27 @@ regardless of policy."</pre></div>
     </div>
   </div>
   <div class="takeaway"><strong>Takeaway:</strong> Never trust retrieved content as instructions. Label it as untrusted. Monitor tool calls and output structure for injection signals.</div>
+</section>
+
+<section>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — Structured outputs</span></div>
+  <h2>Never trust raw model text at system boundaries</h2>
+  <p class="muted">If another service, database, workflow, or UI depends on the answer, the model must speak through a typed contract.</p>
+  <div class="two-col" style="margin-top:12px;">
+    <div>
+      <div class="caption">REFUNDO OUTPUT SCHEMA</div>
+      <div class="card" style="background:var(--c-deep);padding:10px 14px;"><pre style="margin:0;border:none;background:transparent;padding:0;white-space:pre-wrap;font-size:0.58em;color:#e8e8e8;">{
+  "eligible": "yes | no | unclear",
+  "reason": "string",
+  "cited_policy_ids": ["policy-2026-05#3.1"],
+  "confidence": "high | medium | low",
+  "escalation_required": true,
+  "customer_message_draft": "string"
+}</pre></div>
+    </div>
+    <div class="card al"><h4>Production pattern</h4><ul class="check-list" style="font-size:0.84em;"><li>Define schema in code, not only in prose</li><li>Validate every model output before using it</li><li>Retry/repair only for format errors, not missing facts</li><li>Represent refusal and uncertainty as explicit states</li><li>Keep prose for users; keep typed fields for systems</li><li>Never let raw text decide tool calls or database writes</li></ul></div>
+  </div>
+  <div class="takeaway"><strong>Takeaway:</strong> Schemas turn probabilistic text into a software interface. The validator is part of the prompt contract.</div>
 </section>
 
 <section>
@@ -2000,6 +2089,17 @@ output_tokens = 210</pre></div>
     </div>
   </div>
   <div class="takeaway"><strong>Takeaway:</strong> The harness — AGENTS.md, skills, allowlists, hooks, evals — is part of the product. It is not an afterthought.</div>
+</section>
+
+<section>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — Multi-agent orchestration</span></div>
+  <h2>Use more agents only when the handoff is real</h2>
+  <p class="muted">Multi-agent is powerful when roles create independent pressure. It is harmful when it becomes “agent soup” with unclear authority.</p>
+  <div class="two-col" style="margin-top:12px;">
+    <div class="card al"><h4>Good multi-agent splits</h4><ul class="check-list" style="font-size:0.84em;"><li><strong>Builder → reviewer:</strong> reviewer checks diff against spec, not vibes</li><li><strong>Planner → executor:</strong> planner preserves scope; executor makes small edits</li><li><strong>Retriever → writer:</strong> retriever returns evidence; writer cannot invent sources</li><li><strong>Adversarial evaluator:</strong> tries to break output with edge cases</li></ul></div>
+    <div class="card ared"><h4 style="color:var(--c-red);">Agent soup signals</h4><ul class="x-list check-list" style="font-size:0.84em;"><li>No single owner of final decision</li><li>Agents pass summaries without evidence</li><li>Same model validates its own assumptions</li><li>Handoffs lose source links, constraints, or file scope</li><li>Cost and latency grow but quality does not</li></ul></div>
+  </div>
+  <div class="takeaway"><strong>Takeaway:</strong> Add agents to create independent checks, not to create theater. Every handoff needs a contract and evidence.</div>
 </section>
 
 <section>
@@ -2151,6 +2251,24 @@ def test_refund_window():
 </section>
 
 <section>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — Eval set &amp; CI/CD</span></div>
+  <h2>Your first eval set should be small, sharp, and deploy-blocking</h2>
+  <p class="muted">Do not wait for a perfect benchmark. Start with 20–50 cases that represent how your feature can fail.</p>
+  <div class="two-col" style="margin-top:12px;">
+    <div class="card al"><h4>First 20 cases</h4><ul class="check-list" style="font-size:0.84em;"><li>5 happy-path examples users actually ask</li><li>5 edge cases from policy/product rules</li><li>4 missing-data or ambiguous-data cases</li><li>3 adversarial/untrusted-input cases</li><li>3 historical bugs or “this would be embarrassing” cases</li></ul></div>
+    <div class="card"><h4>CI gate</h4><div class="card" style="background:var(--c-deep);margin-top:6px;padding:8px 12px;"><pre style="margin:0;border:none;background:transparent;padding:0;white-space:pre-wrap;font-size:0.58em;color:#e8e8e8;">on prompt/model/retrieval change:
+  run eval_set=refundo-v1
+  require:
+    schema_valid_rate == 100%
+    citation_required_cases == pass
+    no critical regressions
+    latency_p95 < budget
+  block deploy if failed</pre></div></div>
+  </div>
+  <div class="takeaway"><strong>Takeaway:</strong> “It worked once” becomes engineering only when regressions block deploys.</div>
+</section>
+
+<section>
   <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — Incident playbook</span></div>
   <h2>Concern 4: The AI incident playbook</h2>
   <p class="muted">Every team using AI in production should have an incident checklist. Write it before you need it — not during the incident.</p>
@@ -2276,6 +2394,22 @@ Incident playbook: owned by @alice
     </div>
   </div>
   <div class="takeaway"><strong>Takeaway:</strong> Four rules, applied consistently, prevent the majority of AI production incidents. Print them and keep them next to your architecture decisions.</div>
+</section>
+
+<section>
+  <div class="header-bar"><span class="brand">LLM-NATIVE</span><span>Lesson 3 — State &amp; memory</span></div>
+  <h2>Memory is not “more context” — it is product state</h2>
+  <p class="muted">The moment an AI feature remembers something, you own freshness, deletion, consent, conflict resolution, and retrieval quality.</p>
+  <table style="margin-top:12px;font-size:0.72em;">
+    <thead><tr><th>State type</th><th>Use it for</th><th>Main risk</th><th>Control</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Turn context</strong></td><td>Current user message and immediate task</td><td>Recency overrides instructions</td><td>Label roles and untrusted content</td></tr>
+      <tr><td><strong>Session summary</strong></td><td>Longer chat continuity</td><td>Summary drops constraints</td><td>Keep source links and unresolved decisions</td></tr>
+      <tr><td><strong>User memory</strong></td><td>Stable preferences</td><td>Stale or unwanted personalization</td><td>User-visible edit/delete controls</td></tr>
+      <tr><td><strong>Project memory</strong></td><td>Architecture decisions, repo rules</td><td>Outdated instructions mislead agents</td><td>Owner + review cadence</td></tr>
+    </tbody>
+  </table>
+  <div class="takeaway"><strong>Takeaway:</strong> Durable memory needs the same discipline as any database-backed feature: ownership, freshness, deletion, and auditability.</div>
 </section>
 
 <section>
@@ -2438,6 +2572,7 @@ Incident playbook: owned by @alice
           <li>Retrieval filters at source, not at generation</li>
           <li>Untrusted content is labeled explicitly in every context block</li>
           <li>Deletion propagates to embeddings and indexes</li>
+          <li>Retriever quality was tested separately from generation</li>
         </ul>
         <h4 style="margin-top:12px;">Model &amp; versioning</h4>
         <ul class="check-list" style="font-size:0.82em;">
@@ -2454,8 +2589,10 @@ Incident playbook: owned by @alice
         <h4>Safety &amp; operations</h4>
         <ul class="check-list" style="font-size:0.82em;">
           <li>Output schema is validated programmatically (not assumed)</li>
+          <li>Repair loop is limited; missing facts trigger fallback, not guessing</li>
           <li>Tool calls are permissioned, audited, and idempotent</li>
-          <li>Eval set covers happy path + 3 edge cases + known failure modes</li>
+          <li>Eval set covers happy path + edge + ambiguity + adversarial cases</li>
+          <li>Eval gate runs in CI on prompt/model/retrieval changes</li>
           <li>Confidence-based fallback is implemented and tested</li>
           <li>Human can review or undo any risky action</li>
           <li>Risk tier is named and controls match the tier</li>
@@ -2465,6 +2602,7 @@ Incident playbook: owned by @alice
           <li>Named owner exists for: prompts, evals, AGENTS.md, incident playbook</li>
           <li>Incident playbook is written and the team knows where it is</li>
           <li>One worked example shows a new developer the expected behavior</li>
+          <li>Memory/state has owner, retention, edit/delete, and freshness rules</li>
           <li>Review cadence is scheduled (quarterly minimum)</li>
         </ul>
       </div>
@@ -2517,6 +2655,7 @@ Incident playbook: owned by @alice
         <tr><td><strong>DSPy</strong></td><td>A framework for programmatic prompting — you declare what you want as typed modules; DSPy compiles optimized prompts and few-shot examples automatically.</td></tr>
         <tr><td><strong>Eval</strong></td><td>A repeatable test for AI output, checking specific behavior against a rubric. Works like a unit test for prompts.</td></tr>
         <tr><td><strong>Fallback</strong></td><td>An alternative action taken when the model's confidence is low or output is invalid — typically escalating to a human or returning a safe default.</td></tr>
+        <tr><td><strong>Golden dataset</strong></td><td>A curated set of known-good cases used to catch regressions across prompt, model, retrieval, and schema changes.</td></tr>
         <tr><td><strong>Harness</strong></td><td>The full set of infrastructure around a coding agent or AI feature: AGENTS.md, skills, prompt files, allowlists, hooks, evals.</td></tr>
         <tr><td><strong>Idempotency</strong></td><td>A property of operations where running the same action multiple times produces the same result. Essential for agent steps that may retry.</td></tr>
         <tr><td><strong>Judge (LLM-as-judge)</strong></td><td>Using a language model to evaluate another model's output against a rubric. Useful for subjective dimensions. Prone to its own biases.</td></tr>
@@ -2531,6 +2670,7 @@ Incident playbook: owned by @alice
         <tr><td><strong>Prompt injection</strong></td><td>An attack where untrusted input (user message, retrieved doc) manipulates the model into ignoring its instructions.</td></tr>
         <tr><td><strong>RAG</strong></td><td>Retrieval-Augmented Generation — providing the model with retrieved documents as context, rather than relying on training knowledge.</td></tr>
         <tr><td><strong>ReAct</strong></td><td>Reasoning + Acting — agent pattern that interleaves thought steps with tool calls, grounding reasoning in real actions. (Yao et al.)</td></tr>
+        <tr><td><strong>Reranking</strong></td><td>A retrieval step that reorders candidate chunks by relevance after initial vector search, usually improving evidence quality.</td></tr>
         <tr><td><strong>Risk tier</strong></td><td>A classification of AI features by potential harm: Low / Medium / High / Critical. Determines minimum required controls.</td></tr>
         <tr><td><strong>Rollback</strong></td><td>Reverting to a previous prompt version, model version, or system state when the current version causes issues.</td></tr>
         <tr><td><strong>Schema</strong></td><td>A formal definition of what a model's output must look like — field names, types, enums. Paired with a validator and retry.</td></tr>
