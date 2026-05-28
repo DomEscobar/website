@@ -1,0 +1,439 @@
+---
+title: "Stop Judging AI Code by the Diff"
+description: "AI coding gets reliable when developers stop reviewing only the generated diff and start designing contracts, independent reviews, evidence gates, and failure loops around the agent."
+language: "en"
+slug: "stop-judging-ai-code-by-the-diff"
+canonicalSlug: "ki-code-nicht-am-diff-bewerten"
+publishedAt: "2026-05-28"
+updatedAt: "2026-05-28"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "AI Agents", "Coding Agents", "Developer Workflow", "Agent Harness", "MapperOS", "Evals"]
+topic: "AI-first Engineering"
+summary: "Better AI coding is not mainly about better prompts. It is about the harness around the model: explicit contracts, separate builder and reviewer roles, evidence requirements, and a loop that turns failures into better specifications."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is an engineering harness for AI coding?"
+    answer: "An engineering harness is the system around an AI agent: contracts, context, tools, permissions, tests, review roles, evidence gates, and feedback loops that make generated code easier to verify and improve."
+  - question: "Why is reviewing only the AI-generated diff not enough?"
+    answer: "A diff shows what changed, but it does not prove that the original requirement was complete, that business logic was preserved, that edge cases were tested, or that the agent stayed inside scope."
+  - question: "How can developers use this today?"
+    answer: "Before asking AI to code, write a small contract with goals, non-goals, acceptance criteria, risks, edge cases, and required evidence. Then use a separate reviewer pass to check the implementation against that contract."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+Most developers still use AI coding tools like this:
+
+```txt
+Prompt → generated code → quick review → merge
+```
+
+It feels fast. Sometimes it is fast.
+
+But it has a hidden problem: you are judging the output, not the system that produced the output.
+
+That works for small tasks. It breaks down when the work touches product logic, security, payments, data models, deployment, user flows, or anything where “looks correct” is not the same as “is correct.”
+
+The next step in AI-assisted development is not simply writing better prompts. It is building better **engineering harnesses** around AI agents.
+
+A harness is the operating loop that turns vague intent into verifiable software.
+
+<FlowGraphic
+  title="The better AI coding loop"
+  note="the loop matters more than the single prompt"
+  steps={['Intent', 'Contract', 'Builder', 'Independent reviewer', 'Failure classification', 'Contract update']}
+/>
+
+The important shift is this:
+
+> The AI agent is not the productivity system. The loop around the agent is the productivity system.
+
+A recent arXiv paper, [**Meta-Engineering Harnesses for AI-Native Software Production**](https://arxiv.org/abs/2605.25665), gives a useful name to this pattern. It describes an architecture where requirements become explicit contracts, specialized AI agents implement and review work, independent verification catches failures, and the process improves through structured failure classification.
+
+For developers, the practical lesson is simple:
+
+> If AI keeps making subtle mistakes, the fix is often not “prompt harder.” The fix is to make the work more contract-driven, reviewable, and learnable.
+
+## AI code is easy to generate and hard to trust
+
+AI coding tools are excellent at producing plausible code.
+
+That is both the benefit and the danger.
+
+A generated implementation can compile successfully, pass existing tests, look clean in a diff, follow local conventions, and still miss the actual product requirement.
+
+This happens because many failures are not code-generation failures. They are **contract failures**.
+
+The agent did not know what mattered. The reviewer did not know what to check. The tests did not encode the real edge case. The prompt left out the production constraint. The diff looked fine because the missing logic was never represented anywhere.
+
+Imagine asking an AI agent:
+
+```txt
+Add in-app payments to the product.
+```
+
+The agent may create payment routes, checkout UI, webhook handling, database fields, and success states. That can look impressive.
+
+But unless the requirement is explicit, it may miss duplicate webhook handling, refund behavior, tax logic, subscription cancellation rules, partial payment states, fraud cases, receipt requirements, or admin reconciliation.
+
+The implementation can be “correct” relative to the prompt and still wrong relative to the business.
+
+AI agents do not only need instructions. They need contracts.
+
+<MetricStrip
+  metrics={[
+    { value: '1', label: 'contract before code: define what must be true before the agent starts editing' },
+    { value: '2', label: 'separate roles: builder and reviewer should not share the same assumptions' },
+    { value: '∞', label: 'learning loop: every failure should improve the next contract' },
+  ]}
+/>
+
+## Prompts ask. Contracts constrain.
+
+A prompt usually says what you want.
+
+A contract says what must be true.
+
+A weak prompt:
+
+```txt
+Build a settings page where users can update their profile.
+```
+
+A better contract:
+
+```txt
+Goal:
+Users can update display name, avatar, timezone, and notification preferences.
+
+Acceptance criteria:
+- Valid profile changes can be saved.
+- Invalid display names show inline errors.
+- Avatar upload accepts png/jpg up to 5MB.
+- Timezone defaults to the current account timezone.
+- Notification preferences save independently from profile fields.
+- Save button is disabled while submitting.
+- Unsaved changes show a confirmation before leaving.
+
+Must not break:
+- Existing account settings routes.
+- Existing notification delivery preferences.
+- Current avatar rendering in the dashboard.
+
+Evidence required:
+- Unit tests for validation.
+- Integration test for successful save.
+- Manual browser check for unsaved changes warning.
+- Screenshot or log proving avatar upload limit behavior.
+```
+
+The second version does more than instruct the AI. It gives the builder something to build against, the reviewer something to inspect against, the tester something to prove against, and the human something to reason about.
+
+That is the beginning of an engineering harness.
+
+<CompareGrid
+  title="Prompt vs. contract"
+  leftLabel="Prompt-only workflow"
+  rightLabel="Contract-driven workflow"
+  rows={[
+    { left: '“Build this feature.”', right: 'Goal, non-goals, acceptance criteria, edge cases, and proof requirements.' },
+    { left: 'Review the diff and rely on intuition.', right: 'Review the implementation against the original contract.' },
+    { left: 'Fix bugs one by one.', right: 'Classify failures and update the contract so the same mistake is less likely next time.' },
+    { left: 'The agent says it tested the work.', right: 'The agent provides command output, screenshots, logs, or other evidence.' },
+  ]}
+/>
+
+## Split building from reviewing
+
+If the same agent writes the code and judges the code, you often get confirmation bias. The model tends to defend its own assumptions. It may check whether the implementation matches its internal interpretation, not whether that interpretation was complete.
+
+A stronger pattern is simple:
+
+```txt
+Builder Agent:
+Implement this contract. Stay inside scope. Provide evidence for each acceptance criterion.
+
+Reviewer Agent:
+Review this implementation against the original contract. Do not assume it is correct.
+Find missing requirements, untested behavior, regressions, and production risks.
+```
+
+For larger changes, split the review even further:
+
+<KeyPoints
+  title="Useful reviewer roles"
+  items={[
+    'Product reviewer: does this satisfy the user and business behavior?',
+    'Architecture reviewer: does this fit the existing system instead of inventing a parallel one?',
+    'Security reviewer: what could be abused, leaked, bypassed, or over-permissioned?',
+    'QA reviewer: which edge cases are untested or only tested on the happy path?',
+    'Deployment reviewer: what could break during migration, rollout, rollback, or operation?',
+    'Evidence reviewer: did the agent prove the claim or merely state that it worked?',
+  ]}
+/>
+
+You do not always need five agents. For small tasks, that is overkill.
+
+But the principle matters:
+
+> Building and verifying should not be the same mental act.
+
+Human teams already know this. That is why we have code review, QA, security review, staging, and incident postmortems. AI-native development needs the same separation, just faster and more explicit.
+
+## Failure classification is where developers actually improve
+
+Most teams treat AI mistakes as annoying one-offs.
+
+The agent messed up. Fix the code. Move on.
+
+That wastes the most valuable signal.
+
+Every AI failure should answer one question:
+
+> What would have prevented this mistake from happening again?
+
+There are four common classes.
+
+## 1. Contract incompleteness
+
+The implementation failed because the requirement was missing.
+
+Example:
+
+```txt
+The agent implemented checkout but did not handle duplicate webhooks.
+```
+
+The shallow fix is to tell the agent to add duplicate webhook handling.
+
+The better fix is to update the payment contract so webhook idempotency is always required for payment work.
+
+This improves the system, not just the current diff.
+
+## 2. Context failure
+
+The agent failed because it did not know enough about the existing codebase.
+
+Example:
+
+```txt
+The agent created a new auth helper instead of using the existing session abstraction.
+```
+
+The better fix is not only deleting the duplicate helper. It is updating setup context:
+
+```txt
+Authentication must use getCurrentSession().
+Do not create parallel auth utilities.
+Existing middleware lives in /src/server/auth.
+```
+
+The problem was not model intelligence. The problem was missing context.
+
+## 3. Verification failure
+
+The bug existed, but the review did not catch it.
+
+Example:
+
+```txt
+The agent changed pricing behavior. Tests passed. Nobody reviewed billing edge cases.
+```
+
+The better fix is to add a billing-specific review gate for all tasks touching plans, invoices, checkout, subscriptions, or entitlement logic.
+
+## 4. Evidence failure
+
+The agent claimed something worked but did not prove it.
+
+Example:
+
+```txt
+“Tested successfully.”
+```
+
+No command. No output. No screenshot. No reproduction path.
+
+AI agents are very good at sounding done. A harness forces them to show the receipt.
+
+## A tiny workflow you can steal today
+
+Before your next AI coding task, write this:
+
+```txt
+CONTRACT
+
+Goal:
+What should change?
+
+Non-goals:
+What should not be changed?
+
+Acceptance criteria:
+What must be true when this is done?
+
+Must not break:
+What existing behavior matters?
+
+Edge cases:
+What weird or risky cases should be handled?
+
+Evidence required:
+What proof must the agent provide?
+```
+
+Then use two separate prompts.
+
+```txt
+BUILDER PROMPT
+
+You are the builder.
+
+Implement only what is described in the contract.
+Do not expand scope.
+If the contract is ambiguous, stop and ask.
+After implementation, provide:
+- summary of changes
+- files changed
+- tests run
+- evidence for each acceptance criterion
+```
+
+```txt
+REVIEWER PROMPT
+
+You are the independent reviewer.
+
+Review the implementation against the original contract.
+Do not assume the implementation is correct.
+
+Check:
+- missing acceptance criteria
+- untested behavior
+- edge cases
+- regressions
+- security risks
+- places where the code satisfies the prompt but not the product intent
+
+Return:
+- pass/fail
+- critical issues
+- non-critical issues
+- missing evidence
+- contract improvements
+```
+
+If something fails, do not immediately patch the code.
+
+First ask:
+
+```txt
+Was this a code mistake, or did the contract allow the mistake?
+```
+
+If the contract allowed the mistake, update the contract before updating the code.
+
+That is how your AI workflow gets better over time.
+
+<DoDont
+  title="How to use AI coding without fooling yourself"
+  doLabel="Do"
+  dontLabel="Avoid"
+  doItems={[
+    'Write acceptance criteria before implementation starts.',
+    'Make evidence part of done: commands, logs, screenshots, tests, or traces.',
+    'Use an independent reviewer pass that only sees the contract and the diff.',
+    'Turn repeated mistakes into better setup context, checks, or templates.',
+  ]}
+  dontItems={[
+    'Treat a clean-looking diff as proof of correctness.',
+    'Let the builder agent grade its own work without adversarial review.',
+    'Patch every AI mistake locally without improving the contract.',
+    'Accept “tested successfully” without the actual evidence trail.',
+  ]}
+/>
+
+## Why this matters more as AI gets stronger
+
+As models improve, obvious syntax errors become less interesting.
+
+The hard problems move upward:
+
+- Was the requirement complete?
+- Did the agent preserve system intent?
+- Did it understand the business rule?
+- Did it prove the behavior?
+- Did it change something outside the requested scope?
+- Did the reviewer inspect the right risk surface?
+- Did the process learn from the failure?
+
+That is why judging AI coding only by the final diff is too shallow.
+
+The diff tells you what changed.
+
+The harness tells you whether the change can be trusted.
+
+## Where MapperOS fits
+
+This is exactly the direction MapperOS is built around.
+
+MapperOS treats software work less like a chat session and more like an executable blueprint.
+
+A good MapperOS packet should not just say:
+
+```txt
+Build this feature.
+```
+
+It should define phases, contracts, required context, evidence gates, review points, failure handling, setup instructions, and output expectations.
+
+In other words:
+
+> MapperOS turns AI coding from “agent follows prompt” into “agent executes a contract.”
+
+That matters because the future of AI development will not be won by the team with the longest prompts. It will be won by the team with the best loops.
+
+The best loop is:
+
+```txt
+Specify clearly.
+Build independently.
+Verify adversarially.
+Classify failures.
+Improve the contract.
+Repeat.
+```
+
+AI-assisted development becomes reliable not because the agent never fails, but because every failure improves the system.
+
+## The practical takeaway
+
+If you are a developer using AI today, start with one change:
+
+Before your next AI coding task, do not write a prompt.
+
+Write a contract.
+
+Then make the AI prove the result against that contract.
+
+That single habit changes the relationship.
+
+You stop asking:
+
+> Did the AI produce code?
+
+And start asking:
+
+> Did this system produce verified software?
+
+That is the difference between using AI as autocomplete and using AI as an engineering capability.
+
+## Source
+
+- [Meta-Engineering Harnesses for AI-Native Software Production](https://arxiv.org/abs/2605.25665), Satadru Sengupta, Tamunokorite Briggs, Ivan Myshakivskyi, arXiv:2605.25665, 2026.

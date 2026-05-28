@@ -1,0 +1,429 @@
+---
+title: "Bewerte KI-Code nicht am Diff"
+description: "KI-Coding wird zuverlässiger, wenn Entwickler nicht nur den generierten Diff prüfen, sondern Contracts, unabhängige Reviews, Evidence Gates und Failure Loops um den Agenten bauen."
+language: "de"
+slug: "ki-code-nicht-am-diff-bewerten"
+canonicalSlug: "stop-judging-ai-code-by-the-diff"
+publishedAt: "2026-05-28"
+updatedAt: "2026-05-28"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "KI-Agenten", "Coding Agents", "Developer Workflow", "Agent Harness", "MapperOS", "Evals"]
+topic: "AI-first Engineering"
+summary: "Besseres KI-Coding entsteht nicht primär durch bessere Prompts, sondern durch den Harness um das Modell: explizite Contracts, getrennte Builder- und Reviewer-Rollen, Belege und eine Schleife, die Fehler in bessere Spezifikationen zurückführt."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Was ist ein Engineering Harness für KI-Coding?"
+    answer: "Ein Engineering Harness ist das System um einen KI-Agenten herum: Contracts, Kontext, Tools, Permissions, Tests, Review-Rollen, Evidence Gates und Feedback-Loops, die generierten Code prüfbarer und verbesserbar machen."
+  - question: "Warum reicht es nicht, nur den KI-Diff zu prüfen?"
+    answer: "Ein Diff zeigt, was geändert wurde. Er beweist aber nicht, dass die ursprüngliche Anforderung vollständig war, Business-Logik erhalten blieb, Edge Cases getestet wurden oder der Agent im Scope geblieben ist."
+  - question: "Wie können Entwickler das heute nutzen?"
+    answer: "Schreibe vor dem KI-Coding einen kleinen Contract mit Ziel, Non-Goals, Akzeptanzkriterien, Risiken, Edge Cases und erforderlichen Belegen. Lass danach eine separate Reviewer-Runde die Implementierung gegen diesen Contract prüfen."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+Viele Entwickler nutzen KI-Coding immer noch so:
+
+```txt
+Prompt → generierter Code → kurzer Review → Merge
+```
+
+Das fühlt sich schnell an. Manchmal ist es auch schnell.
+
+Aber es hat ein verstecktes Problem: Du bewertest den Output, nicht das System, das diesen Output erzeugt hat.
+
+Für kleine Änderungen funktioniert das oft. Es bricht zusammen, sobald Produktlogik, Security, Payments, Datenmodelle, Deployment oder User Flows betroffen sind — also überall dort, wo „sieht korrekt aus“ nicht dasselbe ist wie „ist korrekt“.
+
+Der nächste Schritt im KI-gestützten Entwickeln ist deshalb nicht einfach ein besserer Prompt. Es ist ein besserer **Engineering Harness** um den Agenten.
+
+Ein Harness ist die operative Schleife, die aus vager Absicht prüfbare Software macht.
+
+<FlowGraphic
+  title="Der bessere KI-Coding-Loop"
+  note="die Schleife ist wichtiger als der einzelne Prompt"
+  steps={['Intent', 'Contract', 'Builder', 'Unabhängiger Review', 'Failure Classification', 'Contract Update']}
+/>
+
+Der entscheidende Shift:
+
+> Der KI-Agent ist nicht das Produktivitätssystem. Die Schleife um den Agenten ist das Produktivitätssystem.
+
+Ein neues arXiv-Paper, [**Meta-Engineering Harnesses for AI-Native Software Production**](https://arxiv.org/abs/2605.25665), beschreibt genau dieses Muster: Anforderungen werden zu expliziten Contracts, spezialisierte Agenten bauen und prüfen Arbeit, unabhängige Verification findet Fehler, und der Prozess verbessert sich durch strukturierte Failure Classification.
+
+Für Entwickler ist der praktische Takeaway simpel:
+
+> Wenn KI subtile Fehler macht, ist die Lösung oft nicht „härter prompten“. Die Lösung ist, Arbeit contract-driven, reviewbar und lernfähig zu machen.
+
+## KI-Code ist leicht zu erzeugen und schwer zu vertrauen
+
+KI-Coding-Tools erzeugen sehr plausiblen Code.
+
+Das ist ihr Vorteil — und ihr Risiko.
+
+Eine Implementierung kann kompilieren, bestehende Tests bestehen, im Diff sauber aussehen, lokale Konventionen treffen und trotzdem die eigentliche Produktanforderung verfehlen.
+
+Das passiert, weil viele Fehler keine Codegenerierungsfehler sind. Es sind **Contract-Fehler**.
+
+Der Agent wusste nicht, was wichtig ist. Der Reviewer wusste nicht, worauf er prüfen soll. Die Tests haben den echten Edge Case nicht abgebildet. Der Prompt hat eine Produktionsbedingung ausgelassen. Der Diff sah gut aus, weil die fehlende Logik nirgends explizit stand.
+
+Stell dir vor, du fragst einen Agenten:
+
+```txt
+Add in-app payments to the product.
+```
+
+Der Agent baut vielleicht Payment Routes, Checkout UI, Webhook Handling, Datenbankfelder und Success States. Das kann beeindruckend aussehen.
+
+Aber wenn die Anforderung nicht explizit ist, fehlen leicht Duplicate Webhook Handling, Refund-Verhalten, Tax Logic, Subscription Cancellation, Partial Payment States, Fraud Cases, Receipts oder Admin Reconciliation.
+
+Die Implementierung kann relativ zum Prompt „korrekt“ sein und relativ zum Business falsch.
+
+KI-Agenten brauchen nicht nur Anweisungen. Sie brauchen Contracts.
+
+<MetricStrip
+  metrics={[
+    { value: '1', label: 'Contract vor Code: definiere, was wahr sein muss, bevor der Agent editiert' },
+    { value: '2', label: 'getrennte Rollen: Builder und Reviewer dürfen nicht dieselben Annahmen teilen' },
+    { value: '∞', label: 'Lernschleife: jeder Fehler sollte den nächsten Contract verbessern' },
+  ]}
+/>
+
+## Prompts bitten. Contracts begrenzen.
+
+Ein Prompt sagt meistens, was du willst.
+
+Ein Contract sagt, was wahr sein muss.
+
+Schwacher Prompt:
+
+```txt
+Build a settings page where users can update their profile.
+```
+
+Besserer Contract:
+
+```txt
+Goal:
+Users can update display name, avatar, timezone, and notification preferences.
+
+Acceptance criteria:
+- Valid profile changes can be saved.
+- Invalid display names show inline errors.
+- Avatar upload accepts png/jpg up to 5MB.
+- Timezone defaults to the current account timezone.
+- Notification preferences save independently from profile fields.
+- Save button is disabled while submitting.
+- Unsaved changes show a confirmation before leaving.
+
+Must not break:
+- Existing account settings routes.
+- Existing notification delivery preferences.
+- Current avatar rendering in the dashboard.
+
+Evidence required:
+- Unit tests for validation.
+- Integration test for successful save.
+- Manual browser check for unsaved changes warning.
+- Screenshot or log proving avatar upload limit behavior.
+```
+
+Die zweite Version instruiert den Agenten nicht nur. Sie gibt dem Builder etwas zum Bauen, dem Reviewer etwas zum Prüfen, dem Tester etwas zum Beweisen und dem Menschen etwas zum Entscheiden.
+
+Das ist der Anfang eines Engineering Harness.
+
+<CompareGrid
+  title="Prompt vs. Contract"
+  leftLabel="Prompt-only Workflow"
+  rightLabel="Contract-driven Workflow"
+  rows={[
+    { left: '“Build this feature.”', right: 'Ziel, Non-Goals, Akzeptanzkriterien, Edge Cases und Proof Requirements.' },
+    { left: 'Diff anschauen und auf Intuition vertrauen.', right: 'Implementierung gegen den ursprünglichen Contract prüfen.' },
+    { left: 'Bugs einzeln flicken.', right: 'Fehler klassifizieren und den Contract verbessern, damit derselbe Fehler seltener wiederkommt.' },
+    { left: 'Der Agent sagt, er habe getestet.', right: 'Der Agent liefert Command Output, Screenshots, Logs oder andere Belege.' },
+  ]}
+/>
+
+## Trenne Bauen von Prüfen
+
+Wenn derselbe Agent Code schreibt und den Code bewertet, entsteht leicht Confirmation Bias. Das Modell verteidigt seine eigenen Annahmen. Es prüft dann oft, ob die Implementierung zu seiner Interpretation passt — nicht, ob diese Interpretation vollständig war.
+
+Ein robusteres Muster ist einfach:
+
+```txt
+Builder Agent:
+Implement this contract. Stay inside scope. Provide evidence for each acceptance criterion.
+
+Reviewer Agent:
+Review this implementation against the original contract. Do not assume it is correct.
+Find missing requirements, untested behavior, regressions, and production risks.
+```
+
+Für größere Änderungen kannst du Reviews weiter aufteilen:
+
+<KeyPoints
+  title="Nützliche Reviewer-Rollen"
+  items={[
+    'Product Reviewer: erfüllt das wirklich Nutzer- und Business-Verhalten?',
+    'Architecture Reviewer: passt es ins bestehende System statt eine Parallelwelt zu bauen?',
+    'Security Reviewer: was könnte missbraucht, geleakt, umgangen oder überberechtigt werden?',
+    'QA Reviewer: welche Edge Cases sind ungetestet oder nur Happy Path?',
+    'Deployment Reviewer: was kann bei Migration, Rollout, Rollback oder Betrieb brechen?',
+    'Evidence Reviewer: hat der Agent den Claim belegt oder nur behauptet?',
+  ]}
+/>
+
+Du brauchst nicht für jede kleine Änderung fünf Agenten. Das wäre Overkill.
+
+Aber das Prinzip zählt:
+
+> Bauen und Verifizieren sollten nicht derselbe mentale Akt sein.
+
+Menschliche Teams wissen das längst. Deshalb gibt es Code Review, QA, Security Review, Staging und Postmortems. KI-native Entwicklung braucht dieselbe Trennung — nur schneller und expliziter.
+
+## Failure Classification ist der eigentliche Lerneffekt
+
+Viele Teams behandeln KI-Fehler als nervige Einzelfälle.
+
+Der Agent hat Mist gebaut. Code fixen. Weiter.
+
+Damit verschwendest du das wertvollste Signal.
+
+Jeder KI-Fehler sollte eine Frage beantworten:
+
+> Was hätte diesen Fehler beim nächsten Mal verhindert?
+
+Es gibt vier häufige Klassen.
+
+## 1. Contract incompleteness
+
+Die Implementierung ist gescheitert, weil die Anforderung fehlte.
+
+```txt
+The agent implemented checkout but did not handle duplicate webhooks.
+```
+
+Der flache Fix: dem Agenten sagen, er soll Duplicate Webhook Handling hinzufügen.
+
+Der bessere Fix: den Payment Contract so ändern, dass Webhook Idempotency bei Payment-Arbeit immer explizit gefordert ist.
+
+Das verbessert das System, nicht nur den aktuellen Diff.
+
+## 2. Context failure
+
+Der Agent ist gescheitert, weil er das bestehende Codebase-Wissen nicht hatte.
+
+```txt
+The agent created a new auth helper instead of using the existing session abstraction.
+```
+
+Der bessere Fix ist nicht nur, den doppelten Helper zu löschen. Der Setup-Kontext muss verbessert werden:
+
+```txt
+Authentication must use getCurrentSession().
+Do not create parallel auth utilities.
+Existing middleware lives in /src/server/auth.
+```
+
+Das Problem war nicht Modellintelligenz. Das Problem war fehlender Kontext.
+
+## 3. Verification failure
+
+Der Bug existierte, aber der Review hat ihn nicht gefunden.
+
+```txt
+The agent changed pricing behavior. Tests passed. Nobody reviewed billing edge cases.
+```
+
+Der bessere Fix: ein Billing-spezifisches Review Gate für alle Tasks, die Plans, Invoices, Checkout, Subscriptions oder Entitlements berühren.
+
+## 4. Evidence failure
+
+Der Agent behauptet, etwas funktioniere, beweist es aber nicht.
+
+```txt
+“Tested successfully.”
+```
+
+Kein Command. Kein Output. Kein Screenshot. Kein Repro-Pfad.
+
+KI-Agenten klingen sehr gut nach „done“. Ein Harness zwingt sie, den Beleg zu zeigen.
+
+## Ein kleiner Workflow zum Klauen
+
+Schreibe vor der nächsten KI-Coding-Aufgabe das hier:
+
+```txt
+CONTRACT
+
+Goal:
+What should change?
+
+Non-goals:
+What should not be changed?
+
+Acceptance criteria:
+What must be true when this is done?
+
+Must not break:
+What existing behavior matters?
+
+Edge cases:
+What weird or risky cases should be handled?
+
+Evidence required:
+What proof must the agent provide?
+```
+
+Dann nutze zwei getrennte Prompts.
+
+```txt
+BUILDER PROMPT
+
+You are the builder.
+
+Implement only what is described in the contract.
+Do not expand scope.
+If the contract is ambiguous, stop and ask.
+After implementation, provide:
+- summary of changes
+- files changed
+- tests run
+- evidence for each acceptance criterion
+```
+
+```txt
+REVIEWER PROMPT
+
+You are the independent reviewer.
+
+Review the implementation against the original contract.
+Do not assume the implementation is correct.
+
+Check:
+- missing acceptance criteria
+- untested behavior
+- edge cases
+- regressions
+- security risks
+- places where the code satisfies the prompt but not the product intent
+
+Return:
+- pass/fail
+- critical issues
+- non-critical issues
+- missing evidence
+- contract improvements
+```
+
+Wenn etwas fehlschlägt, patche nicht sofort den Code.
+
+Frag zuerst:
+
+```txt
+Was this a code mistake, or did the contract allow the mistake?
+```
+
+Wenn der Contract den Fehler erlaubt hat, verbessere den Contract vor dem Code.
+
+So wird dein KI-Workflow mit der Zeit besser.
+
+<DoDont
+  title="KI-Coding ohne Selbstbetrug"
+  doLabel="Mach das"
+  dontLabel="Vermeide das"
+  doItems={[
+    'Akzeptanzkriterien schreiben, bevor die Implementierung startet.',
+    'Evidence zu “done” machen: Commands, Logs, Screenshots, Tests oder Traces.',
+    'Einen unabhängigen Reviewer-Pass nutzen, der Contract und Diff gegeneinander prüft.',
+    'Wiederholte Fehler in besseren Setup-Kontext, Checks oder Templates festhalten.',
+  ]}
+  dontItems={[
+    'Einen sauber aussehenden Diff als Korrektheitsbeweis behandeln.',
+    'Den Builder-Agenten seine eigene Arbeit ohne adversarial Review bewerten lassen.',
+    'Jeden KI-Fehler lokal flicken, ohne den Contract zu verbessern.',
+    '“Tested successfully” ohne tatsächliche Evidence akzeptieren.',
+  ]}
+/>
+
+## Warum das wichtiger wird, je besser Modelle werden
+
+Je besser Modelle werden, desto weniger interessant sind offensichtliche Syntaxfehler.
+
+Die schweren Probleme wandern nach oben:
+
+- War die Anforderung vollständig?
+- Hat der Agent die Systemintention erhalten?
+- Hat er die Business-Regel verstanden?
+- Hat er Verhalten bewiesen?
+- Hat er außerhalb des Scopes geändert?
+- Hat der Reviewer die richtige Risikooberfläche geprüft?
+- Hat der Prozess aus dem Fehler gelernt?
+
+Deshalb ist es zu flach, KI-Coding nur am finalen Diff zu bewerten.
+
+Der Diff sagt dir, was sich geändert hat.
+
+Der Harness sagt dir, ob du der Änderung vertrauen kannst.
+
+## Wo MapperOS reinpasst
+
+Genau in diese Richtung geht MapperOS.
+
+MapperOS behandelt Softwarearbeit weniger wie einen Chatverlauf und mehr wie ein ausführbares Blueprint-System.
+
+Ein gutes MapperOS Packet sollte nicht nur sagen:
+
+```txt
+Build this feature.
+```
+
+Es sollte Phasen, Contracts, erforderlichen Kontext, Evidence Gates, Review Points, Failure Handling, Setup Instructions und Output Expectations definieren.
+
+Anders gesagt:
+
+> MapperOS macht aus „Agent folgt Prompt“ ein „Agent führt Contract aus“.
+
+Das ist wichtig, weil die Zukunft von KI-Entwicklung nicht dem Team mit den längsten Prompts gehört. Sie gehört dem Team mit den besten Loops.
+
+Der beste Loop ist:
+
+```txt
+Specify clearly.
+Build independently.
+Verify adversarially.
+Classify failures.
+Improve the contract.
+Repeat.
+```
+
+KI-gestützte Entwicklung wird nicht zuverlässig, weil der Agent nie Fehler macht. Sie wird zuverlässig, weil jeder Fehler das System verbessert.
+
+## Der praktische Takeaway
+
+Wenn du heute KI zum Coden nutzt, ändere eine Sache:
+
+Schreibe vor der nächsten Aufgabe nicht zuerst einen Prompt.
+
+Schreibe einen Contract.
+
+Und lass die KI das Ergebnis gegen diesen Contract beweisen.
+
+Dann fragst du nicht mehr:
+
+> Hat die KI Code erzeugt?
+
+Sondern:
+
+> Hat dieses System verifizierte Software erzeugt?
+
+Das ist der Unterschied zwischen KI als Autocomplete und KI als Engineering-Fähigkeit.
+
+## Quelle
+
+- [Meta-Engineering Harnesses for AI-Native Software Production](https://arxiv.org/abs/2605.25665), Satadru Sengupta, Tamunokorite Briggs, Ivan Myshakivskyi, arXiv:2605.25665, 2026.
