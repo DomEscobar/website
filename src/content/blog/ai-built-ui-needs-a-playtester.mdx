@@ -1,0 +1,447 @@
+---
+title: "Your AI-Built UI Needs a Playtester, Not a Screenshot Review"
+description: "A practical workflow for testing AI-generated games, demos, and web apps with a Webwright-style browser agent that produces rerunnable Playwright scripts, screenshots, logs, and evidence-backed bug reports."
+language: "en"
+slug: "ai-built-ui-needs-a-playtester"
+canonicalSlug: "ki-generierte-ui-braucht-playtester"
+publishedAt: "2026-05-28"
+updatedAt: "2026-05-28"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "AI Agents", "Webwright", "Playwright", "UI Testing", "Coding Agents", "Developer Workflow", "Evals"]
+topic: "AI-first Engineering"
+summary: "AI-generated interfaces often look finished before they behave correctly. A GUI playtester loop uses a separate browser agent to interact with the artifact, record screenshots and action logs, turn broken flows into reproducible bug reports, and rerun the same script after repairs."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is a GUI playtester loop?"
+    answer: "A GUI playtester loop is a workflow where a separate browser agent opens an AI-generated app, game, or demo, performs expected user behaviors, records screenshots and logs, reports pass/fail evidence, and reruns the same checks after the builder fixes bugs."
+  - question: "Why use Webwright for AI-generated UI testing?"
+    answer: "Webwright turns browser interaction into a rerunnable Playwright script with screenshots and action logs. That makes the playtest reproducible instead of being a one-off agent opinion."
+  - question: "Does this replace human QA?"
+    answer: "No. It is best for catching broken flows, missing states, and obvious behavior regressions. Humans still need to judge taste, accessibility quality, product fit, and whether the interaction feels good."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+AI can now generate small games, demos, calculators, dashboards, landing pages, onboarding flows, and internal tools in minutes.
+
+That is useful.
+
+It also creates a new testing problem: the artifact often **looks finished before it behaves correctly**.
+
+A screenshot can lie. A clean component tree can lie. A successful build can lie. Even a confident agent summary can lie.
+
+The real question is not:
+
+> Does the UI look okay?
+
+The better question is:
+
+> Can a naive user actually complete the expected interaction path?
+
+That is where a GUI playtester loop becomes useful.
+
+Instead of asking the same coding agent to judge its own UI, send a separate browser agent into the app as a playtester. It clicks, types, waits, observes visible state, captures screenshots, logs each action, and reports failures with reproduction steps.
+
+The strongest version of this loop uses a Webwright-style approach: the agent does not merely click around and give an opinion. It writes a rerunnable Playwright script, saves screenshots and logs, and turns failures into regression tests.
+
+<FlowGraphic
+  title="The GUI playtester loop"
+  note="from generated interface to reproducible interaction evidence"
+  steps={['AI builds UI', 'Define expected behaviors', 'Webwright playtests in browser', 'Screenshots + logs', 'Evidence-backed bug report', 'Repair only observed failures', 'Rerun as regression']}
+/>
+
+This is the practical shift:
+
+> Do not ask AI if the interface works. Make AI produce browser evidence that shows what happened.
+
+## Why screenshot review is too weak
+
+The default AI UI workflow is dangerously shallow:
+
+```txt
+Generate app → open preview → glance at screenshot → ship or tweak
+```
+
+That catches visual nonsense. It does not catch interaction failure.
+
+A memory game may render cards but never flip wrong pairs back. A calculator may show buttons but concatenate numbers incorrectly. A form may look complete but lose data after validation. A dashboard may display charts but not update filters. An onboarding flow may look polished but trap users on step three.
+
+These failures are not visible in a static screenshot.
+
+They live in sequences:
+
+```txt
+click start → click card A → click card B → wait → score changes → state resets
+```
+
+That means the useful test artifact is not a screenshot. It is an interaction trace.
+
+<CompareGrid
+  title="Screenshot review vs. playtester evidence"
+  leftLabel="Screenshot review"
+  rightLabel="GUI playtester loop"
+  rows={[
+    { left: 'Checks whether the UI appears rendered.', right: 'Checks whether expected user behaviors actually work.' },
+    { left: 'Usually one-off and subjective.', right: 'Produces rerunnable Playwright scripts, logs, and screenshots.' },
+    { left: 'Finds layout problems and obvious visual errors.', right: 'Finds broken flows, missing state transitions, dead buttons, and regressions.' },
+    { left: 'Often ends with “looks good”.', right: 'Ends with pass/fail evidence and reproduction steps.' },
+  ]}
+/>
+
+## What Webwright adds
+
+[Microsoft Webwright](https://github.com/microsoft/Webwright) is useful here because it treats browser work as code-as-action.
+
+Instead of locking the model into one browser action at a time, Webwright gives the coding model a terminal and browser environment. The agent writes scripts, runs them, inspects screenshots when needed, and keeps the persistent artifact in the workspace: code, screenshots, and logs.
+
+For testing generated UIs, that is exactly the shape we want.
+
+A normal browser agent might do this:
+
+```txt
+open app → click around → say it works
+```
+
+A Webwright-style playtester does this:
+
+```txt
+write Playwright script
+→ run interaction path
+→ save screenshot per critical step
+→ save action log
+→ report pass/fail per expected behavior
+→ rerun same script after repair
+```
+
+That turns playtesting from an opinion into a reusable artifact.
+
+<MetricStrip
+  metrics={[
+    { value: '5-8', label: 'expected behaviors are enough for a first playtest pass' },
+    { value: '1', label: 'rerunnable script becomes the durable regression artifact' },
+    { value: '0', label: 'code suggestions from the playtester before interaction evidence is complete' },
+  ]}
+/>
+
+## The workflow
+
+Use this for AI-generated interactive artifacts:
+
+- mini games
+- educational demos
+- generated web tools
+- form flows
+- onboarding flows
+- dashboards
+- calculators
+- internal admin screens
+- prototypes from vibe-coding sessions
+
+The loop has three roles.
+
+## 1. Builder
+
+The builder creates the artifact.
+
+The builder may be a human, a coding agent, Claude Code, Codex, Cursor, OpenClaw, v0, Lovable, Replit, or any system that produces an interactive web page.
+
+The builder’s job is to implement the feature. Not to grade it.
+
+Builder prompt:
+
+```txt
+Build the interactive artifact described below.
+Keep the implementation simple.
+Do not write tests yet.
+At the end, provide:
+- local URL or run command
+- known assumptions
+- expected user behaviors
+```
+
+The important output is not just the app. It is the list of expected behaviors.
+
+For a memory game, that list might be:
+
+```txt
+Expected behaviors:
+1. Start button begins the game.
+2. Cards are hidden before the game starts.
+3. Cards flip when clicked.
+4. Matching pair stays visible.
+5. Non-matching pair flips back after a short delay.
+6. Score increments on match.
+7. Game-over state appears after all pairs are matched.
+8. Restart resets the board and score.
+```
+
+## 2. Playtester
+
+The playtester is separate from the builder.
+
+Its job is not to improve the code. Its job is to observe the UI like a user and produce evidence.
+
+Playtester prompt:
+
+```txt
+You are the GUI playtester, not the builder.
+
+Open this app:
+http://localhost:3000
+
+Create a rerunnable Playwright script that tests these expected behaviors:
+[PASTE EXPECTED BEHAVIORS]
+
+For each behavior, record:
+- action taken
+- visible result
+- pass/fail
+- screenshot path
+- reproduction steps
+- smallest user-facing bug statement
+
+Rules:
+- Do not suggest code fixes.
+- Do not redesign the app.
+- Do not mark a behavior as passed without visible evidence.
+- Save screenshots for every critical state.
+- Save an action log with one line per meaningful interaction.
+```
+
+A Webwright-style implementation should produce a workspace like this:
+
+```txt
+playtest-runs/memory-game/
+├── plan.md
+├── final_script.py
+└── final_runs/
+    └── run_1/
+        ├── final_script.py
+        ├── final_script_log.txt
+        └── screenshots/
+            ├── final_execution_01_start_screen.png
+            ├── final_execution_02_cards_visible.png
+            ├── final_execution_03_match_pair.png
+            ├── final_execution_04_wrong_pair.png
+            └── final_execution_05_game_over.png
+```
+
+The exact folders do not matter. The contract does.
+
+You want:
+
+<KeyPoints
+  title="The playtester evidence contract"
+  items={[
+    'A plan listing the expected behaviors and critical states.',
+    'A rerunnable Playwright script, not only a chat transcript.',
+    'Screenshots for the states that prove pass/fail outcomes.',
+    'An action log with the exact interaction sequence.',
+    'A bug report written in user-facing language.',
+    'A clean rerun after repairs to prove the failure is gone.',
+  ]}
+/>
+
+## 3. Repair agent
+
+Only after the playtester has evidence should the builder or repair agent modify code.
+
+Repair prompt:
+
+```txt
+Fix only the failures reported by the GUI playtester.
+
+Use these artifacts as evidence:
+- final_script_log.txt
+- screenshots/
+- pass/fail report
+
+Rules:
+- Do not redesign unrelated behavior.
+- Do not change passing behaviors unless necessary for the failing case.
+- Preserve the playtester script.
+- After the fix, rerun the same playtest script.
+- Report which failures are now passing and cite the new evidence.
+```
+
+This prevents the common agent failure where a repair attempt becomes a redesign.
+
+The bug was: wrong pairs do not flip back.
+
+The fix should not become: redesign the whole card system, change the scoring model, add animations, rewrite the UI library, and accidentally break restart.
+
+Evidence constrains repair.
+
+## Example bug report
+
+A good playtester report is boring and concrete.
+
+```txt
+FAIL: Non-matching cards flip back
+
+Expected:
+When the user clicks two non-matching cards, both cards should flip back after a short delay.
+
+Observed:
+The two non-matching cards stayed visible indefinitely.
+
+Actions:
+1. Opened http://localhost:3000
+2. Clicked Start
+3. Clicked card 1
+4. Clicked card 4
+5. Waited 1500ms
+
+Evidence:
+- final_runs/run_1/screenshots/final_execution_04_wrong_pair.png
+- final_script_log.txt, steps 2-5
+
+Reproduction:
+Start → click card 1 → click card 4 → wait 1500ms
+
+Smallest user-facing bug statement:
+Wrong memory-game pairs do not flip back, so the game becomes too easy and the board state is wrong.
+```
+
+That is much better than:
+
+```txt
+The game mostly works but there might be an issue with cards.
+```
+
+The point is not just finding the bug. The point is making the bug reproducible.
+
+## Turn the playtest into a regression test
+
+The best part of the Webwright-style loop is that the final script can survive the current run.
+
+After the repair, run the same script again.
+
+```txt
+python final_script.py
+```
+
+If the bug is fixed, keep the script as a lightweight regression test for that artifact.
+
+For prototypes, this may be enough. For production apps, convert the stable parts into your normal Playwright test suite.
+
+A useful split:
+
+```txt
+Exploratory playtester script:
+- generated quickly
+- evidence-heavy
+- screenshots everywhere
+- good for finding broken flows
+
+Production Playwright test:
+- cleaned up
+- deterministic selectors
+- runs in CI
+- asserts stable behavior
+```
+
+Do not confuse the two.
+
+The playtester script is allowed to be a bit messy because it is discovering behavior. The production test should be stable because it is enforcing behavior.
+
+## Where this fails
+
+GUI playtester loops are useful, but they are not magic.
+
+A browser agent can miss subjective quality. It can click oddly. It can overfit to text labels. It may pass a flow that feels terrible to a human. It may fail because selectors are unstable rather than because the product is broken.
+
+So use the loop for what it is good at: visible behavior evidence.
+
+<DoDont
+  title="Use GUI playtesters for the right job"
+  doLabel="Use it for"
+  dontLabel="Do not use it as"
+  doItems={[
+    'Checking whether expected click/type/play paths work.',
+    'Finding dead buttons, missing states, broken form flows, and obvious regressions.',
+    'Creating reproducible bug reports from AI-generated prototypes.',
+    'Generating a first draft of Playwright regression coverage.',
+  ]}
+  dontItems={[
+    'A replacement for human product taste.',
+    'A complete accessibility audit.',
+    'Proof that a game is fun or a workflow is pleasant.',
+    'A license to ship without human review on high-risk flows.',
+  ]}
+/>
+
+## The tiny version for solo builders
+
+If you are building with AI today, you can start small.
+
+After every generated UI, write five expected behaviors:
+
+```txt
+1. What should happen first?
+2. What should change after the main click?
+3. What should happen on invalid input?
+4. What should happen after success?
+5. What should reset or persist?
+```
+
+Then ask a browser-capable coding agent to produce a rerunnable script and evidence.
+
+Minimal prompt:
+
+```txt
+You are a GUI playtester.
+Open http://localhost:3000.
+Test these five expected behaviors.
+Write a rerunnable Playwright script.
+For every behavior, save a screenshot, log the action, and report pass/fail.
+Do not suggest code fixes until the evidence is complete.
+```
+
+That alone will catch a surprising number of “looked done” bugs.
+
+## Why this pattern matters
+
+AI makes interactive artifacts cheap to generate.
+
+That means the bottleneck moves from creation to verification.
+
+The winning workflow is not:
+
+```txt
+generate more UI faster
+```
+
+It is:
+
+```txt
+generate UI
+→ playtest it like a user
+→ record evidence
+→ repair only proven failures
+→ rerun the same path
+```
+
+This is the same broader lesson showing up across AI engineering: do not only evaluate the model. Evaluate the loop around the model.
+
+For UI work, the loop needs a playtester.
+
+Not a screenshot review.
+
+Not a self-check from the builder.
+
+A separate browser agent that leaves behind a script, screenshots, logs, and bugs a human can reproduce.
+
+That is how AI-generated interfaces become less like demos and more like software.
+
+## Sources
+
+- [Webwright by Microsoft](https://github.com/microsoft/Webwright) — a code-as-action browser agent approach that produces rerunnable scripts, screenshots, and logs.
+- [Webwright: A Terminal Is All You Need For Web Agents](https://www.microsoft.com/en-us/research/articles/webwright-a-terminal-is-all-you-need-for-web-agents/) — Microsoft Research article on the Webwright architecture.
+- [GUI Agents for Continual Game Generation](https://arxiv.org/abs/2605.28258) — related research signal: treating generation as a loop where GUI agents interact with generated games and feed observations back into improvement.
