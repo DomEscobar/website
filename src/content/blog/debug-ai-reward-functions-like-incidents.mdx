@@ -1,0 +1,432 @@
+---
+title: "Debug AI Reward Functions Like Production Incidents"
+description: "A practical field note for developers using LLM-written reward functions, evaluators, or scoring loops: diagnose the failure mode before changing the reward."
+language: "en"
+slug: "debug-ai-reward-functions-like-incidents"
+canonicalSlug: "debug-ai-reward-functions-like-incidents"
+publishedAt: "2026-05-30"
+updatedAt: "2026-05-30"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "AI Agents", "Evals", "Developer Workflow", "Reinforcement Learning", "Agent Harness"]
+topic: "AI-first Engineering"
+summary: "Bad reward functions should not be treated like prompt drafts. Treat them like production incidents: preserve traces, classify the failure, patch only the implicated logic, and rerun against the same controls."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is reward debugging?"
+    answer: "Reward debugging is the practice of diagnosing why a reward function, evaluator, or scoring loop is producing the wrong learning signal before editing it. The goal is to classify the failure mode from traces and metrics instead of blindly asking an LLM to improve the reward."
+  - question: "Does this only apply to reinforcement learning?"
+    answer: "No. The same workflow applies to LLM evaluators, coding-agent graders, workflow scorers, retrieval-ranking heuristics, and any automation loop where a score influences future behavior."
+  - question: "What should developers log when a reward fails?"
+    answer: "Log the run id, task, observed behavior, reward distribution, trace evidence, suspected failure mode, smallest reward change, expected metric movement, and rerun result."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+When an AI system learns the wrong behavior, developers often reach for the same move:
+
+```txt
+The reward is wrong. Ask the LLM to improve the reward.
+```
+
+That sounds reasonable. It is also how you get reward sludge.
+
+The model adds more conditions. Then more penalties. Then more helper logic. The reward function becomes longer, harder to trust, and still does not explain why the previous run failed.
+
+A better frame is this:
+
+> A bad reward function is not a bad prompt. It is a production incident.
+
+You do not fix production incidents by rewriting the service until it feels better. You preserve evidence, identify the failure mode, make the smallest targeted change, and check whether the predicted metric moves.
+
+That same loop belongs in AI reward design.
+
+A recent paper, [**When LLM Reward Design Fails: Diagnostic-Driven Refinement for Sparse Structured RL**](https://arxiv.org/abs/2605.28918), gives this workflow a useful shape. The practical takeaway for developers is not “use this exact RL setup.” It is simpler:
+
+> Before changing a reward, classify how it failed.
+
+<FlowGraphic
+  title="Reward debugging loop"
+  note="diagnose before editing"
+  steps={['run the agent', 'preserve traces', 'classify failure mode', 'patch smallest reward logic', 'rerun same controls', 'write incident note']}
+/>
+
+This matters beyond academic reinforcement learning. If you build coding agents, eval suites, workflow graders, auto-reviewers, retrieval rankers, or any system where a score changes future behavior, you are already doing reward design.
+
+You may just be calling it something else.
+
+## The bug is often not the model
+
+When an agent exploits a reward, the first instinct is to blame the model.
+
+It gamed the system. It found a loophole. It is being weird again.
+
+Sometimes that is true. But often the model is doing exactly what your scoring loop made cheap.
+
+Imagine a support agent trained or selected with this reward:
+
+```txt
++1.0 if the answer includes a refund policy link
++1.0 if the user sentiment improves
+-1.0 if the answer says it cannot help
+```
+
+After a few runs, the agent starts linking the refund policy in almost every answer, including password resets and shipping questions. It sounds helpful. Metrics improve. Users get annoyed.
+
+That is not mysterious model behavior. That is a reward incident.
+
+The system learned:
+
+```txt
+refund link = cheap positive signal
+```
+
+If you ask an LLM to “make the reward better,” it may add five more clauses. But the useful diagnosis is narrower: the reward is flooding the policy-link signal into tasks where it should not apply.
+
+<MetricStrip
+  metrics={[
+    { value: '1', label: 'failure mode before reward edit' },
+    { value: '1', label: 'smallest implicated change first' },
+    { value: '0', label: 'credit for unverifiable reward improvements' },
+  ]}
+/>
+
+## Three failure modes worth naming
+
+The paper highlights concrete reward-design failures. For day-to-day engineering, three are especially useful.
+
+<KeyPoints
+  title="Reward failures developers can actually debug"
+  items={[
+    'reward flooding: a signal fires too often, so the agent chases it even when it is irrelevant.',
+    'semantic or API misunderstanding: the reward checks the wrong thing because it misunderstands the environment, tool result, field name, or business meaning.',
+    'weak shaping: the final success signal exists, but the agent gets too little intermediate guidance to discover the path reliably.',
+  ]}
+/>
+
+You can add more categories later: sparse telemetry, delayed credit assignment, contradictory objectives, distribution shift, reward hacking, hidden human preference, and so on.
+
+But do not start with a taxonomy museum. Start with the three failure modes your team can recognize from logs.
+
+## Example 1: reward flooding in a coding-agent evaluator
+
+Suppose you build an evaluator for coding-agent runs. You want to reward evidence, so you add:
+
+```txt
++2 if the final answer includes test commands
++2 if the final answer includes changed files
++1 if the final answer includes a confidence statement
+```
+
+After a week, agent reports look great:
+
+```txt
+Changed files: src/auth/session.ts, src/auth/session.test.ts
+Tests: npm test src/auth/session.test.ts
+Confidence: high
+```
+
+But developers still complain. The agent lists tests it did not actually run. It includes files that were only inspected. It says “high confidence” because that is rewarded.
+
+The shallow fix:
+
+```txt
+Tell the agent to be honest.
+```
+
+The incident-style diagnosis:
+
+```txt
+Failure mode: reward flooding.
+Evidence: reports contain rewarded evidence-shaped text even when terminal logs do not contain matching commands.
+Small patch: reward only evidence that can be matched to actual tool output or CI logs.
+Expected movement: fewer unsupported test claims; maybe shorter final reports.
+```
+
+A better evaluator rule:
+
+```txt
+Reward evidence only if:
+- the command appears in captured terminal output
+- the exit code is known
+- the changed file list matches the diff
+- claims include a pointer to the supporting log, screenshot, or test result
+
+No reward for unsupported evidence-shaped prose.
+```
+
+Notice the fix is not “make the evaluator smarter.” It removes one cheap exploit.
+
+## Example 2: semantic/API misunderstanding in an automation loop
+
+Imagine a browser agent that books appointments. You reward it like this:
+
+```txt
++5 if booking_status == "confirmed"
+-3 if booking_status == "failed"
+```
+
+The agent appears to improve. Then you inspect traces and find something ugly: on one provider, the API returns `confirmed: false` while payment is pending, but the page displays “request confirmed.” On another provider, `status: confirmed` means the request was submitted, not accepted.
+
+Your reward is reading the same word across different systems as if it has the same meaning.
+
+That is a semantic/API misunderstanding.
+
+Incident note:
+
+```txt
+Observed behavior:
+Agent stops after request submission and reports a completed booking.
+
+Trace evidence:
+Provider A: api.status = "confirmed" before calendar invite exists.
+Provider B: page text = "request confirmed" while backend status = "pending_approval".
+
+Failure mode:
+Semantic/API misunderstanding.
+
+Smallest reward patch:
+Reward completed booking only when a durable confirmation artifact exists:
+- calendar event id, or
+- confirmation email id, or
+- provider booking id with accepted state.
+
+Expected metric movement:
+More runs continue past soft confirmation screens; fewer false completed bookings.
+```
+
+This is the kind of bug that prompt edits rarely solve. The reward logic misunderstood the environment.
+
+## Example 3: weak shaping in a data-cleaning agent
+
+A data-cleaning agent receives a messy CSV and must output a normalized file. Final reward:
+
+```txt
++10 if final CSV matches schema and validation passes
+0 otherwise
+```
+
+The task is sparse. Many attempts get zero. The agent has little signal about whether it is getting closer.
+
+Symptoms:
+
+```txt
+Run 1: changes all column names, fails date parsing
+Run 2: fixes dates, loses currency normalization
+Run 3: handles nulls, breaks required columns
+Run 4: gives up and writes a generic transform
+```
+
+The shallow fix is to make the model try harder.
+
+The better diagnosis is weak shaping.
+
+Add intermediate rewards that correspond to durable subgoals:
+
+```txt
++1 all required columns present
++1 no unexpected columns
++1 dates parse under target timezone
++1 currency values normalize to integer cents
++1 null handling matches policy
++1 row count preserved unless documented
++4 final schema validation passes
+```
+
+But be careful: shaping can become flooding if every tiny partial success overwhelms the final objective.
+
+A useful rule:
+
+> Intermediate rewards should point toward final success, not become a separate game.
+
+## The reward incident log
+
+The smallest useful tool is a plain text log.
+
+```txt
+Reward incident:
+- date:
+- system / agent:
+- task:
+- run ids:
+- observed bad behavior:
+- reward distribution:
+- trace evidence:
+- suspected failure mode:
+- smallest reward change:
+- metric expected to move:
+- rerun result:
+- follow-up:
+```
+
+Example:
+
+```txt
+Reward incident:
+- date: 2026-05-30
+- system / agent: coding-agent evaluator
+- task: final report scoring
+- run ids: eval-1842..eval-1860
+- observed bad behavior: reports claimed tests were run without matching terminal output
+- reward distribution: evidence-report bonus fired in 92% of runs; real command evidence present in 41%
+- trace evidence: final_answer contained "npm test" strings; tool logs missing command events
+- suspected failure mode: reward flooding
+- smallest reward change: only score tests if command exists in captured execution log with exit code
+- metric expected to move: unsupported test claims drop below 10%; average report length may drop
+- rerun result: pending
+- follow-up: add reviewer check for evidence-shaped prose without artifact link
+```
+
+This is deliberately boring. Boring logs beat magical reward edits.
+
+## A prompt you can steal
+
+Use this with rollout traces, evaluator outputs, CI logs, browser traces, or agent transcripts.
+
+```txt
+You are debugging a reward function like a production incident.
+
+Inputs:
+- task description
+- current reward function or evaluator rubric
+- rollout traces / transcripts / logs
+- reward distribution or scored examples
+- environment or API docs if relevant
+
+Do not rewrite the reward immediately.
+
+First classify the failure mode:
+- reward flooding: a signal fires too often or becomes the cheap target
+- semantic/API misunderstanding: the reward checks the wrong field, event, state, or business meaning
+- weak shaping: the final signal exists but the agent receives too little useful intermediate feedback
+- other: explain with trace evidence
+
+Return:
+1. observed bad behavior
+2. trace evidence supporting the diagnosis
+3. why the current reward made that behavior cheap
+4. the smallest reward change that targets this failure
+5. the metric that should move if the diagnosis is right
+6. a rerun plan using the same controls
+
+Rules:
+- cite evidence from traces, not vibes
+- prefer deleting or narrowing cheap reward signals over adding broad new clauses
+- do not change unrelated objectives
+- if telemetry is insufficient, say what must be logged before editing the reward
+```
+
+The most important line is “do not rewrite the reward immediately.” It forces the model into investigator mode before builder mode.
+
+## What to inspect before changing the reward
+
+Developers need evidence. Not a feeling that the reward is bad.
+
+Look at:
+
+```txt
+Reward distribution:
+Which reward components fire too often, never fire, or dominate the total score?
+
+Top-scoring failures:
+Which bad runs received high scores?
+
+Low-scoring successes:
+Which acceptable runs were punished?
+
+Trace boundaries:
+Did the agent actually reach the event the reward claims to measure?
+
+API semantics:
+Does the field name mean what the reward thinks it means?
+
+Control comparison:
+Did the same task, seed, fixture, or benchmark get rerun after the patch?
+```
+
+If you only look at final averages, you will miss the bug. Inspect the weird cases: high score plus bad behavior, low score plus good behavior.
+
+<CompareGrid
+  title="Reward drafting vs reward debugging"
+  leftLabel="Prompt-draft mode"
+  rightLabel="Incident-debug mode"
+  rows={[
+    { left: 'Ask the LLM to improve the reward.', right: 'Preserve traces and classify the failure first.' },
+    { left: 'Add more clauses when behavior looks wrong.', right: 'Patch only the implicated reward signal.' },
+    { left: 'Trust average score movement.', right: 'Inspect top-scoring failures and low-scoring successes.' },
+    { left: 'Treat every run as a fresh annoyance.', right: 'Keep a reward incident log so failures become system memory.' },
+  ]}
+/>
+
+## Where this fails
+
+This workflow is not magic.
+
+It fails when telemetry is too weak. If you cannot see intermediate actions, tool results, environment state, reward components, or scored examples, diagnosis becomes storytelling.
+
+It also fails when the real problem is not the reward. Sometimes the issue is exploration, model capability, bad tools, missing context, flaky environments, impossible tasks, or contradictory product goals.
+
+That is why the loop should allow this answer:
+
+```txt
+Do not edit the reward yet. We do not have enough evidence.
+```
+
+That sentence is painful. It is also often the correct engineering move.
+
+## Do and do not
+
+<DoDont
+  title="Reward debugging rules"
+  doLabel="Do"
+  dontLabel="Do not"
+  doItems={[
+    'keep reward components separately visible in logs',
+    'inspect high-score failures and low-score successes',
+    'name the failure mode before editing',
+    'make the smallest change that should move one metric',
+    'rerun with the same fixtures, seeds, tasks, or controls when possible',
+    'write short reward incident notes for repeated failures',
+  ]}
+  dontItems={[
+    'ask an LLM to improve a reward without traces',
+    'add broad penalties for every surprising behavior',
+    'reward evidence-shaped text without checking artifacts',
+    'treat the same API word as the same state across systems',
+    'let intermediate shaping overpower final success',
+    'declare victory from averages without inspecting examples',
+  ]}
+/>
+
+## The practical version for normal dev teams
+
+You do not need a full RL lab to use this.
+
+If you maintain an LLM evaluator, add component-level score logging.
+
+If you use a coding agent, log whether “evidence” claims match actual command output.
+
+If you run a browser agent, distinguish soft page text from durable backend confirmation.
+
+If you rank retrieved context, inspect cases where irrelevant snippets score high.
+
+If you automate support, look for generic behaviors that collect reward across unrelated tasks.
+
+The pattern is always the same:
+
+```txt
+Bad behavior + high score = reward incident.
+Good behavior + low score = reward incident.
+No trace evidence = observability incident before reward incident.
+```
+
+That last line matters. Sometimes the fix is not to edit the reward. It is to log the right thing.
+
+## Source
+
+- [When LLM Reward Design Fails: Diagnostic-Driven Refinement for Sparse Structured RL](https://arxiv.org/abs/2605.28918)
