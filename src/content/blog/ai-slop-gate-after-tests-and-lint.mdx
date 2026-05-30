@@ -1,0 +1,584 @@
+---
+title: "Put an AI Slop Gate After Tests and Lint"
+description: "A practical workflow for catching the AI-generated code residue that tests and linters miss: dead stubs, swallowed errors, fake comments, any-casts, duplicated helpers, and suspicious agent leftovers."
+language: "en"
+slug: "ai-slop-gate-after-tests-and-lint"
+canonicalSlug: "ai-slop-gate-after-tests-and-lint"
+publishedAt: "2026-05-30"
+updatedAt: "2026-05-30"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "Coding Agents", "Developer Workflow", "Code Quality", "Evals", "Agent Harness"]
+topic: "AI-first Engineering"
+summary: "Tests tell you whether behavior still works. Linters tell you whether code is syntactically and stylistically acceptable. An AI-slop gate catches the residue coding agents leave behind: fake comments, swallowed errors, any-casts, duplicated helpers, TODO stubs, and dead code."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is an AI-slop gate?"
+    answer: "An AI-slop gate is a deterministic code-quality check that runs after an AI coding agent finishes. It looks for common agent leftovers such as narrative comments, swallowed errors, any-casts, duplicated helpers, dead code, TODO stubs, hallucinated imports, and oversized functions."
+  - question: "Should an AI-slop gate block CI immediately?"
+    answer: "Usually no. Start by using it as a review queue and trend metric. Once the team agrees which findings are high-signal, promote only those rules to blocking gates."
+  - question: "How is this different from asking another LLM to review the code?"
+    answer: "A slop gate is deterministic static analysis. The same input gives the same result, it can run in CI, and it does not add another probabilistic reviewer to the runtime path."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+AI coding agents can leave a strange kind of mess.
+
+The code builds. The tests pass. The linter is quiet.
+
+And still, when a human opens the diff, something feels off.
+
+There is a `try/catch` that swallows the real error. A comment explains code that was already obvious. A helper function duplicates a helper that existed three folders away. A TODO stub got committed because it made the demo path work. A TypeScript fix uses `as any` to escape the type system. A file imports something that looks plausible but does not belong to the architecture.
+
+That residue is not always a correctness bug. It is maintainability debt created by a machine that is very good at making code look complete.
+
+So the next useful gate after AI-assisted coding is not another model saying “LGTM.”
+
+It is a boring deterministic check.
+
+> Put an AI-slop gate after tests and lint.
+
+<FlowGraphic
+  title="The post-agent quality loop"
+  note="tests and lint are necessary, not sufficient"
+  steps={['agent edits code', 'tests pass', 'lint/typecheck pass', 'slop gate scans residue', 'fix only high-signal findings', 'rerun gates']}
+/>
+
+The tool that triggered this note is [**AISlop**](https://github.com/scanaislop/aislop), a CLI for catching patterns AI coding agents often leave behind. Its README describes 40+ deterministic rules across TypeScript/JavaScript, Python, Go, Rust, Ruby, PHP, and Java, with commands like:
+
+```bash
+npx aislop scan
+npx aislop scan --changes
+npx aislop ci
+npx aislop fix --prompt
+```
+
+The exact tool matters less than the pattern.
+
+Tests answer:
+
+```txt
+Does the behavior we check still work?
+```
+
+Linters answer:
+
+```txt
+Is the code valid and style-compliant enough?
+```
+
+A slop gate answers a different question:
+
+```txt
+Did the agent leave behind suspicious code residue that a human should inspect before merge?
+```
+
+That third question is becoming more important.
+
+## Why tests and lint miss AI residue
+
+A test suite is not a general taste machine.
+
+It only checks what someone encoded. If there is no test for duplicated helpers, vague abstractions, swallowed exceptions, dead fallback branches, or narrative comments, the test suite does not care.
+
+A linter is also not enough. Linters are excellent at enforcing known syntax, formatting, and local style rules. But many AI leftovers are semantically suspicious while still being legal code.
+
+Example:
+
+```ts
+try {
+  await syncCustomer(customerId);
+} catch (error) {
+  // Continue gracefully if sync fails
+}
+```
+
+This can pass tests. It can pass lint. It may even look intentional.
+
+But in production it means a customer sync can fail silently and no one knows. The code did not break the build. It broke observability.
+
+Another example:
+
+```ts
+const user = response.data as any;
+return user.profile.name;
+```
+
+This may unblock the agent. It may make the TypeScript error go away. It may even be safe in the happy path.
+
+But it also erases the type boundary right where the system needed one.
+
+These are not always catastrophic bugs. They are “smells.” The problem is that AI coding sessions can create many small smells very quickly.
+
+<MetricStrip
+  metrics={[
+    { value: '1', label: 'tests: checked behavior' },
+    { value: '2', label: 'lint/typecheck: checked validity' },
+    { value: '3', label: 'slop gate: checked agent residue' },
+  ]}
+/>
+
+The right move is not panic. The right move is to add a lightweight review queue.
+
+## What counts as AI slop?
+
+“AI slop” is not “code written by AI.”
+
+That distinction matters.
+
+Good AI-generated code can be clean, useful, and easier to review than rushed human code. Bad human code can look exactly like bad agent code. The point is not to shame the origin. The point is to catch recurring residue that appears more often when agents optimize for completing a task quickly.
+
+<KeyPoints
+  title="Common slop patterns worth scanning for"
+  items={[
+    'narrative comments: comments that explain obvious code or tell the story of the implementation instead of preserving useful intent',
+    'swallowed errors: catch blocks that hide failures without logging, rethrowing, or returning a meaningful state',
+    'type escapes: any-casts and broad unknown-to-any conversions used to silence the compiler',
+    'duplicated helpers: new utility functions that reimplement existing project behavior under slightly different names',
+    'dead or unreachable code: fallback branches, placeholders, and old paths that no longer run',
+    'TODO stubs: committed half-implementations that make the file look complete but leave behavior undefined',
+    'hallucinated imports: plausible dependencies or local modules that do not match the project architecture',
+    'oversized functions: agent-written blobs that mix parsing, validation, IO, state updates, and rendering in one place',
+  ]}
+/>
+
+None of these should be an automatic moral failure.
+
+Sometimes a comment is useful. Sometimes a temporary `any` is the least bad bridge during a migration. Sometimes duplication is acceptable while refactoring toward a new abstraction.
+
+The gate should not say:
+
+```txt
+This code is bad.
+```
+
+It should say:
+
+```txt
+This deserves human attention before merge.
+```
+
+That is the difference between a useful gate and a bureaucratic one.
+
+## The practical workflow
+
+Start simple.
+
+```bash
+# after the agent finishes
+npm test
+npm run lint
+npm run typecheck
+npx aislop scan --changes
+```
+
+If your project does not have all three existing commands, use the closest equivalent. The important part is order:
+
+```txt
+Behavior gate → validity gate → residue gate
+```
+
+Do not run the slop gate first. If the code does not build, the slop findings are noise. Fix the real breakage first.
+
+For a small team, I would use three phases.
+
+## Phase 1: review queue, not blocker
+
+Run the scan locally or in PR comments. Do not fail CI yet.
+
+Goal:
+
+```txt
+Learn which findings are high-signal in this repo.
+```
+
+Some rules will be immediately useful. Some will be noisy because your project has generated code, legacy patterns, framework conventions, or deliberate style choices.
+
+During this phase, track only two things:
+
+```txt
+Which findings would we have wanted to catch before merge?
+Which findings are noise for our codebase?
+```
+
+A good first policy:
+
+```txt
+All slop findings are advisory for two weeks.
+Only security, swallowed errors, type escapes at boundaries, dead stubs, and hallucinated imports may block manually.
+```
+
+## Phase 2: baseline and prevent regression
+
+Once you know your repo’s normal smell level, take a baseline.
+
+The goal is not to make an old codebase perfect. The goal is to stop agent sessions from making it worse.
+
+A useful policy:
+
+```txt
+Existing score: 74
+New PR must not reduce score.
+High-severity findings in changed files require explanation or fix.
+```
+
+This is much less annoying than “clean the whole repo.”
+
+It also matches how teams adopt linters in real legacy systems: protect the diff first, improve the rest gradually.
+
+## Phase 3: promote high-signal findings to CI
+
+Only after the team agrees which rules matter should you make CI fail.
+
+Example `.aislop/config.yml` shape:
+
+```yaml
+ci:
+  failBelow: 80
+
+exclude:
+  - "src/generated/**"
+  - "**/*.snapshot.*"
+
+rules:
+  ai-slop/narrative-comment: warning
+  ai-slop/trivial-comment: off
+  security/hardcoded-secret: error
+```
+
+The exact rule names and thresholds depend on the tool and repo. The principle is stable:
+
+> Block regressions and high-risk residue, not every aesthetic disagreement.
+
+## Example 1: the swallowed error that passed tests
+
+A coding agent updates a webhook handler:
+
+```ts
+export async function handleStripeWebhook(event: Stripe.Event) {
+  try {
+    await applySubscriptionEvent(event);
+    await sendAnalyticsEvent(event);
+  } catch (error) {
+    // Ignore analytics failures so webhook processing continues
+  }
+
+  return { ok: true };
+}
+```
+
+The tests pass because they only check the happy path. The linter passes because the code is valid.
+
+But the catch wraps both subscription updates and analytics. If `applySubscriptionEvent` fails, the webhook still returns ok.
+
+A slop gate flags a swallowed exception.
+
+The fix is not “delete the catch.” The fix is to separate critical and non-critical work:
+
+```ts
+export async function handleStripeWebhook(event: Stripe.Event) {
+  await applySubscriptionEvent(event);
+
+  try {
+    await sendAnalyticsEvent(event);
+  } catch (error) {
+    logger.warn({ err: error, eventId: event.id }, 'analytics event failed');
+  }
+
+  return { ok: true };
+}
+```
+
+This is exactly the kind of residue gate that pays for itself. The code worked. The smell pointed to a production failure mode.
+
+## Example 2: the `as any` that hides a missing contract
+
+An agent is asked to wire a new API response into the UI.
+
+It writes:
+
+```ts
+type DashboardUser = {
+  id: string;
+  name: string;
+  plan: 'free' | 'pro';
+};
+
+const user = response.json() as any as DashboardUser;
+```
+
+This is not just ugly. It hides the contract between the API and frontend.
+
+A better fix is to validate at the boundary:
+
+```ts
+const DashboardUserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  plan: z.enum(['free', 'pro']),
+});
+
+const user = DashboardUserSchema.parse(await response.json());
+```
+
+The slop gate should not blindly forbid every cast in every file. But casts at IO boundaries are high-signal because they often mean the agent chose “silence TypeScript” over “model the data.”
+
+## Example 3: duplicated helper drift
+
+The repo already has:
+
+```ts
+export function formatCurrencyCents(cents: number, currency = 'EUR') {
+  return new Intl.NumberFormat('de-DE', {
+    style: 'currency',
+    currency,
+  }).format(cents / 100);
+}
+```
+
+The agent adds:
+
+```ts
+function formatPrice(amount: number) {
+  return `€${(amount / 100).toFixed(2)}`;
+}
+```
+
+Both work for the demo. The new helper fails for locale details, currency changes, spacing, and existing conventions.
+
+Tests pass because the component only checks that a price appears.
+
+A slop finding for duplicated helper logic tells the reviewer where to look.
+
+The fix:
+
+```ts
+import { formatCurrencyCents } from '@/lib/money';
+
+const price = formatCurrencyCents(product.priceCents, product.currency);
+```
+
+This is where AI slop gates become repo-hygiene tools. They catch when the agent solved the local prompt but ignored the existing system.
+
+## Example 4: narrative comments that reveal shallow understanding
+
+AI agents often write comments like this:
+
+```ts
+// Loop through all users and update each user's status
+for (const user of users) {
+  await updateUserStatus(user.id, status);
+}
+```
+
+That comment adds nothing. It just repeats the code.
+
+The deeper issue is not the comment itself. It is that narrative comments often appear around code the agent does not fully understand. The agent explains the mechanics because it has no useful domain intent to preserve.
+
+A better comment would explain a non-obvious decision:
+
+```ts
+// Keep this sequential: the provider rate-limits status writes per account.
+for (const user of users) {
+  await updateUserStatus(user.id, status);
+}
+```
+
+So the rule should not be “no comments.”
+
+The rule should be:
+
+```txt
+Comments must preserve intent, constraints, or surprising decisions.
+They should not narrate obvious syntax.
+```
+
+## The prompt to hand back to your agent
+
+After the slop scan, do not tell the coding agent:
+
+```txt
+Clean this up.
+```
+
+That invites broad refactors.
+
+Use a narrow repair prompt:
+
+```txt
+Fix only the AI-slop findings below.
+
+Rules:
+- Preserve behavior.
+- Do not rewrite unrelated code.
+- Do not rename public APIs unless required by a finding.
+- Prefer using existing project helpers over adding new helpers.
+- For each fix, report:
+  1. finding removed
+  2. file changed
+  3. why the new code is safer or clearer
+  4. test/lint/typecheck command proving behavior still works
+
+If a finding is a false positive, leave the code unchanged and explain why.
+```
+
+That last sentence is important. A good gate allows justified exceptions.
+
+## How to make it CI-safe
+
+A bad slop gate creates review theater. A good one creates a small, explainable pressure toward cleaner diffs.
+
+Start with changed files:
+
+```bash
+npx aislop scan --changes
+```
+
+Then CI:
+
+```bash
+npx aislop ci
+```
+
+For GitHub Actions, the AISlop README shows the basic pattern:
+
+```yaml
+- uses: actions/checkout@v4
+- uses: actions/setup-node@v4
+  with:
+    node-version: 20
+- run: npx aislop@latest ci .
+```
+
+For teams that already use GitHub code scanning, SARIF output is useful because findings show up where security and code-quality issues already live:
+
+```bash
+npx aislop@latest scan . --sarif > aislop.sarif
+```
+
+But resist the temptation to turn every finding into a hard failure.
+
+A sensible merge policy:
+
+```txt
+Block:
+- score regression below agreed baseline
+- high-severity findings in changed files
+- swallowed errors in production paths
+- hardcoded secrets
+- TODO stubs in executable paths
+- any-casts at IO/security/payment/auth boundaries
+
+Warn:
+- narrative comments
+- large functions
+- duplicated helpers
+- dead code in non-critical areas
+
+Ignore:
+- generated code
+- snapshots
+- framework boilerplate
+- intentionally documented exceptions
+```
+
+This is boring. That is the point.
+
+## When not to use it
+
+Do not install a slop gate if your team will treat every finding as proof that the code is bad.
+
+Code smell tools require judgment. Otherwise they become another way to punish reasonable tradeoffs.
+
+Do not use it to reject AI-generated code because it is AI-generated. Use it to make generated code more reviewable.
+
+Do not run it before tests, typecheck, or build. A slop score on broken code is not meaningful.
+
+Do not let it replace architecture review. A deterministic scanner can catch residue. It cannot decide whether the feature should exist, whether the abstraction is right, or whether the product behavior matches user intent.
+
+<CompareGrid
+  title="Bad gate vs good gate"
+  leftLabel="Bad slop gate"
+  rightLabel="Good slop gate"
+  rows={[
+    { left: 'Blocks every smell immediately.', right: 'Starts as a review queue and promotes high-signal rules gradually.' },
+    { left: 'Treats AI-written code as suspicious by default.', right: 'Treats specific residue patterns as review-worthy.' },
+    { left: 'Creates broad cleanup prompts.', right: 'Asks the agent to fix only listed findings and preserve behavior.' },
+    { left: 'Punishes legacy codebase history.', right: 'Protects changed files and prevents score regression first.' },
+  ]}
+/>
+
+## The tiny checklist
+
+Before merging an AI-heavy PR, ask:
+
+```txt
+1. Did tests pass?
+2. Did lint/typecheck pass?
+3. Did the slop gate run on changed files?
+4. Are high-severity findings fixed or explicitly justified?
+5. Did the agent rerun the relevant proof after cleanup?
+6. Did cleanup stay narrow, or did it become a refactor?
+```
+
+If the answer to 6 is “it became a refactor,” stop and split the work.
+
+Slop cleanup should make the diff easier to trust. It should not become a second uncontrolled agent session.
+
+<DoDont
+  title="AI-slop gate rules"
+  doLabel="Do"
+  dontLabel="Do not"
+  doItems={[
+    'run the gate after tests, lint, and typecheck',
+    'start with changed files and advisory findings',
+    'treat findings as a review queue before making them blockers',
+    'promote only high-signal repo-specific rules to CI failures',
+    'ask the agent to fix listed findings without broad refactors',
+    'allow explicit false-positive justifications',
+  ]}
+  dontItems={[
+    'use slop findings as proof that all AI-written code is bad',
+    'block every smell on day one',
+    'scan generated files, snapshots, and vendor code without exclusions',
+    'let the agent clean up unrelated code while fixing findings',
+    'replace human architecture review with a static scanner',
+    'declare a PR safe because the slop score is high',
+  ]}
+/>
+
+## The bigger point
+
+The interesting part of AI-slop gates is not the word “slop.”
+
+The interesting part is that AI-native development needs more deterministic post-agent hygiene.
+
+As agents write more code, review cannot depend only on human vibes and final test results. We need small mechanical gates around the patterns agents repeatedly get wrong.
+
+Not because agents are useless.
+
+Because they are useful enough to produce more code than humans can carefully inspect line by line.
+
+So add the boring gate.
+
+```txt
+tests → lint/typecheck → slop scan → narrow cleanup → proof
+```
+
+That loop will not make bad architecture good. It will not catch every bug. It will not replace experienced engineers.
+
+But it will catch a category of residue that otherwise slips through because everything technically passed.
+
+And in AI-assisted development, “everything technically passed” is no longer enough.
+
+## Sources
+
+- [AISlop GitHub repository](https://github.com/scanaislop/aislop)
+- [AISlop documentation / hosted project](https://scanaislop.com)
+- [Show HN discussion](https://news.ycombinator.com/item?id=48322956)
