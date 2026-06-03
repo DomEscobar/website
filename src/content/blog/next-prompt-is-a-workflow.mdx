@@ -1,0 +1,441 @@
+---
+title: "The Next Prompt Is Not a Prompt. It’s a Workflow."
+description: "Claude Code dynamic workflows are a useful signal for where agent work is going: not bigger prompts, but inspectable orchestration with evidence, budgets, permissions, and stop conditions."
+language: "en"
+slug: "next-prompt-is-a-workflow"
+canonicalSlug: "next-prompt-is-a-workflow"
+publishedAt: "2026-06-03"
+updatedAt: "2026-06-03"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Claude Code", "Agent Workflows", "Developer Workflow", "AI Engineering"]
+topic: "AI Agent Workflows"
+summary: "Dynamic workflows move agent work from one chat prompt into inspectable orchestration: phases, subagents, evidence, budget, permissions, adversarial review, and stop conditions. The point is not more agents. The point is better control."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is a dynamic workflow in Claude Code?"
+    answer: "Claude Code describes a dynamic workflow as a JavaScript script that Claude writes for a task. The runtime executes it in the background to orchestrate many subagents, while the user can inspect and manage the run."
+  - question: "Are dynamic workflows just parallel agents?"
+    answer: "No. Parallelism is only one part. The useful shift is moving orchestration into a readable, reusable script with phases, intermediate state, observability, and cross-checking."
+  - question: "When should teams not use dynamic workflows?"
+    answer: "Do not use them for tiny tasks, subjective decisions, sensitive broad-tool work without permission boundaries, or any task where you cannot define evidence for correctness."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+The least interesting way to use an AI agent is to write a longer prompt.
+
+The more interesting move is to stop treating the prompt as the whole control surface.
+
+Claude Code’s new [dynamic workflows](https://code.claude.com/docs/en/workflows.md) are a good signal. Not because every team should immediately run a swarm of coding agents. That would be the shallow read.
+
+The useful read is this:
+
+> The next prompt is not a prompt. It is a workflow.
+
+A prompt tells one agent what to do.
+
+A workflow decides who works, in what order, with which tools, what evidence counts, how claims are checked, when the run stops, and what gets saved for next time.
+
+That is a different thing.
+
+## The short version
+
+Claude describes a dynamic workflow as a JavaScript script that Claude writes for your task. A runtime executes the script in the background, orchestrating many subagents while your main session stays responsive.
+
+That sounds like “parallel agents.”
+
+But parallel agents are not the interesting part.
+
+<MetricStrip
+  metrics={[
+    { value: '16', label: 'max concurrent agents in Claude workflow docs' },
+    { value: '1,000', label: 'max agents per workflow run' },
+    { value: '0', label: 'value from more agents without evidence' },
+  ]}
+/>
+
+The important part is that the plan moves out of the chat and into code.
+
+Claude’s docs say it plainly: with subagents, skills, and agent teams, Claude still decides turn by turn what to spawn or assign next. With workflows, the script holds the loop, branching, and intermediate results. Claude’s context only needs the final answer.
+
+<FlowGraphic
+  title="From prompt to workflow"
+  note="the control surface moves from instruction to orchestration"
+  steps={['Prompt', 'Subagent', 'Agent team', 'Workflow script', 'Observable run', 'Reusable command']}
+/>
+
+That is the shift worth paying attention to.
+
+Not: “Can an agent do more work?”
+
+But: “Can we make agent work inspectable, repeatable, bounded, and evidence-backed?”
+
+## Why this matters
+
+Most agent failures are not caused by a missing magic sentence in the prompt.
+
+They come from weak control.
+
+The agent keeps going after the scope changed. It edits files without a clean stop rule. It reports “done” without showing the command output. It trusts one source. It spawns helpers that all repeat the same bad premise. It solves the easy half of the task and silently shrinks the hard half.
+
+A longer prompt can warn against those failures.
+
+A workflow can design around them.
+
+<CompareGrid
+  title="Prompt vs. workflow"
+  leftLabel="Prompt"
+  rightLabel="Workflow"
+  rows={[
+    { left: 'One agent holds the plan in context.', right: 'A script holds phases, loops, branches, and state.' },
+    { left: 'Quality depends on the model remembering constraints.', right: 'Quality checks can be built into the run.' },
+    { left: 'Evidence often appears as prose.', right: 'Evidence can be required per phase before merge.' },
+    { left: 'Stopping is vague: “when done.”', right: 'Stopping can be explicit: tests, citations, diffs, logs, blocker.' },
+    { left: 'Hard to reuse except by copying the prompt.', right: 'Successful orchestration can be saved as a command.' },
+  ]}
+/>
+
+This is why Claude’s bundled [`/deep-research`](https://code.claude.com/docs/en/workflows.md#bundled-workflows) workflow is such a good example. It does not just “search more.” It fans out searches across angles, fetches sources, cross-checks claims, votes on them, and returns a cited report with weak claims filtered out.
+
+That is the pattern.
+
+Not more tokens.
+
+More structure.
+
+## The trap: faster slop
+
+There is a bad version of dynamic workflows.
+
+It looks like this:
+
+```txt
+Spawn 20 agents.
+Ask each one to investigate.
+Merge the summaries.
+Ship the answer.
+```
+
+That is not research. It is a slop amplifier.
+
+If all 20 agents share the same flawed framing, they can produce 20 confident versions of the same mistake. If none of them has to cite sources, you get more prose. If none of them has a stop rule, you get a long run that feels productive because the progress view is busy.
+
+A Hacker News commenter on the [Claude dynamic workflows thread](https://news.ycombinator.com/item?id=48311705) captured the skepticism well: the bottleneck is not how quickly Claude can trudge through code. The bottleneck is whether it is doing the task correctly, and whether the human has enough mechanisms to control a long-running session.
+
+That is exactly right.
+
+The question is not “How many agents can I run?”
+
+The question is:
+
+> What would make this run trustworthy enough that I can let it continue without staring at every step?
+
+## A useful workflow has an evidence contract
+
+The smallest upgrade is to require each worker to return evidence, not vibes.
+
+For coding work, evidence might be:
+
+- exact files changed
+- exact tests run
+- command output
+- diff summary
+- failing reproduction before the fix
+- passing reproduction after the fix
+- remaining risks
+
+For research, evidence might be:
+
+- source URL
+- direct quote
+- date inspected
+- confidence level
+- contradiction notes
+- whether the source is primary or secondary
+
+For product/content work, evidence might be:
+
+- screenshot or page URL
+- user quote
+- competitor page
+- search result
+- analytics event
+- acceptance checklist
+
+<KeyPoints
+  title="A workflow should define this before it runs"
+  items={[
+    'Roles: who investigates, who builds, who checks, who attacks the answer.',
+    'Tools: what each agent may read, write, fetch, execute, or never touch.',
+    'Evidence: what counts as proof for each claim or change.',
+    'Budget: maximum agents, model tier, tokens, time, or retries.',
+    'Merge rule: how findings become the final answer.',
+    'Stop conditions: what proves done, and what forces an honest blocker report.',
+  ]}
+/>
+
+Without that, “workflow” is mostly theatre.
+
+## Example 1: codebase auth audit
+
+A vague prompt:
+
+```txt
+Audit this app for missing auth checks.
+```
+
+A workflow-shaped prompt:
+
+```txt
+Turn this into a dynamic workflow.
+
+Goal:
+Audit every API endpoint under src/routes for missing authentication or authorization checks.
+
+Before running, show:
+- phases
+- subagent roles
+- allowed files/tools
+- cost cap
+- evidence each agent must return
+- merge rule
+- adversarial review step
+- stop conditions
+
+Evidence required per endpoint:
+- route path
+- handler file
+- auth/permission code found
+- risk classification
+- direct code quote or line reference
+- recommended fix if missing
+
+Do not mark complete unless:
+- every route has a row in the audit table
+- one reviewer agent checks for skipped route files
+- one adversarial agent tries to refute the “safe” findings
+- final report lists unknowns and unverified assumptions
+```
+
+Now the agent is not just “doing an audit.”
+
+It is producing an audit artifact.
+
+That distinction matters.
+
+## Example 2: 500-file migration
+
+Claude’s docs mention large migrations as a good workflow use case. That makes sense because the task is broad, repetitive, and checkable.
+
+Bad prompt:
+
+```txt
+Migrate the app to the new API.
+```
+
+Better workflow:
+
+```txt
+Create a workflow for this migration.
+
+Phases:
+1. Inventory all old API usages.
+2. Group usages by migration pattern.
+3. Assign agents per group.
+4. Apply changes in isolated batches.
+5. Run tests/build after each batch.
+6. Have a reviewer compare inventory vs migrated files.
+7. Produce final diff summary and unresolved cases.
+
+Stop if:
+- tests fail twice for the same reason
+- migration requires schema or production config changes
+- an old API use cannot be mapped to a new API equivalent
+- batch changes touch files outside the allowed directories
+```
+
+A workflow is useful here because you do not want one long chat context trying to remember 500 files.
+
+You want an inventory, batches, checks, and a final reconciliation step.
+
+## Example 3: deep research without source soup
+
+A normal research prompt often creates a source dump.
+
+A workflow should create a claim graph.
+
+```txt
+Run deep research on this question.
+
+Use separate agents for:
+- official docs / primary sources
+- GitHub / release notes
+- arXiv / academic work
+- community discussion
+- adversarial source check
+
+Every claim must include:
+- URL
+- source type
+- quote or extracted evidence
+- confidence: high / medium / low
+- contradiction notes
+
+Merge rule:
+Only include claims confirmed by a primary source or by two credible independent sources.
+Mark everything else as tentative.
+```
+
+That is close to what Claude’s `/deep-research` workflow is trying to formalize: fan out, fetch, cross-check, and filter.
+
+The post you are reading was drafted from that kind of workflow: Claude docs, adjacent frameworks, GitHub repositories, arXiv papers, and community discussion were treated differently instead of collapsed into one generic web summary.
+
+## This is bigger than Claude Code
+
+Claude’s implementation is one concrete version of a broader shift.
+
+The surrounding ecosystem is already full of orchestration primitives:
+
+- [LangGraph](https://docs.langchain.com/oss/python/langgraph/overview) describes itself as a low-level orchestration framework and runtime for long-running, stateful agents.
+- [AutoGen](https://microsoft.github.io/autogen/stable/) has an event-driven core for scalable multi-agent systems, including deterministic and dynamic agentic workflows.
+- [CrewAI Flows](https://docs.crewai.com/concepts/flows) give CrewAI a workflow layer around agents, tasks, human input, checkpointing, and event listeners.
+- [Mastra workflows](https://mastra.ai/docs/workflows/overview) are structured step sequences with schemas, suspension, resumption, and streaming.
+- [Temporal](https://docs.temporal.io/workflows) is the non-AI baseline: durable code-defined workflows that can be executed many times with different inputs.
+- [n8n](https://docs.n8n.io/advanced-ai/intro-tutorial/) shows the low-code version: visual AI workflows connected to tools and integrations.
+
+The difference is control ownership.
+
+In LangGraph, Mastra, Temporal, or n8n, a human developer usually designs the graph or workflow.
+
+In Claude Code dynamic workflows, Claude can generate the orchestration script for the task, then ask the human to approve it.
+
+That is powerful.
+
+It is also risky.
+
+Because the review surface changes. You are no longer only reviewing a proposed code edit. You are reviewing a temporary little operating procedure that can coordinate many agents.
+
+## What arXiv adds: cost, reliability, monitoring
+
+The academic/research direction points in the same direction: orchestration is becoming the real problem.
+
+A recent paper on [cost-aware optimization for agentic query execution](http://arxiv.org/abs/2606.03152v1) frames agent workflow optimization like database query optimization: placement, ordering, granularity, cost, and answer quality all interact.
+
+That is the right mental model.
+
+A workflow should not blindly spawn the strongest model everywhere. Some phases need a frontier model. Some need a cheap classifier. Some need deterministic checks. Some should not run at all if the inventory is already complete.
+
+Another paper on [self-healing agentic orchestrators](http://arxiv.org/abs/2606.01416v1) points to failures that are not just “model mistakes”: tool timeouts, malformed arguments, stale context, contradictory evidence, retry loops, and unverified intermediate outputs.
+
+A paper on [monitoring agentic systems before they are reliable](http://arxiv.org/abs/2606.02494v1) argues for monitoring quality, suitability, and efficiency across within-run, cross-run, and structural scopes.
+
+In plain English:
+
+> The hard part is not getting agents to act. The hard part is knowing whether the run is healthy while it acts.
+
+## Steal this workflow prompt
+
+Use this whenever a task feels too large for one agent but too risky to hand-wave.
+
+```txt
+Turn this task into a workflow before doing the work.
+
+Before running, show me:
+1. Phases
+2. Subagent roles
+3. Allowed tools and forbidden actions
+4. Context each role receives
+5. Evidence each role must return
+6. Cost/time/retry cap
+7. Merge rule
+8. Adversarial review step
+9. Stop conditions
+10. What will be saved as a reusable workflow if it works
+
+Rules:
+- Do not mark complete from summaries alone.
+- Every important claim needs a source, diff, test, log, screenshot, or command output.
+- If evidence is missing, say what is missing instead of filling the gap with confidence.
+- Stop before destructive, external, private, or irreversible actions unless explicitly approved.
+```
+
+That prompt is not magic.
+
+It simply forces the right conversation before the agent starts spending tokens.
+
+## When not to use workflows
+
+Workflows add overhead. That overhead is worth it when the task is broad, parallelizable, and checkable.
+
+It is not worth it for everything.
+
+<DoDont
+  title="Use workflows selectively"
+  doItems={[
+    'Use them for audits, migrations, research, eval sweeps, and multi-angle planning.',
+    'Use them when each worker can return concrete evidence.',
+    'Use them when cross-checking matters more than speed.',
+    'Use them when the successful process should become reusable.'
+  ]}
+  dontItems={[
+    'Do not use them for tiny edits or taste decisions.',
+    'Do not use them when you cannot define what correct means.',
+    'Do not give broad sensitive tool access without a permission boundary.',
+    'Do not trust a swarm just because the progress view looks busy.'
+  ]}
+/>
+
+A workflow without evidence is a faster way to create plausible nonsense.
+
+A workflow with evidence can become a repeatable operating procedure.
+
+## The real category: agent operating systems
+
+Today this shows up as “dynamic workflows,” “agent teams,” “flows,” “graphs,” “crews,” or “multi-agent orchestration.”
+
+The names differ.
+
+The deeper category is emerging agent operating systems:
+
+- scheduler: what runs next?
+- permissions: what can each worker touch?
+- memory: what state persists between phases?
+- budget: how much model/tool spend is allowed?
+- evidence: what proves a claim or change?
+- isolation: can workers edit safely in parallel?
+- observability: can a human inspect the run?
+- termination: what means done, blocked, or unsafe?
+
+Once you see that, “write a better prompt” starts to sound too small.
+
+Prompts still matter.
+
+But prompts are becoming the input to a larger runtime.
+
+## The practical rule
+
+If you take one thing from this, take this:
+
+> Do not ask for more agents. Ask for a better workflow contract.
+
+Before you let an agent swarm loose, require:
+
+```txt
+Roles + tools + evidence + budget + review + stop conditions.
+```
+
+That is the difference between a workflow and a very expensive group chat.
+
+Claude Code’s dynamic workflows are interesting because they make that distinction visible inside a coding tool.
+
+But the principle is bigger than Claude.
+
+The future of agent work is not one perfect prompt.
+
+It is the small, inspectable workflow that proves what happened before it asks you to trust the result.
