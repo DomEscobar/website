@@ -1,0 +1,439 @@
+---
+title: "Agenten brauchen Runtime Contracts, nicht längere Prompts"
+description: "Ein praktischer Leitfaden für Entwickler: Wie du Agenten mit Tool-Inventaren, Deny-Signalen, Memory-Scopes, Claim-Ledgern und Verifikations-Gates zuverlässiger machst."
+language: "de"
+slug: "agenten-brauchen-runtime-contracts"
+canonicalSlug: "agenten-brauchen-runtime-contracts"
+publishedAt: "2026-06-07"
+updatedAt: "2026-06-07"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "AI Agents", "Agent Harness", "Developer Workflow", "KI-Workflows", "Evals"]
+topic: "AI-first Engineering"
+summary: "Bessere Prompts machen Agenten nicht automatisch zuverlässig. Entwickler brauchen Runtime Contracts: explizite Verträge dafür, welche Tools ein Agent nutzen darf, was er erinnern darf, wann er stoppen muss und wie seine Behauptungen geprüft werden."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Was ist ein Runtime Contract für AI-Agenten?"
+    answer: "Ein Runtime Contract ist ein ausführbarer oder überprüfbarer Vertrag zwischen Agent, Tools, Speicher und Umgebung. Er beschreibt erlaubte Fähigkeiten, Zustände, Abbruchregeln, Memory-Scopes und Verifikationspflichten."
+  - question: "Warum reicht ein guter Systemprompt nicht?"
+    answer: "Ein Prompt kann Verhalten beschreiben, aber er kann Tool-Änderungen nicht zuverlässig erkennen, Rechte nicht technisch begrenzen, Memory nicht versionieren und Behauptungen nicht unabhängig prüfen. Dafür braucht es Laufzeitlogik im Harness."
+  - question: "Wo sollte ein Team anfangen?"
+    answer: "Starte mit fünf einfachen Gates: Tool-Inventar pinnen, Deny-Signale respektieren, Memory-Scopes definieren, High-Impact-Claims belegen und riskante Aktionen vor Ausführung prüfen."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+
+Agenten scheitern selten daran, dass der Prompt nicht lang genug war.
+
+Sie scheitern daran, dass zur Laufzeit zu viel implizit bleibt.
+
+Welche Tools darf der Agent wirklich nutzen? Darf ein Tool mitten in der Session anders aussehen als am Anfang? Was passiert, wenn eine Ressource sagt: "Automatisierte Agenten bitte nicht"? Welche Erinnerung darf in den nächsten Lauf wandern? Welche Behauptung braucht einen Beleg, bevor der Agent handelt?
+
+Wenn diese Fragen nur im Systemprompt stehen, hast du keinen Vertrag.
+
+Du hast eine Bitte.
+
+Ein zuverlässiger Agent braucht mehr als bessere Formulierungen. Er braucht **Runtime Contracts**: konkrete, überprüfbare Regeln zwischen Modell, Tools, Memory und Umgebung.
+
+## Die kurze Version
+
+Ein Runtime Contract sagt nicht nur:
+
+```txt
+Bitte sei vorsichtig.
+```
+
+Er sagt:
+
+```txt
+Diese Tools existieren.
+Diese Tool-Schemas sind erlaubt.
+Diese Ressourcen sind tabu.
+Diese Erinnerungen dürfen gelesen oder geschrieben werden.
+Diese Aktionen brauchen Verifikation.
+Diese Signale stoppen den Lauf.
+```
+
+Das klingt nach Infrastruktur. Genau das ist der Punkt.
+
+<FlowGraphic
+  title="Vom Prompt zum Runtime Contract"
+  note="Der Prompt beschreibt Verhalten. Der Contract begrenzt und prüft es."
+  steps={['Intent', 'Tool-Inventar', 'Memory-Scope', 'Deny-Regeln', 'Claim-Ledger', 'Verifikation', 'Aktion']}/>
+
+Ein Prompt kann einen Agenten bitten, keine riskanten Dinge zu tun.
+
+Ein Runtime Contract kann riskante Dinge blockieren, protokollieren oder in eine Freigabe schicken.
+
+## Was Entwickler wirklich kontrollieren müssen
+
+Die meisten Agenten-Setups haben heute vier wackelige Stellen:
+
+<KeyPoints
+  title="Die vier Runtime-Flächen"
+  items={[
+    'Tools: Welche Fähigkeiten sieht der Agent, von welchem Ursprung kommen sie, und hat sich ihr Schema geändert?',
+    'Ressourcen: Welche Dateien, Seiten, APIs oder Systeme darf der Agent betreten, auch wenn die Credentials technisch funktionieren?',
+    'Memory: Welche Fakten sind kurzlebig, welche dauerhaft, wer darf sie überschreiben, und wann laufen sie ab?',
+    'Claims: Welche Aussagen darf der Agent einfach berichten, und welche müssen mit Logs, Tests, Quellen oder externen Checks belegt werden?',
+  ]}/>
+
+Das sind keine Prompt-Details. Das sind Produkt- und Systementscheidungen.
+
+Wenn du sie nicht explizit modellierst, modelliert dein Agent sie selbst. Meistens schlecht.
+
+## 1. Pinne das Tool-Inventar
+
+Agenten mit Browser-, MCP- oder Plugin-Zugriff entdecken Tools oft zur Laufzeit. Das ist bequem, aber gefährlich als Default.
+
+Wenn ein Agent am Anfang einer Session diese Tools sieht:
+
+```txt
+search(query)
+open(url)
+save_note(title, body)
+```
+
+und später plötzlich dieses Tool auftaucht:
+
+```txt
+send_invoice(customer_id, amount)
+```
+
+darf das nicht einfach "mehr Kontext" sein.
+
+Das ist eine Capability-Änderung.
+
+Ein Runtime Contract sollte deshalb pro Lauf festhalten:
+
+```json
+{
+  "tool_inventory": [
+    {
+      "name": "search",
+      "origin": "browser",
+      "schema_hash": "sha256:...",
+      "risk": "read"
+    },
+    {
+      "name": "save_note",
+      "origin": "workspace",
+      "schema_hash": "sha256:...",
+      "risk": "write_internal"
+    }
+  ],
+  "on_new_tool": "stop_for_approval",
+  "on_schema_change": "stop_for_approval"
+}
+```
+
+Du brauchst nicht sofort ein perfektes Policy-System. Aber du brauchst mindestens eine Antwort auf:
+
+- Welche Tools waren am Start erlaubt?
+- Hat sich Name, Schema, Ursprung oder Risikoklasse geändert?
+- Darf der Agent neue Tools automatisch nutzen?
+- Wird die Tool-Liste mit dem Lauf gespeichert?
+
+<DoDont
+  title="Tool-Surface-Regel"
+  doLabel="Tun"
+  dontLabel="Vermeiden"
+  doItems={[
+    'Tool-Inventar zu Beginn des Laufs snapshotten.',
+    'Schema, Ursprung und Risikoklasse mitspeichern.',
+    'Neue oder veränderte Tools als Freigabeereignis behandeln.',
+  ]}
+  dontItems={[
+    'Dem Agenten jede neu sichtbare Fähigkeit automatisch geben.',
+    'Tool-Namen als stabilen Sicherheitsanker behandeln.',
+    'Nur im Prompt sagen, dass der Agent vorsichtig sein soll.',
+  ]}/>
+
+## 2. Respektiere Deny-Signale
+
+Credentials sind nicht dasselbe wie Erlaubnis.
+
+Ein Agent kann technisch Zugriff auf eine Datei, eine Seite oder eine API haben und trotzdem sollte er stoppen, wenn die Ressource selbst sagt: "nicht für diesen Agenten", "nicht automatisiert auslesen", "nur manuelle Nutzung" oder "keine Weiterverarbeitung".
+
+Das ist besonders wichtig bei internen Systemen. Viele Agenten laufen mit breiten Rechten, weil Menschen keine Lust haben, pro Workflow ein perfektes Permission-Modell zu bauen. Dann muss wenigstens die Runtime Kontextgrenzen ernst nehmen.
+
+Ein einfacher Contract:
+
+```yaml
+deny_signals:
+  sources:
+    - robots_or_policy_page
+    - api_response_header
+    - repository_policy_file
+    - page_banner
+    - file_marker
+  behavior:
+    on_deny: stop
+    preserve_evidence: true
+    allow_workaround: false
+    escalation: human_approval
+```
+
+Wichtig ist der letzte Punkt: **kein Workaround**.
+
+Wenn der Agent eine Ressource nicht nutzen soll, darf er nicht einfach einen anderen Pfad suchen, denselben Inhalt über Cache holen oder die Daten aus einem Suchindex rekonstruieren.
+
+Der richtige Laufzeit-Output ist dann langweilig:
+
+```txt
+Stopped: resource emitted deny signal.
+Evidence: response header x-agent-access: denied
+Next step: request human approval or choose another source.
+```
+
+Langweilig ist gut. Langweilig ist auditierbar.
+
+## 3. Behandle Memory wie Infrastruktur
+
+Memory ist kein magischer Notizzettel.
+
+Memory ist ein langlebiger Zustand, der Verhalten in späteren Läufen verändert. Damit ist Memory näher an Datenbank, Cache und Konfiguration als an Chatverlauf.
+
+Wenn ein Agent sich alles merkt, hast du irgendwann drei Probleme:
+
+- stale facts: alte Informationen werden mit neuer Sicherheit wiederverwendet
+- scope leaks: private oder kontextgebundene Fakten tauchen im falschen Workflow auf
+- silent overwrites: eine falsche neue Erinnerung überschreibt eine richtige alte
+
+Ein brauchbarer Memory Contract trennt mindestens diese Ebenen:
+
+```txt
+scratchpad       nur aktueller Lauf, darf weg
+session memory   aktuelles Projekt oder Ticket
+durable memory   langfristig, selten, prüfpflichtig
+```
+
+Und für jede Ebene:
+
+```json
+{
+  "scope": "project:huecki-blog",
+  "read_allowed": true,
+  "write_allowed": true,
+  "expires_after_days": 30,
+  "requires_evidence": true,
+  "visible_in_audit_log": true
+}
+```
+
+Der Entwickler-Nutzen ist direkt: Du kannst Memory-Bugs debuggen.
+
+Wenn der Agent eine falsche Annahme wiederholt, willst du wissen:
+
+- Woher kam diese Erinnerung?
+- Wann wurde sie geschrieben?
+- Für welchen Scope galt sie?
+- Welche Evidenz hatte sie?
+- Welche neuere Evidenz darf sie überschreiben?
+
+Ohne diese Fragen ist Memory nur ein zweiter Prompt, der schlechter zu sehen ist.
+
+## 4. Führe ein Claim-Ledger
+
+Agenten klingen oft sicher, bevor das System sicher ist.
+
+Darum sollte ein Agent für wichtige Behauptungen ein kleines Claim-Ledger führen. Nicht für jeden Satz. Nur für Claims, die eine Entscheidung, eine Änderung oder eine externe Aktion stützen.
+
+Beispiel:
+
+```json
+{
+  "claim": "The login regression is caused by expired session cookies.",
+  "impact": "code_change",
+  "evidence": [
+    "test: auth/session.test.ts failed on expired cookie case",
+    "log: Set-Cookie maxAge is negative in trace 1842"
+  ],
+  "verification": "test passes after patch",
+  "status": "supported"
+}
+```
+
+Das ist keine Bürokratie. Das ist Schutz gegen Agenten-Prosa.
+
+<CompareGrid
+  title="Ohne Ledger vs. mit Ledger"
+  leftLabel="Nur Antwort"
+  rightLabel="Runtime Claim"
+  rows={[
+    { left: 'Der Agent sagt, Tests wurden ausgeführt.', right: 'Der Lauf enthält Befehl, Exit-Code und Log-Verweis.' },
+    { left: 'Der Agent sagt, Quelle X belegt Y.', right: 'Der Claim hängt an konkreter Quelle, Absatz oder Trace.' },
+    { left: 'Der Agent sagt, Änderung ist sicher.', right: 'Der Contract verlangt Test, Diff-Check oder menschliche Freigabe.' },
+  ]}/>
+
+Für Entwickler ist die Regel simpel:
+
+```txt
+Kein High-Impact-Claim ohne Evidence Pointer.
+```
+
+High Impact heißt:
+
+- Code wird geändert
+- Daten werden geschrieben
+- ein externer Dienst wird angesprochen
+- Geld, Nutzer, Security oder Compliance sind betroffen
+- ein Mensch soll auf Basis der Aussage handeln
+
+## 5. Trenne Lesen, Schreiben und Handeln
+
+Viele Agenten-Workflows geben dem Agenten zu früh zu viel.
+
+Ein Entwickler fragt:
+
+```txt
+Analysiere das Problem und fixe es.
+```
+
+Das Harness macht daraus:
+
+```txt
+read repo
+edit files
+run commands
+open browser
+call deployment API
+comment on ticket
+```
+
+Das ist bequem, aber als Default unsauber. Die Runtime sollte zwischen Modi unterscheiden.
+
+```yaml
+modes:
+  inspect:
+    tools: [read_file, search, list_files]
+    writes: false
+  propose:
+    tools: [read_file, search]
+    writes: false
+    output: plan
+  patch:
+    tools: [read_file, edit_file, run_tests]
+    writes: workspace_only
+  publish:
+    tools: [push_git, deploy, send_message]
+    requires_human_approval: true
+```
+
+Damit wird aus "der Agent darf alles" ein kleiner Zustandsautomat.
+
+Das ist nicht nur sicherer. Es macht Agenten auch leichter zu benutzen, weil du ihnen nicht mehr misstrauen musst, sobald du ihnen einen Task gibst.
+
+## Ein minimaler Runtime Contract für Coding Agents
+
+Wenn du nur eine Sache aus diesem Artikel kopierst, nimm diese Vorlage:
+
+```yaml
+agent_runtime_contract:
+  run_id: generated
+  mode: inspect | propose | patch | publish
+
+  tools:
+    inventory_snapshot_required: true
+    on_new_tool: stop_for_approval
+    on_schema_change: stop_for_approval
+    log_tool_calls: true
+
+  resources:
+    respect_deny_signals: true
+    allow_workarounds_after_deny: false
+    preserve_deny_evidence: true
+
+  memory:
+    scopes:
+      - scratchpad
+      - session
+      - durable
+    durable_writes_require_evidence: true
+    audit_log: true
+    expiry_required: true
+
+  claims:
+    high_impact_claims_require_evidence: true
+    evidence_can_be:
+      - command_output
+      - test_result
+      - source_url
+      - diff
+      - trace
+
+  actions:
+    external_writes_require_approval: true
+    destructive_actions_require_approval: true
+    publish_requires_approval: true
+
+  verification:
+    before_final_answer:
+      - changed_files_listed
+      - tests_or_reason_not_run
+      - unsupported_claims_marked
+```
+
+Das ist absichtlich klein. Ein Contract, den ein Team wirklich nutzt, schlägt ein perfektes Policy-Framework, das niemand pflegt.
+
+## Was in den Prompt gehört und was nicht
+
+Prompts bleiben wichtig. Sie sind nur nicht mehr der Ort für alles.
+
+<CompareGrid
+  title="Die richtige Ebene"
+  leftLabel="In den Prompt"
+  rightLabel="In die Runtime"
+  rows={[
+    { left: 'Aufgabe, Zielgruppe, Ton, gewünschte Ausgabe.', right: 'Tool-Rechte, Tool-Inventar, Schema-Änderungen.' },
+    { left: 'Wie der Agent Unsicherheit kommunizieren soll.', right: 'Welche Aktionen bei Unsicherheit blockiert werden.' },
+    { left: 'Welche Art von Belegen bevorzugt wird.', right: 'Ob High-Impact-Claims ohne Beleg erlaubt sind.' },
+    { left: 'Welche Memory-Fakten relevant sein könnten.', right: 'Welche Memory-Scopes gelesen oder geschrieben werden dürfen.' },
+  ]}/>
+
+Der Prompt beschreibt die Arbeit.
+
+Die Runtime kontrolliert die Arbeit.
+
+Wenn du beides vermischst, bekommst du Systeme, die gut klingen und schwer zu debuggen sind.
+
+## Der praktische Test
+
+Frag dein Agenten-System diese zehn Fragen:
+
+```txt
+1. Kann ich die Tool-Liste eines Laufs später rekonstruieren?
+2. Merke ich, wenn ein Tool-Schema während des Laufs wechselt?
+3. Gibt es eine harte Regel für neue Capabilities?
+4. Stoppt der Agent bei Deny-Signalen, auch wenn Credentials funktionieren?
+5. Gibt es getrennte Memory-Scopes?
+6. Haben dauerhafte Erinnerungen Evidenz und Ablaufdaten?
+7. Werden High-Impact-Claims mit Belegen verbunden?
+8. Sind Lesen, Schreiben und externe Aktionen verschiedene Modi?
+9. Gibt es eine Freigabegrenze vor Publizieren, Deployen oder Senden?
+10. Kann ich nach einem schlechten Lauf erklären, welche Contract-Regel fehlte?
+```
+
+Wenn du die meisten Fragen nicht beantworten kannst, hast du keinen Agenten mit Runtime Contract.
+
+Du hast einen Agenten mit Vertrauen auf Vorschuss.
+
+## Fazit
+
+Die nächste Qualitätsstufe bei AI-Agenten kommt nicht aus noch längeren Prompts.
+
+Sie kommt aus Harnesses, die zur Laufzeit wissen:
+
+- welche Fähigkeiten erlaubt sind
+- welche Ressourcen tabu sind
+- welche Erinnerungen gültig sind
+- welche Behauptungen belegt sind
+- welche Aktionen gestoppt werden müssen
+
+Das ist weniger spektakulär als eine neue Demo.
+
+Aber es ist genau die Arbeit, die aus Agenten brauchbare Entwicklerwerkzeuge macht.
