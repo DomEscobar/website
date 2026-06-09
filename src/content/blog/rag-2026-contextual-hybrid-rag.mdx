@@ -1,0 +1,476 @@
+---
+title: "RAG 2026: Vergiss GraphRAG als Default"
+description: "Der beste RAG-Ansatz ist aktuell kein einzelner Hype-Begriff, sondern ein messbarer Stack aus Contextual Retrieval, Hybrid Search, Reranking und Evals."
+language: "de"
+slug: "rag-2026-contextual-hybrid-rag"
+canonicalSlug: "rag-2026-contextual-hybrid-rag-en"
+publishedAt: "2026-06-09"
+updatedAt: "2026-06-09"
+author: "Dominic Hückmann"
+tags: ["RAG", "Context Engineering", "AI Engineering", "LLM", "Evals"]
+topic: "AI-first Engineering"
+summary: "RAG wird 2026 nicht dadurch besser, dass man GraphRAG auf alles wirft. Der robuste Default ist Contextual Hybrid RAG: saubere Ingestion, BM25 plus Embeddings, Reranking, Quellenpflicht und harte Evals."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Was ist der beste RAG-Ansatz 2026?"
+    answer: "Für die meisten Produktionssysteme ist der beste Default Contextual Hybrid RAG: strukturierte Ingestion, Dense Retrieval plus BM25, Rank Fusion, Reranking, Quellenpflicht und Evaluation. GraphRAG ist ein Zusatz für Beziehungs- und Themenfragen, nicht der Standardpfad für jede Suche."
+  - question: "Ist GraphRAG besser als normales RAG?"
+    answer: "GraphRAG ist besser für Fragen über Beziehungen, Communities, Trends und corpusweite Muster. Für einfache Fakten, Zitate, Dokumentstellen und aktuelle Wissensabfragen ist ein sauberer hybrider Retrieval-Stack oft schneller, günstiger und leichter zu debuggen."
+  - question: "Womit sollte ein Team starten?"
+    answer: "Starte mit einem Golden Set aus echten Fragen, baue einen hybriden Retrieval-Baseline-Stack und miss Context Precision, Context Recall, Faithfulness und Antwortqualität. Erst danach lohnt sich Optimierung."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+RAG hat gerade denselben Fehler wie Prompt Engineering vor ein paar Jahren.
+
+Alle suchen nach dem einen Trick.
+
+GraphRAG. HyDE. Corrective RAG. Self-RAG. Agentic RAG. RAPTOR. Parent-child retrieval. Query rewriting. Multi-query. Contextual Retrieval.
+
+Das Problem ist nicht, dass diese Techniken schlecht sind. Viele davon sind nützlich. Das Problem ist die Frage:
+
+> "Welche RAG-Technik ist die beste?"
+
+Das ist die falsche Frage.
+
+Die bessere Frage ist:
+
+> "Welche Retrieval-Fehler macht mein System gerade, und welche Technik reduziert genau diese Fehler messbar?"
+
+RAG 2026 ist kein Feature. RAG ist ein Messproblem.
+
+<MetricStrip
+  metrics={[
+    { value: '2', label: 'Retrieval-Kanäle als Default: dense plus sparse' },
+    { value: '1', label: 'Reranker-Gate vor der Antwort' },
+    { value: '0', label: 'Vertrauen in “sieht plausibel aus”' },
+  ]}
+/>
+
+## Die kurze Antwort
+
+Wenn du heute einen robusten RAG-Stack bauen musst, nimm nicht GraphRAG als Default.
+
+Nimm:
+
+```txt
+Contextual Hybrid RAG
++ Reranking
++ Quellenpflicht
++ Evals
+```
+
+Das klingt weniger sexy als ein neues Paper-Akronym. Es ist aber viel näher an dem, was in echten Systemen zählt: findet das System die richtigen Belege, sortiert es sie sinnvoll, bleibt die Antwort bei den Quellen, und kannst du Fehler reproduzierbar verbessern?
+
+<FlowGraphic
+  title="Der robuste RAG-Stack"
+  note="erst messen, dann fancy werden"
+  steps={['Corpus Contract', 'Contextual Ingestion', 'Hybrid Retrieval', 'Reranking', 'Cited Answer', 'Evals + Traces']}
+/>
+
+## Warum Vector Search allein nicht reicht
+
+Der erste RAG-Reflex vieler Teams ist:
+
+```txt
+Dokumente chunking
+→ Embeddings
+→ Vector DB
+→ Top-K in den Prompt
+→ Antwort
+```
+
+Das funktioniert als Demo. Es funktioniert auch für manche interne Wissensdatenbanken.
+
+Aber als Default ist es zu schwach.
+
+Vector Search ist gut für semantische Nähe. Sie ist schlecht, wenn exakte Begriffe, IDs, Zahlen, Namen, Versionen, Fehlermeldungen, Gesetzesstellen oder Produktbezeichnungen zählen.
+
+BM25 und andere sparse Verfahren wirken neben Embeddings altmodisch. Genau deshalb werden sie unterschätzt. In vielen echten Korpora willst du beides:
+
+- Dense Retrieval findet "inhaltlich ähnliche" Stellen.
+- Sparse Retrieval findet exakte Begriffe, technische Marker und seltene Tokens.
+- Rank Fusion kombiniert beide Signale.
+- Reranking entscheidet danach genauer, was wirklich relevant ist.
+
+Ein aktueller 2026-Benchmark zu Text-und-Tabellen-RAG fand genau dieses Muster: Hybrid Retrieval plus neuralem Reranking schlug die Single-Stage-Verfahren. Interessant war auch: Bei Finanzdokumenten schnitt BM25 stärker ab als Dense Retrieval. Das ist eine gute Ohrfeige für jeden "Vector DB löst Knowledge"-Pitch.
+
+Quelle: [From BM25 to Corrective RAG](https://arxiv.org/abs/2604.01733)
+
+<CompareGrid
+  title="Vector-only vs. Hybrid RAG"
+  leftLabel="Vector-only"
+  rightLabel="Hybrid"
+  rows={[
+    { left: 'Gut bei semantischer Ähnlichkeit.', right: 'Gut bei Bedeutung plus exakten Signalen.' },
+    { left: 'Kann IDs, Zahlen und seltene Begriffe verpassen.', right: 'BM25/sparse fängt präzise Tokens ab.' },
+    { left: 'Ein Ranking-Signal.', right: 'Mehrere Signale, danach Fusion und Reranking.' },
+    { left: 'Einfacher Demo-Stack.', right: 'Besserer Produktions-Default.' },
+  ]}
+/>
+
+## Der unterschätzte Hebel: Contextual Retrieval
+
+Chunks sind brutal.
+
+Du nimmst ein Dokument, zerschneidest es in kleine Stücke und hoffst, dass jedes Stück später noch genug Bedeutung trägt.
+
+Tut es oft nicht.
+
+Ein Chunk kann sagen:
+
+```txt
+This method reduced retrieval failure by 49%.
+```
+
+Aber ohne Kontext fehlt:
+
+- welche Methode?
+- in welchem Experiment?
+- für welche Dokumente?
+- verglichen mit welchem Baseline?
+- von wem?
+
+Contextual Retrieval löst genau dieses Problem. Vor dem Indexing bekommt jeder Chunk einen kurzen, dokumentbezogenen Kontext. Nicht als Antworttext, sondern als Retrieval-Hilfe.
+
+Vereinfacht:
+
+```txt
+Original chunk:
+"The method reduced retrieval failure by 49%."
+
+Contextualized chunk:
+"This chunk is from Anthropic's Contextual Retrieval article.
+It discusses adding document-aware context to chunks before embedding
+and BM25 indexing. The method reduced retrieval failure by 49%."
+```
+
+Das wird dann eingebettet und auch in den lexical Index geschrieben.
+
+Anthropic berichtet für diesen Ansatz starke Zahlen: Contextual Embeddings plus Contextual BM25 reduzierten Retrieval-Fehler in ihren Tests um 49 Prozent. Mit Reranking waren es 67 Prozent.
+
+Quelle: [Anthropic: Introducing Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)
+
+Das ist der wichtigste praktische Takeaway:
+
+> Viele RAG-Probleme sind keine Modellprobleme. Es sind Kontextverlust-Probleme beim Chunking.
+
+## Reranking ist kein Nice-to-have
+
+Retrieval sollte breit suchen und eng antworten.
+
+Wenn du nur Top 5 aus der Vector DB nimmst, muss der erste Retriever schon fast perfekt sein. Das ist selten eine gute Annahme.
+
+Besser:
+
+```txt
+Retrieve 50-150 Kandidaten
+→ fusionieren
+→ reranken
+→ Top 8-20 in den Antwortkontext
+```
+
+Der erste Retriever darf grob sein. Der Reranker darf genauer sein.
+
+Das ist teurer als Top-K direkt in den Prompt zu werfen. Aber es kauft dir etwas, das in RAG fast immer wichtiger ist als ein paar Millisekunden: weniger falsche Belege.
+
+<KeyPoints
+  title="Was Reranking verbessert"
+  items={[
+    'semantisch ähnliche, aber irrelevante Treffer werden aussortiert',
+    'exakte Treffer bekommen eine zweite Relevanzprüfung',
+    'der Generator sieht weniger Müll im Kontext',
+    'Citations werden vertrauenswürdiger',
+  ]}
+/>
+
+## GraphRAG ist nicht falsch. Nur oft zu früh.
+
+GraphRAG klingt nach dem logischen nächsten Schritt:
+
+Dokumente rein, Entitäten raus, Beziehungen bauen, Communities erkennen, smarter fragen.
+
+Und ja: Für bestimmte Fragen ist das stark.
+
+Microsoft beschreibt GraphRAG mit Suchmodi wie Local Search, Global Search und DRIFT Search. Das ist sinnvoll, wenn die Frage nicht nur "wo steht X?" lautet, sondern:
+
+- Welche Themen ziehen sich durch das ganze Korpus?
+- Welche Projekte, Personen oder Methoden hängen zusammen?
+- Welche Communities oder Cluster entstehen?
+- Welche Widersprüche gibt es zwischen Quellen?
+- Was verändert sich über Zeit?
+
+Quelle: [Microsoft GraphRAG Query Overview](https://microsoft.github.io/graphrag/query/overview/)
+
+Aber genau deshalb ist GraphRAG nicht der beste Default für jede RAG-Anwendung.
+
+Für eine normale Frage wie:
+
+```txt
+Welche Methode empfiehlt Anthropic für bessere Chunk-Relevanz?
+```
+
+brauchst du keinen Graphen. Du brauchst den richtigen Absatz, gutes Ranking und eine saubere Quelle.
+
+GraphRAG ist ein Analysemodul. Kein Ersatz für sauberes Retrieval.
+
+<DoDont
+  title="GraphRAG richtig einsetzen"
+  doLabel="Machen"
+  dontLabel="Lassen"
+  doItems={[
+    'für Beziehungen, Themen, Communities und corpusweite Synthese nutzen',
+    'als zweiten Query-Pfad neben normalem Retrieval bauen',
+    'Indexing-Kosten und Aktualisierung bewusst einplanen',
+    'Ergebnisse gegen Originalquellen zurückführen',
+  ]}
+  dontItems={[
+    'jeden Lookup durch einen Graphen schicken',
+    'Graph-Extraktionen als Wahrheit behandeln',
+    'GraphRAG vor einem starken Baseline-RAG bauen',
+    'fehlende Evals durch ein komplexeres Diagramm ersetzen',
+  ]}
+/>
+
+## Der Fehler in vielen RAG-Projekten
+
+Viele Teams bauen RAG in dieser Reihenfolge:
+
+```txt
+Tool wählen
+→ Daten reinwerfen
+→ Prompt basteln
+→ Demo zeigen
+→ Fehler einzeln flicken
+```
+
+Die bessere Reihenfolge ist:
+
+```txt
+Fragen sammeln
+→ Gold Set bauen
+→ Fehlerklassen definieren
+→ Baseline messen
+→ gezielt Technik hinzufügen
+→ wieder messen
+```
+
+Du brauchst zuerst einen Corpus Contract:
+
+- Welche Dokumenttypen gibt es?
+- Wie aktuell müssen Antworten sein?
+- Welche Quellen sind vertrauenswürdiger?
+- Was ist eine gute Citation?
+- Welche Fragen kommen wirklich vor?
+- Wann soll das System "weiß ich nicht" sagen?
+- Welche Antwort darf nie ohne Quelle erscheinen?
+
+Ohne diesen Contract ist RAG-Optimierung meistens Theater.
+
+## Evals sind der eigentliche Stack
+
+RAG ohne Evals ist eine Suchmaschine mit Selbstbewusstsein.
+
+Du brauchst mindestens vier Fragen:
+
+```txt
+Context Precision:
+Wie viel vom gelieferten Kontext war wirklich relevant?
+
+Context Recall:
+Wurden die nötigen Belege überhaupt gefunden?
+
+Faithfulness:
+Bleibt die Antwort bei den Quellen?
+
+Answer Relevancy:
+Beantwortet sie wirklich die Frage?
+```
+
+Ragas deckt genau solche Metriken ab, unter anderem Context Precision, Context Recall, Response Relevancy und Faithfulness.
+
+Quelle: [Ragas Metrics](https://docs.ragas.io/en/latest/concepts/metrics/available_metrics/)
+
+Wichtig: Diese Metriken ersetzen kein menschliches Urteil. Aber sie machen RAG-Fehler sichtbar genug, dass du nicht nur Bauchgefühl optimierst.
+
+<FlowGraphic
+  title="Der RAG-Eval-Loop"
+  steps={['echte Fragen', 'erwartete Belege', 'Pipeline Run', 'Metriken', 'Fehlerklasse', 'Pipeline Patch']}
+/>
+
+## Was ist mit HyDE, Self-RAG und Corrective RAG?
+
+Alles interessant. Nichts davon ist automatisch Default.
+
+HyDE kann helfen, wenn kurze Nutzerfragen semantisch zu dünn sind. Es kann aber bei exakten oder numerischen Fragen auch stören, weil das hypothetische Dokument neue Begriffe einführt, die gar nicht in der Quelle stehen müssen.
+
+Query Expansion kann Recall erhöhen. Sie kann auch Rauschen erhöhen.
+
+Self-RAG und Corrective RAG können Retrieval-Fehler erkennen und reparieren. Sie machen das System aber komplexer, langsamer und schwerer reproduzierbar.
+
+Agentic RAG kann Tools, Web, Datenbanken und APIs routen. Es kann aber auch aus einer Suchfrage einen kleinen, unberechenbaren Workflow machen.
+
+Deshalb ist die Reihenfolge wichtig:
+
+```txt
+Baseline
+→ Contextual Hybrid Retrieval
+→ Reranking
+→ Evals
+→ erst dann adaptive/agentic Korrekturen
+```
+
+Die Sammlung [NirDiamant/RAG_Techniques](https://github.com/NirDiamant/RAG_Techniques) ist dafür sehr nützlich: als Katalog von Experimenten. Aber ein Katalog ist noch keine Architekturentscheidung.
+
+## Ein praktischer Bauplan
+
+Wenn ich heute ein RAG-System für ein Research-, Blog- oder Knowledge-Produkt bauen müsste, würde ich so starten:
+
+### 1. Corpus Contract
+
+Schreibe auf, welche Quellen rein dürfen, wie Vertrauen gewichtet wird, welche Metadaten Pflicht sind und welche Antworttypen es gibt.
+
+```txt
+source_type
+author
+published_at
+fetched_at
+canonical_url
+language
+section_path
+trust_level
+freshness_policy
+```
+
+### 2. Struktur-aware Ingestion
+
+PDFs, HTML, Markdown, Tabellen und Code brauchen andere Behandlung. Chunking sollte Überschriften, Abschnitte, Tabellen und Listen respektieren.
+
+Nicht:
+
+```txt
+split every 800 tokens
+```
+
+Sondern:
+
+```txt
+Dokumentstruktur lesen
+→ sinnvolle Sections bilden
+→ kleine Child Chunks erzeugen
+→ Parent Context behalten
+```
+
+### 3. Contextualization beim Indexing
+
+Jeder Chunk bekommt eine kurze, generierte Kontextzeile:
+
+```txt
+Dieser Chunk stammt aus [Dokument], Abschnitt [X].
+Er behandelt [Y] im Zusammenhang mit [Z].
+```
+
+Diese Contextualized Chunks gehen in Dense und Sparse Index.
+
+### 4. Hybrid Retrieval plus Fusion
+
+Baue zwei Suchpfade:
+
+- Embeddings für semantische Nähe
+- BM25/sparse für exakte Signale
+
+Dann fusionieren, nicht blind einen Kanal bevorzugen.
+
+### 5. Reranking
+
+Top 50 bis 150 rein, Top 8 bis 20 raus. Die genaue Zahl hängt von Kontextfenster, Latenz und Antworttyp ab.
+
+### 6. Cited Generation
+
+Der Generator darf nur Aussagen machen, die sich auf mitgelieferte Quellen stützen. Keine Quelle, kein Claim.
+
+### 7. Evaluation und Tracing
+
+Jeder Run sollte speichern:
+
+- Originalfrage
+- Query Rewrite
+- Dense Treffer
+- Sparse Treffer
+- Fusion Ranking
+- Reranker Scores
+- finale Quellen
+- Antwort
+- Latenz pro Stage
+- Eval Scores
+
+NVIDIAs RAG Blueprint modelliert solche Query-to-Answer-Stages explizit mit Rewriter, Retriever, Reranker, Generator und Observability.
+
+Quelle: [NVIDIA RAG Blueprint](https://docs.nvidia.com/rag/latest/query-to-answer-pipeline.html)
+
+## Die Entscheidungsmatrix
+
+<CompareGrid
+  title="Welche Technik wann?"
+  leftLabel="Situation"
+  rightLabel="Guter nächster Schritt"
+  rows={[
+    { left: 'Antworten verfehlen genaue Begriffe, IDs oder Zahlen.', right: 'BM25/sparse Retrieval ergänzen.' },
+    { left: 'Chunks wirken relevant, aber verlieren Dokumentkontext.', right: 'Contextual Retrieval einführen.' },
+    { left: 'Zu viele halbpassende Treffer im Prompt.', right: 'Reranker einbauen.' },
+    { left: 'Lange Dokumente werden zerstückelt.', right: 'Parent-child Retrieval nutzen.' },
+    { left: 'Fragen suchen Themen und Beziehungen im ganzen Korpus.', right: 'GraphRAG als separaten Pfad testen.' },
+    { left: 'Query-Typen sind sehr unterschiedlich.', right: 'Routing oder agentic RAG prüfen.' },
+  ]}
+/>
+
+## Die eigentliche Regel
+
+RAG wird nicht gut, weil du die modernste Technik einbaust.
+
+RAG wird gut, wenn jede Technik einen gemessenen Fehler reduziert.
+
+Wenn dein System relevante Stellen nicht findet, brauchst du besseren Recall.
+
+Wenn es zu viel irrelevanten Kontext liefert, brauchst du bessere Precision und Reranking.
+
+Wenn Chunks ihren Sinn verlieren, brauchst du Contextualization oder Parent Context.
+
+Wenn Antworten plausible Dinge erfinden, brauchst du Faithfulness Checks und härtere Citation-Regeln.
+
+Wenn Nutzer corpusweite Muster fragen, brauchst du vielleicht GraphRAG.
+
+Aber wenn du mit GraphRAG startest, bevor du weißt, welche Fehler du hast, baust du meistens nur eine hübschere Black Box.
+
+## Mein Default für 2026
+
+Der robuste Default ist:
+
+```txt
+Structure-aware ingestion
++ contextual chunks
++ dense retrieval
++ BM25/sparse retrieval
++ rank fusion
++ reranking
++ cited generation
++ RAG evals
++ traces
+```
+
+GraphRAG kommt danach. Agentic RAG kommt danach. Self-correction kommt danach.
+
+Nicht, weil diese Dinge unwichtig sind.
+
+Sondern weil ein System erst eine verlässliche Such- und Messbasis braucht, bevor man es intelligenter macht.
+
+RAG 2026 ist nicht "mehr KI in die Suche werfen".
+
+RAG 2026 ist: Kontext sauber bauen, Retrieval messbar machen, Antworten belegen und nur dann Komplexität hinzufügen, wenn sie einen echten Fehler löst.
