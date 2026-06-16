@@ -1,0 +1,307 @@
+---
+title: "Dein Coding Agent braucht eine Verfassung und ein Logbuch"
+description: "Warum Codex, Claude Code und Cursor nicht nur bessere Prompts brauchen, sondern saubere, kuratierte Save Files: Regeln vorab, Projektwissen laufend, Kontext ohne Müll."
+language: "de"
+slug: "coding-agent-save-file"
+canonicalSlug: "coding-agent-save-file"
+publishedAt: "2026-06-15"
+updatedAt: "2026-06-15"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "Coding Agents", "Context Engineering", "Developer Workflow", "Agent Memory"]
+topic: "AI-first Engineering"
+summary: "Coding Agents werden nicht nur durch bessere Modelle nützlich. Teams brauchen eine kleine Verfassung für Agent-Verhalten und ein kuratiertes Logbuch für Projektwissen, sonst wird Memory zu Kontext-Müll."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Was ist ein Save File für Coding Agents?"
+    answer: "Ein persistenter Arbeitszustand für Agenten: aktuelle Regeln, sichere Commands, Architekturentscheidungen, bekannte Fehlerbilder und Workflows, die Codex, Claude Code oder Cursor direkt in der täglichen Arbeit nutzen können."
+  - question: "Ersetzt Agent Memory Projektregeln?"
+    answer: "Nein. Gute Agentensysteme brauchen beides: eine Verfassung mit vorab definierten Grundregeln und ein Logbuch, das sich aus der Projektarbeit entwickelt."
+  - question: "Warum reicht ein LLM-Wiki nicht?"
+    answer: "Ein Wiki erklärt Menschen das Projekt. Ein Agent-Save-File ist operativer Kontext: Es soll Verhalten steuern, bekannte Fehler verhindern und Entscheidungen für Tool-Nutzung, Tests und Reviews abrufbar machen."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+
+## Die kurze Version
+
+Die nützliche Metapher für Coding Agents ist nicht der bessere Prompt.
+
+Es ist das **Save File**.
+
+Nicht im Gaming-Sinn als nettes Bild, sondern als Arbeitsmodell: Ein Agent ist nicht nur das Modell. Der produktive Agent ist das Modell plus Tools, Repo-Zugriff, Regeln, Projektwissen, Entscheidungen, bekannte Fehler und wiederholbare Workflows.
+
+Genau dort liegt für Entwicklerteams der praktische Hebel. Codex, Claude Code oder Cursor werden nicht automatisch gut, nur weil das Basismodell besser wird. Sie werden gut, wenn sie in einem Projektzustand arbeiten, der sauber gepflegt ist.
+
+Die bessere Frage lautet deshalb nicht:
+
+```txt
+Welches LLM schreibt den besten Code?
+```
+
+Die bessere Frage lautet:
+
+```txt
+Welcher Agent hat den besten Arbeitszustand für dieses Repo?
+```
+
+<KeyPoints
+  title="Der Kern"
+  items={[
+    'Ein Wiki erklärt Menschen das Projekt.',
+    'Ein Save File macht Agenten im Projekt handlungsfähig.',
+    'Ohne Struktur wird Memory schnell zu Kontext-Müll.',
+  ]}
+/>
+
+## Der Fehler: Agenten wie Chatfenster behandeln
+
+Viele Teams benutzen Coding Agents noch wie bessere Chatfenster.
+
+Man öffnet den Agenten, erklärt das Projekt, nennt die Testbefehle, beschreibt die relevante Architektur, warnt vor zwei bekannten Fallen, lässt ihn arbeiten und wiederholt beim nächsten Mal fast denselben Kontext.
+
+Das fühlt sich normal an, ist aber teuer.
+
+Ein Mensch im Team muss nicht jeden Tag neu lernen, welche Tests flaky sind, warum ein Service nicht verschoben wurde oder welche Dateien generiert sind. Ein brauchbarer Agent sollte diese Dinge ebenfalls nicht jedes Mal neu aus dem Repo erraten müssen.
+
+Deshalb ist der Save-File-Gedanke so stark: Der Agent braucht einen persistenten Zustand, der nicht aus einem endlosen Chatverlauf besteht, sondern aus kuratiertem operativem Wissen.
+
+Das kann sehr schlicht anfangen:
+
+- `AGENTS.md` oder `CLAUDE.md` für Arbeitsregeln
+- `RUNBOOK.md` für Build, Test, Deploy und Debugging
+- `DECISIONS.md` für gültige Architekturentscheidungen
+- `KNOWN_ISSUES.md` für wiederkehrende Fehlerbilder
+- kleine Skills oder Workflows für Reviews, Refactorings, Migrationen und Releases
+
+Der Punkt ist nicht, möglichst viel Text zu sammeln.
+
+Der Punkt ist, Reibung aus wiederkehrender Arbeit zu entfernen.
+
+## Wiki vs. Save File
+
+Ein klassisches Projektwiki ist für Menschen geschrieben. Es erklärt Zusammenhänge, liefert Hintergrund, erzählt manchmal Geschichte und hilft neuen Teammitgliedern, sich zu orientieren.
+
+Ein Agent-Save-File hat eine andere Aufgabe. Es ist nicht primär Lesestoff. Es ist ein Interface für Verhalten.
+
+Wenn dort steht, dass Migrationen nie ohne Review erzeugt werden sollen, muss der Agent daraus ein Gate ableiten. Wenn dort steht, dass `npm test` im Monorepo zu breit ist und für Frontend-Änderungen zuerst `npm run test:web` reicht, muss der Agent anders handeln. Wenn dort steht, dass eine API aus Kompatibilitätsgründen absichtlich unschön ist, soll der Agent sie nicht jedes Mal "aufräumen".
+
+<CompareGrid
+  title="Wiki vs. Save File"
+  leftLabel="Projektwiki"
+  rightLabel="Agent-Save-File"
+  rows={[
+    { left: 'Erklärt Menschen den Kontext.', right: 'Steuert Agent-Verhalten im Kontext.' },
+    { left: 'Optimiert auf Verständnis.', right: 'Optimiert auf richtige nächste Schritte.' },
+    { left: 'Darf ausführlich und historisch sein.', right: 'Muss kurz, aktuell und priorisiert sein.' },
+    { left: 'Kann alte Diskussionen enthalten.', right: 'Muss klar markieren, was heute gilt.' },
+    { left: 'Hilft beim Onboarding.', right: 'Hilft beim Arbeiten.' },
+  ]}
+/>
+
+Das ist auch der Grund, warum ein Save File nicht einfach "mehr Dokumentation" ist. Mehr Dokumentation kann Agents sogar schlechter machen, wenn sie keine Priorität enthält.
+
+Ein Modell liest Kontext nicht wie ein erfahrener Mensch. Es kann alte Experimente, harte Regeln, lose Ideen und historische Notizen miteinander vermischen. Dann entsteht Alignment-Theater: viel Text, aber kein verlässliches Verhalten.
+
+## Man braucht eine Verfassung und ein Logbuch
+
+Der wichtigste Einwand gegen Save Files ist richtig:
+
+Sollte man solche Regeln nicht vorher definieren?
+
+Ja.
+
+Unbedingt.
+
+Ein Team sollte nicht warten, bis der Agent Chaos produziert hat, und dann Memory als Pflaster benutzen. Die Grundregeln gehören vorab definiert.
+
+Aber Vorfeld-Regeln und laufendes Projektwissen sind nicht dasselbe.
+
+<FlowGraphic
+  title="Verfassung und Logbuch"
+  note="stabile Regeln plus kuratiertes Projektwissen"
+  steps={['Baseline-Regeln', 'Agent-Arbeit', 'Entscheidungen', 'Lessons learned', 'Kuratierung', 'Besserer nächster Lauf']}
+/>
+
+Die **Verfassung** beantwortet:
+
+- Wie darf der Agent arbeiten?
+- Welche Aktionen brauchen Zustimmung?
+- Wie klein sollen Änderungen bleiben?
+- Welche Tests sind vor einem Ergebnis Pflicht?
+- Was darf nie automatisch passieren?
+- Wie wird mit fremden Änderungen im Working Tree umgegangen?
+
+Das **Logbuch** beantwortet:
+
+- Was hat dieses Projekt inzwischen gelernt?
+- Welche Architekturentscheidung gilt noch?
+- Welche Tests sind aktuell flaky?
+- Welche Befehle sind sicher?
+- Welche Fehler hat der Agent schon einmal gemacht?
+- Welche lokalen Workflows haben sich bewährt?
+
+Beides zusammen macht den Unterschied.
+
+Nur Verfassung ist zu abstrakt. Sie sagt: "Arbeite vorsichtig." Das hilft, aber es kennt das Projekt nicht.
+
+Nur Logbuch ist zu chaotisch. Es sammelt Ereignisse, aber ohne stabile Regeln kann der Agent daraus keine zuverlässige Handlungslogik ableiten.
+
+Gute Agentensysteme brauchen beides: wenige harte Grundregeln und ein wachsendes, gepflegtes Projektgedächtnis.
+
+## Kontext-Müll ist ein echtes Risiko
+
+Der naive Weg ist: alles speichern.
+
+Jede Entscheidung. Jeden Chat. Jeden Bug. Jede Meinung. Jeden Workaround. Jede Agentenantwort, die mal nützlich klang.
+
+Das endet fast immer schlecht.
+
+Ein Save File ist kein Tagebuch. Es ist auch kein Schrottplatz für gute Absichten. Es ist ein operativer Zustand, den ein Modell zuverlässig verwenden soll.
+
+Wenn Teams dort zu viel ablegen, entstehen typische Failure Modes:
+
+- widersprüchliche Regeln
+- alte Workarounds, die nicht mehr gelten
+- Projektgeschichte ohne aktuellen Status
+- lange Prosa ohne klare Handlungsanweisung
+- globale Regeln, die nur für einen Teilbereich gelten
+- Hinweise, die Agents zu unnötiger Exploration zwingen
+
+Das Ergebnis ist nicht mehr Intelligenz, sondern Rauschen.
+
+Für KI-Alignment im Alltag ist das entscheidend. Modelle behandeln Kontext als Signal. Wenn der Kontext unsauber ist, wird auch das Verhalten unsauber. Der Agent wirkt dann gründlich, aber nicht zielgerichtet. Er liest mehr, fragt mehr, testet mehr und verändert mehr, ohne zwingend bessere Ergebnisse zu liefern.
+
+## Wie saubere Save Files aussehen
+
+Die beste Struktur ist langweilig.
+
+Langweilig ist gut.
+
+Ein Agent sollte nicht erraten müssen, ob ein Satz harte Regel, Empfehlung oder historische Notiz ist. Die Dateien sollten das sichtbar machen.
+
+Ein brauchbares Muster:
+
+```txt
+AGENTS.md
+  - harte Arbeitsregeln
+  - Tool-Grenzen
+  - Approval Gates
+  - allgemeiner Stil
+
+RUNBOOK.md
+  - Setup
+  - Build
+  - Tests
+  - Debugging
+  - Deploy
+
+DECISIONS.md
+  - aktuelle Architekturentscheidungen
+  - Datum
+  - Status
+  - Konsequenz für Agenten
+
+KNOWN_ISSUES.md
+  - wiederkehrende Fehler
+  - Symptome
+  - bevorzugter Fix
+  - was nicht wiederholen
+
+ARCHIVE.md
+  - alte, nicht mehr aktive Hinweise
+```
+
+Noch wichtiger ist die Schreibweise.
+
+Schreibe nicht:
+
+```txt
+Das Testsetup ist manchmal schwierig und historisch gewachsen.
+```
+
+Schreibe:
+
+```txt
+Für Änderungen in packages/web zuerst ausführen:
+npm run test:web
+
+Nur bei Änderungen an shared/auth zusätzlich:
+npm run test:auth
+```
+
+Schreibe nicht:
+
+```txt
+Die Payment-Logik ist sensibel.
+```
+
+Schreibe:
+
+```txt
+Payment-Code:
+- keine Refactors ohne explizite Anfrage
+- keine API-Signaturen ändern
+- bei Änderung immer tests/payment.test.ts ausführen
+- vor finaler Antwort geänderte Payment-Dateien nennen
+```
+
+Das ist der Unterschied zwischen Beschreibung und Steuerung.
+
+<DoDont
+  doItems={[
+    'Regeln kurz, aktuell und handlungsnah formulieren.',
+    'Zwischen harten Regeln, Empfehlungen und Historie unterscheiden.',
+    'Alte Hinweise archivieren statt im aktiven Kontext liegen lassen.',
+    'Commands mit konkretem Scope und Auslöser dokumentieren.',
+  ]}
+  dontItems={[
+    'Chatverläufe ungefiltert als Memory verwenden.',
+    'Jede Beobachtung zu einer globalen Regel machen.',
+    'Alte Architekturideen neben gültigen Entscheidungen stehen lassen.',
+    'Root-Kontextdateien mit Spezialfällen überladen.',
+  ]}
+/>
+
+## Die praktische Regel
+
+Behandle Agent-Kontext wie Produktionscode.
+
+Nicht, weil Markdown gefährlich aussieht. Sondern weil diese Dateien Verhalten auslösen.
+
+Eine schlechte Regel in `AGENTS.md` kann jeden Task verlangsamen. Ein veralteter Hinweis in `DECISIONS.md` kann einen Refactor in die falsche Richtung schieben. Ein zu allgemeiner Testbefehl kann Agents dazu bringen, bei jeder Miniänderung die halbe Pipeline zu starten.
+
+Deshalb sollten Teams Agent-Save-Files regelmäßig reviewen:
+
+- Ist diese Regel noch gültig?
+- Ist sie global oder nur für einen Pfad relevant?
+- Ist sie konkret genug, um Verhalten zu steuern?
+- Ist sie kurz genug, um nicht den Kontext zu fluten?
+- Hat sie einen klaren Auslöser?
+- Kann ein Agent daraus eine richtige nächste Aktion ableiten?
+
+Wenn die Antwort nein ist, gehört der Eintrag überarbeitet oder archiviert.
+
+## Fazit
+
+Der nächste Sprung bei Coding Agents kommt nicht nur aus besseren Modellen.
+
+Er kommt aus besseren Arbeitszuständen.
+
+Teams, die Codex, Claude Code, Cursor oder andere Agenten produktiv einsetzen wollen, brauchen deshalb mehr als Prompts. Sie brauchen eine kleine Verfassung für Agent-Verhalten und ein gepflegtes Logbuch für Projektwissen.
+
+Die Verfassung schützt vor Chaos.
+
+Das Logbuch schützt vor Wiederholung.
+
+Die Kuratierung schützt vor Kontext-Müll.
+
+Erst zusammen entsteht ein Agent, der nicht bei jedem Lauf wieder bei null anfängt.
+
+## Quelle und Anschlussgedanke
+
+Ausgangspunkt ist die Save-File-Metapher aus der aktuellen Agenten-Diskussion auf X: [x.com/i/status/2065129901427130678](https://x.com/i/status/2065129901427130678). Der praktische Developer-Spin ist: Wenn der "Character" eines Agenten im Save File steckt, dann ist Kontextpflege keine Nebensache. Sie ist Teil der Engineering-Arbeit.

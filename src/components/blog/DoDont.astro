@@ -3,11 +3,19 @@ interface Props {
   title?: string;
   doLabel?: string;
   dontLabel?: string;
-  doItems: string[];
-  dontItems: string[];
+  doItems?: string[];
+  dontItems?: string[];
+  dos?: string[];
+  donts?: string[];
 }
 
-const { title = 'Use / avoid', doLabel = 'Use when', dontLabel = 'Avoid when', doItems, dontItems } = Astro.props;
+const {
+  title = 'Use / avoid',
+  doLabel = 'Use when',
+  dontLabel = 'Avoid when',
+  doItems = Astro.props.dos ?? [],
+  dontItems = Astro.props.donts ?? [],
+} = Astro.props;
 ---
 
 <section class="not-prose my-8 rounded-2xl border border-border/70 bg-card/70 p-5 shadow-sm md:p-6">
