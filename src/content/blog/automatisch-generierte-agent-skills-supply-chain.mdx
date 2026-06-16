@@ -1,0 +1,327 @@
+---
+title: "Automatisch generierte Agent Skills brauchen eine Supply Chain"
+description: "OpenClaw-Skill zeigt, wohin Coding Agents gehen: Skills werden aus Trajektorien gelernt. Genau deshalb brauchen Teams Registry, Provenance, Evals und Quarantäne statt blindem Skill-Hype."
+language: "de"
+slug: "automatisch-generierte-agent-skills-supply-chain"
+canonicalSlug: "automatic-agent-skills-need-a-supply-chain"
+publishedAt: "2026-06-16"
+updatedAt: "2026-06-16"
+author: "Dominic Hückmann"
+tags: ["AI Engineering", "Agent Skills", "Coding Agents", "Context Engineering", "Agent Security"]
+topic: "AI-first Engineering"
+summary: "Das OpenClaw-Skill-Paper ist ein starkes Signal: Agent Skills werden nicht nur manuell geschrieben, sondern aus Trajektorien, Skill-Bäumen und Transfer-Evals gelernt. Aber genau das macht eine Skill-Supply-Chain wichtiger, nicht unwichtiger."
+heroImage: "/dominic-h.png"
+draft: true
+featured: false
+faqs:
+  - question: "Sind automatisch generierte Agent Skills eine gute Idee?"
+    answer: "Ja, wenn sie evaluiert, versioniert und kuratiert werden. Ohne Provenance, Tests und Review werden sie schnell zu synthetischem Kontext-Müll."
+  - question: "Was ist die wichtigste Lehre aus OpenClaw-Skill?"
+    answer: "Skills sind nicht nur Notizen. Sie sind operative Verhaltensbausteine für Agents. Wenn sie automatisch erzeugt werden, brauchen sie eine Supply Chain wie andere Software-Artefakte."
+  - question: "Sollten Teams Skills direkt aus Paper-Methoden übernehmen?"
+    answer: "Nein. Erst prüfen: Quelle, Benchmark-Abdeckung, Daten-Trennung, Modellübertragbarkeit, Runtime-Rechte und beobachtetes Verhalten im eigenen Agent-Harness."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## Die kurze Version
+
+Das Spannende an Agent Skills ist nicht mehr, dass man sie schreiben kann.
+
+Das Spannende ist, dass sie bald automatisch entstehen.
+
+Das Paper [**OpenClaw-Skill: Collective Skill Tree Search for Agentic Large Language Models**](https://arxiv.org/html/2606.16774v1) ist dafür ein gutes Signal. Die Autoren schlagen vor, komplexe Agent-Aufgaben in Subtasks zu zerlegen, aus mehreren Modell-Trajektorien Skills zu erzeugen, diese Skills als Baum zu organisieren und danach zu bewerten, ob sie auch über Modellgrenzen hinweg nützlich bleiben.
+
+Das ist die richtige Richtung.
+
+Aber die praktische Lehre ist nicht:
+
+```txt
+Cool, dann lassen wir Agents ihre Skills einfach selbst schreiben.
+```
+
+Die bessere Lehre ist:
+
+```txt
+Wenn Skills automatisch entstehen, brauchen sie eine Supply Chain.
+```
+
+Sonst bauen wir nur eine schnellere Maschine für Kontext-Müll.
+
+<KeyPoints
+  title="Der Kern"
+  items={[
+    'Automatisch erzeugte Skills sind ein neues Software-Artefakt, kein harmloser Prompt-Anhang.',
+    'Transferability ist wichtig, aber kein Ersatz für Provenance, Versionierung und Runtime-Grenzen.',
+    'Die Gewinner werden nicht die meisten Skills haben, sondern die beste Skill-Registry.',
+  ]}
+/>
+
+## Was OpenClaw-Skill eigentlich behauptet
+
+Das Paper beschreibt zwei Bausteine.
+
+Der erste heißt **Collective Skill Tree Search**, kurz CSTS.
+
+Die Idee: Nimm eine komplexe Aufgabe, zerlege sie in Subtasks, lasse mehrere Modelle oder Agent-Trajektorien Kandidaten-Skills erzeugen und bewerte diese Skill-Knoten aus zwei Perspektiven:
+
+- Ist der Skill klar, ausführbar und relevant?
+- Hilft der Skill auch anderen Modellen, nicht nur dem Modell, das ihn erzeugt hat?
+
+Der zweite Baustein heißt **Collective Skill Reinforcement Learning**, kurz CSRL.
+
+Dabei werden die erzeugten Skill-Pfade nicht nur als Textbibliothek verwendet, sondern als Trainingssignal. Das Modell soll lernen, mit Skill-Konditionierung bessere Rollouts zu erzeugen.
+
+<FlowGraphic
+  title="OpenClaw-Skill in einem Bild"
+  note="aus Trajektorien werden Skill-Bäume, aus Skill-Bäumen Trainingssignale"
+  steps={['Task', 'Subtasks', 'Trajektorien', 'Skill-Knoten', 'Transfer-Score', 'Training']}
+/>
+
+Das ist konzeptionell stark, weil es Skills nicht als einzelne Markdown-Schnipsel behandelt.
+
+Ein guter Agent-Workflow besteht selten aus genau einem Trick. Er besteht aus mehreren kleinen Verhaltensmustern:
+
+- erst Zustand prüfen
+- dann Plan bauen
+- dann Tool ausführen
+- dann Zwischenergebnis verifizieren
+- dann bei Fehlern reparieren
+- dann Ergebnis belegen
+
+Ein Skill-Baum passt besser zu dieser Realität als eine flache Liste von Tipps.
+
+## Die Zahlen sind interessant, aber nicht magisch
+
+Die Autoren evaluieren auf **QwenClawBench** und **PinchBench**. Beide Benchmarks zielen auf längere Agent-Aufgaben mit Tool Use, Dateizugriff, Code-Ausführung, Web-Interaktion und mehrstufigen Entscheidungen.
+
+Das Paper berichtet für QwenClawBench konsistente Gewinne über mehrere Qwen-Backbones:
+
+<MetricStrip
+  metrics={[
+    { value: '+5.8', label: 'Punkte für Qwen3-4B auf QwenClawBench' },
+    { value: '+10.4', label: 'Punkte für Qwen3.5-9B auf QwenClawBench' },
+    { value: '2K', label: 'SFT-Beispiele aus CSTS-generierten Trajektorien' },
+  ]}
+/>
+
+Auf PinchBench berichten die Autoren ebenfalls Verbesserungen. Für OpenClaw-Skill 9B steigt der Best-Run auf der 23-Task-Version von 67.5 auf 72.8. Auf der 123-Task-Version steigt der Best Score von 61.1 auf 68.2 und der Durchschnitt von 47.1 auf 53.6.
+
+Das ist nicht nichts.
+
+Aber es ist auch nicht der Moment, in dem man Frontier-Modelle abschreibt.
+
+Auf QwenClawBench erreicht OpenClaw-Skill 9B im Paper 44.9 Overall. In derselben Tabelle stehen stärkere geschlossene oder größere Modelle deutlich höher. Der sinnvolle Claim ist also nicht: "Skill-Training schlägt alles."
+
+Der sinnvolle Claim ist:
+
+```txt
+Gute Skills können kleinere oder offene Agent-Modelle spürbar robuster machen.
+```
+
+Das ist für Teams viel interessanter als ein SOTA-Spruch.
+
+Wenn Skills schwächere Modelle besser machen, werden Skills zu Infrastruktur. Dann werden sie Teil der Frage, welches Agent-Setup man betreibt.
+
+## Der gefährliche Fehlschluss
+
+Der gefährliche Fehlschluss lautet:
+
+```txt
+Wenn Skills automatisch erzeugt und bewertet werden,
+können wir Menschen aus dem Loop nehmen.
+```
+
+Nein.
+
+Automatische Skill-Erzeugung verschiebt die Arbeit. Sie entfernt sie nicht.
+
+Ein Modell kann aus Trajektorien einen brauchbaren Ablauf destillieren. Es kann einen Skill formulieren, der in einem Benchmark hilft. Es kann sogar mit mehreren Modell-Judges prüfen, ob der Skill klarer oder übertragbarer wirkt.
+
+Aber das beantwortet nicht alle Fragen, die ein echtes Team stellen muss:
+
+- Woher kommt der Skill?
+- Für welche Runtime wurde er erzeugt?
+- Welche Tools darf er implizit aktivieren?
+- Wurde er gegen eigene Projekte getestet?
+- Welche Rechte braucht er wirklich?
+- Welche alten Skills überschreibt oder widerspricht er?
+- Was passiert, wenn der Skill in einem anderen Repo falsche Annahmen macht?
+
+Das sind keine Forschungsdetails. Das ist Betriebsrealität.
+
+## Skills sind Dependencies
+
+Der beste Vergleich ist nicht Prompt Engineering.
+
+Der bessere Vergleich ist Package Management.
+
+Ein Skill ist eine Verhaltensabhängigkeit. Er sagt einem Agenten, wie er planen, prüfen, klicken, schreiben, committen, testen oder entscheiden soll.
+
+Wenn ein Skill falsch ist, verändert er nicht nur eine Antwort. Er verändert eine Arbeitsweise.
+
+<CompareGrid
+  title="Skill als Prompt vs. Skill als Dependency"
+  leftLabel="Prompt-Denke"
+  rightLabel="Dependency-Denke"
+  rows={[
+    { left: 'Der Skill klingt hilfreich.', right: 'Der Skill hat Quelle, Version, Owner und Review.' },
+    { left: 'Der Agent hat damit einmal gewonnen.', right: 'Der Skill hat reproduzierbare Evals und Traces.' },
+    { left: 'Mehr Skills sind besser.', right: 'Nur kuratierte Skills kommen in den aktiven Kontext.' },
+    { left: 'Der Skill darf erklären, was zu tun ist.', right: 'Runtime-Rechte liegen außerhalb des Skill-Texts.' },
+    { left: 'Alte Skills bleiben liegen.', right: 'Skills werden deprecated, archiviert oder quarantined.' },
+  ]}
+/>
+
+Genau deshalb ist unser öffentlicher Skill-Repo-Ansatz nicht nur ein nettes Website-Feature.
+
+Er ist die richtige Form.
+
+Die Website ist der Katalog. Das Repo ist die Quelle. Der Skill selbst bleibt versioniert, reviewbar, verlinkbar und diffbar.
+
+```txt
+Website:
+  kuratierte Darstellung, Kontext, Erklärung, Links
+
+Repo:
+  SKILL.md, Referenzen, Scripts, Evals, Versionen
+```
+
+So sollte eine Skill-Supply-Chain anfangen.
+
+## Was ich am Paper kritisch sehe
+
+Das Paper ist ein gutes Signal, aber kein Freifahrtschein.
+
+Erstens: Ich sehe im Paper selbst keine vollständige, direkt nutzbare Artefaktkette für OpenClaw-Skill. Wenn Code, Daten und Trainingspipeline nicht sauber verfügbar sind, bleibt Reproduktion schwierig.
+
+Zweitens: Die Transferability ist methodisch interessant, aber sie ist nicht automatisch der Beweis, dass ein Skill in jeder Agent-Runtime funktioniert. Ein Skill, der zwischen Qwen-Backbones transferiert, kann in einem anderen Tool-Harness trotzdem falsche Annahmen über Dateisystem, Browser, Shell oder Approval-Regeln machen.
+
+Drittens: Agent-Benchmarks haben immer ein Kontaminationsrisiko. Wenn Skills aus Trajektorien gelernt werden, muss sehr sauber getrennt sein, was Trainingssignal ist und was später als Evaluation zählt.
+
+Viertens: Die Modellreferenzen und Benchmark-Links muss man separat prüfen. Das Paper verlinkt reale OpenClaw-Dokumentation und PinchBench ist erreichbar, aber gerade bei sehr aktuellen Modellnamen sollte man nicht jede Tabellenzeile ungeprüft als Marktbild übernehmen.
+
+Das schmälert nicht die Idee.
+
+Es schützt nur vor falscher Produktentscheidung.
+
+<DoDont
+  title="Was Teams daraus machen sollten"
+  doLabel="Tun"
+  dontLabel="Vermeiden"
+  doItems={[
+    'Skills als versionierte Artefakte behandeln.',
+    'Skill-Änderungen mit Diff, Owner und Zweck reviewen.',
+    'Evals und Traces neben dem Skill speichern.',
+    'Automatisch erzeugte Skills zuerst quarantinen.',
+    'Runtime-Rechte außerhalb des Skill-Texts binden.',
+  ]}
+  dontItems={[
+    'Automatisch erzeugte Skills direkt in den Live-Kontext legen.',
+    'Benchmark-Gewinne mit Runtime-Sicherheit verwechseln.',
+    'Transferability nur innerhalb einer Modellfamilie überbewerten.',
+    'Alte Skills unmarkiert neben neue Skills stellen.',
+    'Skill-Texte als alleinige Authority für Tool-Nutzung behandeln.',
+  ]}
+/>
+
+## Die praktische Architektur
+
+Wenn ich heute eine Skill-Registry für ein Team bauen würde, hätte jeder Skill mindestens diese Felder:
+
+```txt
+name
+description
+source_repo
+version_or_commit
+owner
+status: draft | experimental | stable | deprecated | quarantined
+permission_tier
+runtime_assumptions
+evals
+known_failures
+last_reviewed_at
+```
+
+Und jeder Skill hätte nicht nur `SKILL.md`, sondern auch Belege daneben:
+
+```txt
+skills/deepresearch/
+  SKILL.md
+  references/
+  scripts/
+  evals/
+  CHANGELOG.md
+  traces/
+```
+
+Nicht jeder Skill braucht am Anfang alles.
+
+Aber jeder Skill braucht einen Ort, an dem diese Dinge wachsen können.
+
+Das ist der Unterschied zwischen einer Skill-Liste und einer Skill-Supply-Chain.
+
+## Warum das für Coding Agents wichtig wird
+
+Coding Agents werden nicht nur durch bessere Modelle besser.
+
+Sie werden besser, wenn sie in einem besseren Arbeitszustand laufen.
+
+Dazu gehören:
+
+- Projektregeln
+- Runbooks
+- bekannte Fehlerbilder
+- Tool-Grenzen
+- Skills
+- Evals
+- gespeicherte Entscheidungen
+- sichere Workflows
+
+OpenClaw-Skill zeigt, dass ein Teil dieses Arbeitszustands automatisch gelernt werden kann. Das ist mächtig.
+
+Aber automatisch gelernt heißt nicht automatisch vertrauenswürdig.
+
+In einer echten Entwicklungsumgebung ist ein Skill nicht nur ein Performance-Hebel. Er ist auch ein Risiko-Hebel. Er kann Agents schneller machen, aber auch systematisch falsch.
+
+Deshalb ist die eigentliche Lehre:
+
+```txt
+Die Zukunft gehört nicht Agenten mit maximal viel Memory.
+Die Zukunft gehört Agenten mit kuratierten, getesteten und versionierten Skills.
+```
+
+## Mein Take
+
+OpenClaw-Skill ist kein Grund, alle Skills automatisch generieren zu lassen.
+
+Es ist ein Grund, jetzt die Infrastruktur dafür zu bauen.
+
+Wenn Skills aus Trajektorien entstehen, brauchen wir:
+
+- eine öffentliche oder interne Registry
+- klare Eigentümerschaft
+- Review-Gates
+- Quarantäne für neue Skills
+- Transfer-Evals
+- Runtime-Permissions
+- Logs, die zeigen, was der Skill tatsächlich auslöst
+
+Das klingt weniger sexy als "Agenten lernen ihre Skills selbst".
+
+Aber genau dort liegt der Produkthebel.
+
+Nicht im Skill-Hype.
+
+In der Supply Chain dahinter.
+
+## Quellen
+
+- [OpenClaw-Skill: Collective Skill Tree Search for Agentic Large Language Models](https://arxiv.org/html/2606.16774v1)
+- [OpenClaw Dokumentation](https://docs.openclaw.ai/)
+- [PinchBench](https://pinchbench.com/about)
+- [QwenClawBench auf GitHub](https://github.com/SKYLENAGE-AI/QwenClawBench)
