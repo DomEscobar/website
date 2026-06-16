@@ -1,0 +1,69 @@
+---
+import { getCollection } from 'astro:content';
+import Navbar from '@/components/portfolio/Navbar.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { formatDate, localizedPath, type Locale } from '@/lib/site';
+
+export const prerender = true;
+
+const locale: Locale = 'de';
+const title = 'Tools, Skills und Templates';
+const description =
+  'Eine kuratierte Sammlung aus Agent-Skills, kleinen Tools, Prompts, Templates und Workflows für AI-first Engineering.';
+const tools = (await getCollection('tools'))
+  .filter((tool) => tool.data.language === locale && !tool.data.draft)
+  .sort((a, b) => Number(b.data.featured) - Number(a.data.featured) || b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
+const categories = [...new Set(tools.map((tool) => tool.data.category))];
+---
+
+<BaseLayout
+  locale={locale}
+  title={`${title} | Hücki`}
+  description={description}
+  path="/tools/"
+  jsonLd={[{
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: title,
+    description,
+    inLanguage: 'de-DE',
+  }]}
+>
+  <Navbar locale={locale} />
+  <main id="main-content" class="px-6 pt-32 pb-20 md:px-12 lg:px-24">
+    <section class="mx-auto max-w-7xl">
+      <div class="max-w-4xl">
+        <p class="text-sm font-semibold uppercase tracking-[0.24em] text-accent">Werkzeugkiste</p>
+        <h1 class="mt-4 text-4xl font-bold tracking-tight md:text-7xl">{title}</h1>
+        <p class="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">{description}</p>
+      </div>
+
+      <div class="mt-10 flex flex-wrap gap-2">
+        {categories.map((category) => (
+          <span class="rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-foreground/80">{category}</span>
+        ))}
+      </div>
+
+      <div class="mt-12 grid gap-6 md:grid-cols-2">
+        {tools.map((tool) => (
+          <article class="rounded-md border border-border/70 bg-card/60 p-6 transition hover:-translate-y-1 hover:border-accent/80 md:p-8">
+            <div class="flex flex-wrap items-center gap-2 text-xs">
+              <span class="rounded-full bg-accent/10 px-3 py-1 font-semibold text-accent">{tool.data.category}</span>
+              <span class="rounded-full border border-border px-3 py-1 text-muted-foreground">{tool.data.status}</span>
+              {tool.data.featured && <span class="rounded-full border border-accent/30 px-3 py-1 text-accent">Featured</span>}
+            </div>
+            <p class="mt-5 text-sm text-muted-foreground">{formatDate(tool.data.publishedAt, locale)} · {tool.data.author}</p>
+            <h2 class="mt-3 text-2xl font-bold tracking-tight md:text-3xl">
+              <a href={localizedPath(locale, `/tools/${tool.data.slug}/`)} class="hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{tool.data.title}</a>
+            </h2>
+            <p class="mt-4 leading-7 text-muted-foreground">{tool.data.summary}</p>
+            <div class="mt-5 flex flex-wrap gap-2">
+              {tool.data.tags.map((tag) => <span class="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground/80">{tag}</span>)}
+            </div>
+            <a href={localizedPath(locale, `/tools/${tool.data.slug}/`)} class="mt-6 inline-flex text-sm font-semibold text-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">Details ansehen</a>
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+</BaseLayout>

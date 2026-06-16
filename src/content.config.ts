@@ -30,4 +30,27 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+const tools = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/tools' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    language: z.enum(['de', 'en']),
+    slug: z.string(),
+    canonicalSlug: z.string(),
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
+    author: z.string(),
+    category: z.enum(['Skill', 'Tool', 'Template', 'Workflow', 'Prompt']),
+    summary: z.string(),
+    tags: z.array(z.string()).default([]),
+    status: z.enum(['Draft', 'Experimental', 'Stable']).default('Experimental'),
+    homepageUrl: z.string().url().optional(),
+    repositoryUrl: z.string().url().optional(),
+    downloadUrl: z.string().url().optional(),
+    draft: z.boolean().default(false),
+    featured: z.boolean().default(false),
+  }),
+});
+
+export const collections = { blog, tools };

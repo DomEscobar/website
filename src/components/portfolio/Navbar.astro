@@ -10,11 +10,13 @@ const { locale } = Astro.props;
 const copy = portfolioCopy[locale];
 const homeHref = localizedPath(locale, '/');
 const blogHref = localizedPath(locale, '/blog/');
+const toolsHref = localizedPath(locale, '/tools/');
 const learningHref = localizedPath(locale, '/ai-native-engineering/');
 const switchHref = locale === 'de' ? '/en/' : '/';
 const switchLabel = locale === 'de' ? 'EN' : 'DE';
 const navItems = [
   { href: learningHref, label: 'AI Native' },
+  { href: toolsHref, label: copy.nav.tools },
   { href: blogHref, label: copy.nav.blog },
 ];
 ---

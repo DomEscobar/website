@@ -1,0 +1,107 @@
+---
+title: "Agent Save File Starter"
+description: "Ein kompaktes Starter-Template für Coding-Agent-Projekte: Arbeitsregeln, Runbook, Entscheidungen und bekannte Fehler an einem Ort."
+language: "de"
+slug: "agent-save-file-starter"
+canonicalSlug: "agent-save-file-starter-en"
+publishedAt: "2026-06-16"
+updatedAt: "2026-06-16"
+author: "Dominic Hückmann"
+category: "Template"
+summary: "Ein leichtgewichtiges Projektgerüst für Agent-Kontextdateien. Es trennt harte Regeln, sichere Commands, gültige Entscheidungen und alte Hinweise, damit Agents nicht aus Chat-Müll arbeiten."
+tags: ["Coding Agents", "Agent Memory", "Context Engineering", "AGENTS.md"]
+status: "Experimental"
+featured: true
+draft: false
+---
+
+Dieses Template ist für Projekte gedacht, in denen Coding Agents regelmäßig am Repo arbeiten.
+
+Die Idee: Der Agent braucht nicht mehr Kontext. Er braucht besseren Kontext.
+
+## Struktur
+
+```txt
+AGENTS.md
+RUNBOOK.md
+DECISIONS.md
+KNOWN_ISSUES.md
+ARCHIVE.md
+```
+
+## AGENTS.md
+
+```txt
+# AGENTS.md
+
+## Arbeitsregeln
+
+- Lies relevante Dateien, bevor du Änderungen machst.
+- Halte Änderungen klein und nah am Task.
+- Revertiere keine fremden Änderungen im Working Tree.
+- Führe passende Tests aus oder erkläre, warum das nicht möglich war.
+
+## Gates
+
+- Keine destruktiven Commands ohne explizite Zustimmung.
+- Keine Public Actions wie Posts, Mails oder Pushes ohne klare Anfrage.
+- Keine breiten Refactors ohne konkreten Auftrag.
+```
+
+## RUNBOOK.md
+
+```txt
+# RUNBOOK.md
+
+## Setup
+
+npm install
+
+## Build
+
+npm run build
+
+## Tests
+
+Frontend-Änderungen:
+npm run test:web
+
+Content-Änderungen:
+npm run build
+```
+
+## DECISIONS.md
+
+```txt
+# DECISIONS.md
+
+## 2026-06-16: Astro Content Collections für Blog und Tools
+
+Status: aktiv
+
+Konsequenz für Agents:
+- Neue Blogposts nach src/content/blog legen.
+- Neue Tools nach src/content/tools legen.
+- Frontmatter-Schema aus src/content.config.ts einhalten.
+```
+
+## KNOWN_ISSUES.md
+
+```txt
+# KNOWN_ISSUES.md
+
+## MDX-Komponenten brechen bei falschen Props
+
+Symptom:
+Astro Build bricht beim Prerendering mit undefined.map ab.
+
+Bevorzugter Fix:
+- Prop-Namen mit der Komponente abgleichen.
+- Komponenten defensiv gegen alte Alias-Props machen, wenn mehrere Drafts betroffen sind.
+```
+
+## Pflege-Regel
+
+Alles, was heute nicht mehr gilt, gehört aus den aktiven Dateien raus.
+
+Nicht löschen, wenn Historie wichtig ist. Verschiebe es nach `ARCHIVE.md`.

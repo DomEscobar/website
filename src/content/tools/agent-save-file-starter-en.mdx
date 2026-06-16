@@ -1,0 +1,107 @@
+---
+title: "Agent Save File Starter"
+description: "A compact starter template for coding-agent projects: working rules, runbook, decisions, and known issues in one place."
+language: "en"
+slug: "agent-save-file-starter-en"
+canonicalSlug: "agent-save-file-starter"
+publishedAt: "2026-06-16"
+updatedAt: "2026-06-16"
+author: "Dominic Hückmann"
+category: "Template"
+summary: "A lightweight project structure for agent context files. It separates hard rules, safe commands, active decisions, and archived notes so agents do not work from chat sludge."
+tags: ["Coding Agents", "Agent Memory", "Context Engineering", "AGENTS.md"]
+status: "Experimental"
+featured: true
+draft: false
+---
+
+This template is for repositories where coding agents work regularly.
+
+The idea: the agent does not need more context. It needs better context.
+
+## Structure
+
+```txt
+AGENTS.md
+RUNBOOK.md
+DECISIONS.md
+KNOWN_ISSUES.md
+ARCHIVE.md
+```
+
+## AGENTS.md
+
+```txt
+# AGENTS.md
+
+## Working rules
+
+- Read relevant files before editing.
+- Keep changes small and close to the task.
+- Do not revert someone else's working-tree changes.
+- Run suitable tests or explain why you could not.
+
+## Gates
+
+- No destructive commands without explicit approval.
+- No public actions such as posts, emails, or pushes without a clear request.
+- No broad refactors without a specific assignment.
+```
+
+## RUNBOOK.md
+
+```txt
+# RUNBOOK.md
+
+## Setup
+
+npm install
+
+## Build
+
+npm run build
+
+## Tests
+
+Frontend changes:
+npm run test:web
+
+Content changes:
+npm run build
+```
+
+## DECISIONS.md
+
+```txt
+# DECISIONS.md
+
+## 2026-06-16: Astro Content Collections for Blog and Tools
+
+Status: active
+
+Consequence for agents:
+- Put new blog posts in src/content/blog.
+- Put new tools in src/content/tools.
+- Follow the frontmatter schema in src/content.config.ts.
+```
+
+## KNOWN_ISSUES.md
+
+```txt
+# KNOWN_ISSUES.md
+
+## MDX components break on wrong props
+
+Symptom:
+Astro build fails during prerendering with undefined.map.
+
+Preferred fix:
+- Match prop names against the component.
+- Make components defensive against old alias props when multiple drafts are affected.
+```
+
+## Maintenance rule
+
+Anything that is no longer true should leave the active files.
+
+Do not delete it when the history matters. Move it to `ARCHIVE.md`.
