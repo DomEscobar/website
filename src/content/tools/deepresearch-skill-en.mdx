@@ -1,0 +1,53 @@
+---
+title: "DeepResearch Skill"
+description: "An agent skill for evidence-backed research with a plan, source list, evidence extraction, cross-checking, and a cited report."
+language: "en"
+slug: "deepresearch-skill-en"
+canonicalSlug: "deepresearch-skill"
+publishedAt: "2026-06-16"
+updatedAt: "2026-06-16"
+author: "Dominic Hückmann"
+category: "Skill"
+summary: "DeepResearch pushes agents out of quick search-summary mode. The skill writes research artifacts, separates primary from secondary sources, and requires URL-backed evidence before synthesis."
+tags: ["Research", "Agent Skills", "Evidence", "Sources"]
+status: "Stable"
+repositoryUrl: "https://github.com/DomEscobar/FutureOfDev/tree/main/skills/deepresearch"
+downloadUrl: "https://raw.githubusercontent.com/DomEscobar/FutureOfDev/main/skills/deepresearch/SKILL.md"
+featured: true
+draft: false
+---
+
+This skill is for research tasks where a quick summary is not enough.
+
+It uses a fixed workflow:
+
+```txt
+plan -> discover -> fetch/read -> extract evidence -> cross-check -> synthesize -> cite
+```
+
+## Use when
+
+- comparing tools or technologies
+- researching markets or competitors
+- implementation research
+- decisions where source quality matters
+- questions like: "Is this just googling?"
+
+## What the skill enforces
+
+- a research plan artifact
+- a source list
+- extracted URL-backed evidence
+- confidence notes
+- a cited report
+- artifact validation before the final answer
+
+## Source of truth
+
+The skill lives in the public repo:
+
+```txt
+FutureOfDev/skills/deepresearch/
+```
+
+The website is only the catalog entry. Changes to the skill itself belong in the repo.

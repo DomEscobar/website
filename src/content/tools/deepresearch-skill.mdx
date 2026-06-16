@@ -1,0 +1,53 @@
+---
+title: "DeepResearch Skill"
+description: "Ein Agent-Skill für belastbare Recherche mit Plan, Quellenliste, Evidenzextraktion, Gegenprüfung und zitierfähigem Report."
+language: "de"
+slug: "deepresearch-skill"
+canonicalSlug: "deepresearch-skill-en"
+publishedAt: "2026-06-16"
+updatedAt: "2026-06-16"
+author: "Dominic Hückmann"
+category: "Skill"
+summary: "DeepResearch zwingt Agenten aus dem schnellen Suchmaschinen-Summary-Modus heraus. Der Skill schreibt Recherche-Artefakte, trennt Primär- von Sekundärquellen und verlangt URL-gestützte Evidenz vor der Synthese."
+tags: ["Research", "Agent Skills", "Evidence", "Sources"]
+status: "Stable"
+repositoryUrl: "https://github.com/DomEscobar/FutureOfDev/tree/main/skills/deepresearch"
+downloadUrl: "https://raw.githubusercontent.com/DomEscobar/FutureOfDev/main/skills/deepresearch/SKILL.md"
+featured: true
+draft: false
+---
+
+Dieser Skill ist für Recherchen gedacht, bei denen ein schnelles Summary nicht reicht.
+
+Er verwendet einen festen Ablauf:
+
+```txt
+plan -> discover -> fetch/read -> extract evidence -> cross-check -> synthesize -> cite
+```
+
+## Wann benutzen?
+
+- Tool- oder Technologievergleiche
+- Markt- und Wettbewerbsrecherche
+- Implementierungsrecherche
+- Entscheidungen, bei denen Quellenqualität wichtig ist
+- Fragen wie: "Ist das nur Googeln?"
+
+## Was der Skill erzwingt
+
+- ein Recherche-Plan-Artefakt
+- eine Quellenliste
+- extrahierte Evidenz mit URLs
+- Confidence-Notizen
+- einen zitierfähigen Report
+- eine Validierung der Artefakte vor dem Ergebnis
+
+## Source of truth
+
+Der Skill lebt im öffentlichen Repo:
+
+```txt
+FutureOfDev/skills/deepresearch/
+```
+
+Die Website ist nur der Katalogeintrag. Änderungen am Skill selbst gehören ins Repo.

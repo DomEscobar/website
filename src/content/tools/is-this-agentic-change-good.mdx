@@ -1,0 +1,51 @@
+---
+title: "Is This Agentic Change Good?"
+description: "Ein Read-only Review-Skill für Änderungen an Agent-Setup, Skills, AGENTS.md, Runtime-Kontext und Sicherheitsgrenzen."
+language: "de"
+slug: "is-this-agentic-change-good"
+canonicalSlug: "is-this-agentic-change-good-en"
+publishedAt: "2026-06-16"
+updatedAt: "2026-06-16"
+author: "Dominic Hückmann"
+category: "Skill"
+summary: "Dieser Skill prüft Branches, die zukünftiges Agent-Verhalten verändern. Er sammelt lokale Git-Evidenz, bewertet Skill-Kollisionen, Kontextbudget, Sicherheitsrisiken und Runtime-Sichtbarkeit, bevor ein Merge empfohlen wird."
+tags: ["Agent Skills", "Review", "AGENTS.md", "Safety"]
+status: "Experimental"
+repositoryUrl: "https://github.com/DomEscobar/FutureOfDev/tree/main/skills/is-this-agentic-change-good"
+downloadUrl: "https://raw.githubusercontent.com/DomEscobar/FutureOfDev/main/skills/is-this-agentic-change-good/SKILL.md"
+featured: false
+draft: false
+---
+
+Dieser Skill ist kein normaler Code-Review-Skill.
+
+Er prüft Änderungen, die beeinflussen, wie zukünftige Agents arbeiten:
+
+- `AGENTS.md`, `TOOLS.md`, `SOUL.md`, `USER.md`, `HEARTBEAT.md`
+- Skill-Dateien und Skill-Support-Dateien
+- Runtime-Konfigurationen
+- Hooks, Allowlisten, Tooling, Sandbox- oder Prompt-Injection-Änderungen
+
+## Output
+
+Der Skill gibt zuerst ein JSON-Urteil aus:
+
+```json
+{
+  "verdict": "ship|ship-with-notes|needs-fix|unsafe",
+  "confidence": "high|medium|low",
+  "blockers": []
+}
+```
+
+Danach folgt eine kurze menschliche Zusammenfassung.
+
+## Source of truth
+
+Der Skill lebt im öffentlichen Repo:
+
+```txt
+FutureOfDev/skills/is-this-agentic-change-good/
+```
+
+Die Website ist der Katalog. Der Skill-Code, Rubric und Collector bleiben im Repo.

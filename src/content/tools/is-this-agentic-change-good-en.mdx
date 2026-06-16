@@ -1,0 +1,51 @@
+---
+title: "Is This Agentic Change Good?"
+description: "A read-only review skill for changes to agent setup, skills, AGENTS.md, runtime context, and safety boundaries."
+language: "en"
+slug: "is-this-agentic-change-good-en"
+canonicalSlug: "is-this-agentic-change-good"
+publishedAt: "2026-06-16"
+updatedAt: "2026-06-16"
+author: "Dominic Hückmann"
+category: "Skill"
+summary: "This skill reviews branches that change future agent behavior. It collects local git evidence and judges skill collisions, context budget, safety risks, and runtime visibility before recommending a merge."
+tags: ["Agent Skills", "Review", "AGENTS.md", "Safety"]
+status: "Experimental"
+repositoryUrl: "https://github.com/DomEscobar/FutureOfDev/tree/main/skills/is-this-agentic-change-good"
+downloadUrl: "https://raw.githubusercontent.com/DomEscobar/FutureOfDev/main/skills/is-this-agentic-change-good/SKILL.md"
+featured: false
+draft: false
+---
+
+This is not a normal code-review skill.
+
+It reviews changes that affect how future agents behave:
+
+- `AGENTS.md`, `TOOLS.md`, `SOUL.md`, `USER.md`, `HEARTBEAT.md`
+- skill files and skill support files
+- runtime configuration
+- hooks, allowlists, tooling, sandbox, or prompt-injection changes
+
+## Output
+
+The skill returns a JSON verdict first:
+
+```json
+{
+  "verdict": "ship|ship-with-notes|needs-fix|unsafe",
+  "confidence": "high|medium|low",
+  "blockers": []
+}
+```
+
+Then it renders a short human summary.
+
+## Source of truth
+
+The skill lives in the public repo:
+
+```txt
+FutureOfDev/skills/is-this-agentic-change-good/
+```
+
+The website is the catalog. The skill code, rubric, and collector stay in the repo.
