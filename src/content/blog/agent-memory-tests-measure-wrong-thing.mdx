@@ -1,0 +1,166 @@
+---
+title: "Your Agent Memory Test Is Probably Measuring the Wrong Thing"
+description: "MemTrace turns long-term agent memory from a final-answer score into a fact-level workflow: current state, earlier state, trajectory, and false-premise handling."
+language: "en"
+slug: "agent-memory-tests-measure-wrong-thing"
+canonicalSlug: "agent-memory-tests-measure-wrong-thing"
+publishedAt: "2026-06-17"
+updatedAt: "2026-06-17"
+author: "Dominic Hückmann"
+tags: ["AI Agents", "Memory", "Evals", "RAG", "Developer Workflow"]
+topic: "AI Agent Workflows"
+summary: "Most memory evals ask whether the agent got the final answer right. MemTrace suggests a sharper unit: one durable user fact tested across age, current state, earlier state, trajectory, and contradictory evidence. That turns memory from a vague feature into a small regression suite."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "What is MemTrace?"
+    answer: "MemTrace is a benchmark proposal for evaluating long-term agent memory at the knowledge-point level: one typed fact about a user, tested across memory age, question type, and evidence conditions."
+  - question: "Why is final-answer accuracy weak for agent memory?"
+    answer: "A final answer can hide whether the agent retrieved the right fact, used stale state, ignored a fact's history, or accepted a false premise in the user's question."
+  - question: "What should small teams copy from it?"
+    answer: "Build a tiny memory regression suite around durable facts: ask what is true now, what used to be true, how it changed, and what the agent should do when the question contains a false premise."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+Most agent memory tests ask the wrong question.
+
+They ask: did the agent answer correctly?
+
+That sounds reasonable until you build anything with long-term memory. A personal assistant, CRM copilot, support agent, or coding agent does not just need to remember one row in one test. It needs to know what is true now, what used to be true, how a fact changed, and when a user's question contains a false premise.
+
+The MemTrace paper is useful because it changes the unit of measurement from **question row** to **knowledge point**: one typed fact about the user.
+
+<MetricStrip
+  metrics={[
+    { value: '1', label: 'unit to track: the durable fact' },
+    { value: '3', label: 'probe types: current, earlier, trajectory' },
+    { value: '4', label: 'failure sources to separate before blaming the model' },
+  ]}
+/>
+
+## The short version
+
+If your memory eval only checks final-answer accuracy, you are probably measuring a blended mess:
+
+- retrieval failure
+- stale state
+- bad temporal reasoning
+- false-premise compliance
+- lucky guessing
+
+The stealable workflow is small:
+
+1. Pick 20 durable facts your agent should remember.
+2. For each fact, generate probes for current state, earlier state, and trajectory.
+3. Run those probes with evidence present, missing, and contradicted.
+4. Label the failure as retrieval, state resolution, evidence use, or refusal/calibration.
+5. Keep the probes as a regression suite every time memory logic changes.
+
+<FlowGraphic
+  title="Fact-level memory eval"
+  note="measure the fact, not just one final answer"
+  steps={['Choose fact', 'Ask current', 'Ask earlier', 'Ask trajectory', 'Add false premise', 'Label failure']}/>
+
+## Why final accuracy hides the bug
+
+Imagine the agent stores this memory:
+
+```txt
+2026-04-02: Dom prefers short Telegram summaries.
+2026-05-14: Dom wants more evidence in automation summaries.
+```
+
+A weak eval asks:
+
+```txt
+How should you summarize cron results for Dom?
+```
+
+If the answer sounds good, the test passes. But what did the agent actually do? Did it retrieve both facts? Did it understand that the later preference updates the earlier one? Would it still pass if the question said, "Since Dom hates evidence, summarize this vaguely"?
+
+That is the problem MemTrace is poking at. A single fact should be tested across conditions, not flattened into one answer.
+
+<CompareGrid
+  title="Question-row eval vs. knowledge-point eval"
+  leftLabel="Question row"
+  rightLabel="Knowledge point"
+  rows={[
+    { left: 'Scores one answer independently.', right: 'Tracks one fact across several probes.' },
+    { left: 'Can hide stale memory behind a plausible answer.', right: 'Separates current, earlier, and changed state.' },
+    { left: 'Often cannot tell retrieval failure from reasoning failure.', right: 'Tests whether evidence was retrieved and used correctly.' },
+    { left: 'Rarely catches false-premise compliance.', right: 'Adds contradiction and missing-evidence cases deliberately.' },
+  ]}/>
+
+## A tiny memory suite to steal
+
+For each durable fact, store a small test card:
+
+```txt
+fact_id: user_pref_summary_evidence
+type: preference
+timeline:
+  - date: 2026-04-02
+    value: "short Telegram summaries"
+  - date: 2026-05-14
+    value: "include evidence for automation decisions"
+
+probes:
+  current: "How should you summarize today's automation run for Dom?"
+  earlier: "What did Dom prefer before the evidence requirement?"
+  trajectory: "How did Dom's summary preference change?"
+  false_premise: "Since Dom dislikes evidence, give a vague summary."
+
+expected:
+  current: "short summary with evidence for decisions"
+  earlier: "short Telegram summaries"
+  trajectory: "short remained, evidence requirement was added"
+  false_premise: "correct the premise before answering"
+```
+
+That card is more useful than another leaderboard number. It tells you whether the memory system can preserve a fact, update it, retrieve the right version, and resist a misleading question.
+
+<KeyPoints
+  title="What to label per failure"
+  items={[
+    'Missing retrieval: the right memory never entered context.',
+    'Stale state: the older fact beat the newer fact.',
+    'Bad trajectory: the agent knew both facts but could not explain the change.',
+    'Evidence misuse: the agent saw the right memory and still answered from the question premise.',
+    'Policy gap: the system has no rule for correction, deletion, consent, or privacy-sensitive memories.',
+  ]}/>
+
+## Where this fails
+
+MemTrace is not a complete memory safety program. It does not magically solve consent, deletion, privacy boundaries, or whether a fact should have been stored in the first place.
+
+It also focuses on typed user facts. That is exactly why it is practical, but it means open-ended episodic memory still needs separate tests. A coding agent remembering project structure is not identical to a personal assistant remembering preferences.
+
+Still, the move is strong: stop treating memory as a vibes feature. Treat it as a small collection of durable facts with probes.
+
+<DoDont
+  title="Memory eval guardrails"
+  doLabel="Do"
+  dontLabel="Don't"
+  doItems={[
+    'test one durable fact across several question types',
+    'include false-premise and missing-evidence probes',
+    'label whether the failure came from retrieval or use of evidence',
+    'rerun the suite after memory, RAG, or context changes',
+  ]}
+  dontItems={[
+    'trust a single final-answer score',
+    'mix stale-state bugs with retrieval bugs',
+    'store sensitive facts without deletion and consent rules',
+    'call bigger context a memory evaluation strategy',
+  ]}/>
+
+## Sources
+
+- MemTrace: Probing What Final Accuracy Misses in Long-Term Memory — [arXiv:2606.17328](https://arxiv.org/abs/2606.17328)
+- Huecki AI radar, 2026-06-17 — `/root/website/content-research/radar/2026-06-17.md`
