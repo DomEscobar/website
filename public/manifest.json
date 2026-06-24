@@ -1,0 +1,20 @@
+{
+  "name": "Hücki",
+  "short_name": "Hücki",
+  "description": "Huecki blog: agent-first wiki on agent harnesses, security, context engineering, and tooling.",
+  "start_url": "/en/",
+  "scope": "/",
+  "display": "standalone",
+  "lang": "en",
+  "theme_color": "#0b1020",
+  "background_color": "#0b1020",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["developer", "productivity", "education"]
+}

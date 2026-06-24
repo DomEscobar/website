@@ -1,0 +1,12 @@
+/* TEAM */
+Author: Dom Hueckmann
+Site: https://huecki.com
+Twitter: @Domacc
+GitHub: https://github.com/DomEscobar
+Location: Europe/Berlin Germany
+
+/* SITE */
+Last update: 2026/06/24
+Standards: HTML5, CSS3, schema.org JSON-LD, RSS, Atom, llms.txt, llms-full.txt, knowledge-map.json
+Components: Astro, MDX, sitemap-index.xml, robots.txt
+Software: Node.js, Astro

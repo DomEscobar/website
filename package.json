@@ -10,6 +10,7 @@
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "astro build",
+    "indexnow": "node scripts/indexnow.mjs",
     "radar:ai": "node scripts/ai-radar.mjs",
     "preview": "astro preview --host 0.0.0.0 --port 3000",
     "start": "node ./dist/server/entry.mjs",

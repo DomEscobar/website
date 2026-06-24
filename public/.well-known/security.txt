@@ -1,0 +1,5 @@
+Contact: mailto:d.hueckmann@googlemail.com
+Contact: https://github.com/DomEscobar
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en, de
+Canonical: https://huecki.com/.well-known/security.txt
