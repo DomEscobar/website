@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { blogPath } from '@/lib/agent-readable';
+import { agentTopics, topicUrl } from '@/lib/agent-topics';
 import { buildprints } from '@/lib/buildprints';
 import { absoluteUrl, person, siteUrl } from '@/lib/site';
 
@@ -19,7 +21,7 @@ const postLine = (post: BlogPost) => {
   const date = post.data.publishedAt.toISOString().slice(0, 10);
   const language = post.data.language === 'en' ? 'English' : 'German';
   const tags = post.data.tags.length ? ` Tags: ${post.data.tags.join(', ')}.` : '';
-  return `- [${markdownEscape(post.data.title)}](${postUrl(post)}): ${markdownEscape(post.data.summary)} (${language}, ${date}; topic: ${post.data.topic}.${tags})`;
+  return `- [${markdownEscape(post.data.title)}](${postUrl(post)}): ${markdownEscape(post.data.summary)} (${language}, ${date}; topic: ${post.data.topic}; markdown: ${absoluteUrl(blogPath(post, true))}.${tags})`;
 };
 
 const buildprintLine = (buildprint: (typeof buildprints)[number]) =>
@@ -74,6 +76,11 @@ export const GET: APIRoute = async () => {
     `- [Sitemap index](${absoluteUrl('/sitemap-index.xml')}): Canonical URL discovery.`,
     `- [Robots policy](${absoluteUrl('/robots.txt')}): Crawler access rules.`,
     `- [Full LLM context](${absoluteUrl('/llms-full.txt')}): Longer generated context catalog for answer engines and agents.`,
+    `- [Knowledge map](${absoluteUrl('/knowledge-map.json')}): JSON graph of topics, posts, tools, canonical URLs, Markdown URLs, and relationships.`,
+    `- Markdown exports: public blog/tool pages also expose clean Markdown at /en/blog/{slug}.md, /blog/{slug}.md, /en/tools/{slug}.md, and /tools/{slug}.md.`,
+    '',
+    '## Topic Hubs',
+    ...agentTopics.map((topic) => `- [${topic.labels.en}](${topicUrl('en', topic.id)}): ${topic.descriptions.en}`),
     '',
     '## Best Starting Points',
     ...priorityPosts.map(postLine),

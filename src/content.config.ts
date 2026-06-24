@@ -16,6 +16,28 @@ const blog = defineCollection({
     tags: z.array(z.string()).default([]),
     topic: z.string(),
     summary: z.string(),
+    thesis: z.string().optional(),
+    audience: z.array(z.string()).default([]),
+    concepts: z.array(z.string()).default([]),
+    related: z
+      .array(
+        z.object({
+          slug: z.string(),
+          relation: z.string(),
+        }),
+      )
+      .default([]),
+    sourceRefs: z
+      .array(
+        z.object({
+          title: z.string(),
+          url: z.string().url(),
+          type: z.string().optional(),
+        }),
+      )
+      .default([]),
+    claimStatus: z.string().optional(),
+    contentStatus: z.enum(['field-note', 'evergreen', 'reference', 'draft']).default('field-note'),
     heroImage: z.string().optional(),
     draft: z.boolean().default(false),
     featured: z.boolean().default(false),
@@ -44,6 +66,27 @@ const tools = defineCollection({
     category: z.enum(['Skill', 'Tool', 'Template', 'Workflow', 'Prompt']),
     summary: z.string(),
     tags: z.array(z.string()).default([]),
+    thesis: z.string().optional(),
+    audience: z.array(z.string()).default([]),
+    concepts: z.array(z.string()).default([]),
+    related: z
+      .array(
+        z.object({
+          slug: z.string(),
+          relation: z.string(),
+        }),
+      )
+      .default([]),
+    sourceRefs: z
+      .array(
+        z.object({
+          title: z.string(),
+          url: z.string().url(),
+          type: z.string().optional(),
+        }),
+      )
+      .default([]),
+    contentStatus: z.enum(['field-note', 'evergreen', 'reference', 'draft']).default('reference'),
     status: z.enum(['Draft', 'Experimental', 'Stable']).default('Experimental'),
     homepageUrl: z.string().url().optional(),
     repositoryUrl: z.string().url().optional(),

@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { blogPath, toolPath } from '@/lib/agent-readable';
+import { agentTopics, getEntryTopicIds, topicUrl } from '@/lib/agent-topics';
 import { buildprints } from '@/lib/buildprints';
 import { absoluteUrl, person, siteUrl } from '@/lib/site';
 
@@ -21,10 +23,12 @@ const postBlock = (post: BlogPost) => {
   return [
     `### ${markdownEscape(post.data.title)}`,
     `- URL: ${postUrl(post)}`,
+    `- Markdown URL: ${absoluteUrl(blogPath(post, true))}`,
     `- Language: ${post.data.language === 'en' ? 'English' : 'German'}`,
     `- Published: ${date}`,
     ...(updated ? [`- Updated: ${updated}`] : []),
     `- Topic: ${post.data.topic}`,
+    `- Agent topics: ${getEntryTopicIds(post).join(', ')}`,
     `- Tags: ${post.data.tags.join(', ') || 'none'}`,
     `- Description: ${markdownEscape(post.data.description)}`,
     `- Summary: ${markdownEscape(post.data.summary)}`,
@@ -56,6 +60,26 @@ const buildprintBlock = (buildprint: (typeof buildprints)[number]) =>
     '',
   ].join('\n');
 
+const toolBlock = (tool: Awaited<ReturnType<typeof getCollection<'tools'>>>[number]) => {
+  const date = tool.data.publishedAt.toISOString().slice(0, 10);
+  const updated = tool.data.updatedAt ? tool.data.updatedAt.toISOString().slice(0, 10) : null;
+  return [
+    `### ${markdownEscape(tool.data.title)}`,
+    `- URL: ${absoluteUrl(toolPath(tool))}`,
+    `- Markdown URL: ${absoluteUrl(toolPath(tool, true))}`,
+    `- Language: ${tool.data.language === 'en' ? 'English' : 'German'}`,
+    `- Published: ${date}`,
+    ...(updated ? [`- Updated: ${updated}`] : []),
+    `- Category: ${tool.data.category}`,
+    `- Status: ${tool.data.status}`,
+    `- Agent topics: ${getEntryTopicIds(tool).join(', ')}`,
+    `- Tags: ${tool.data.tags.join(', ') || 'none'}`,
+    `- Description: ${markdownEscape(tool.data.description)}`,
+    `- Summary: ${markdownEscape(tool.data.summary)}`,
+    '',
+  ].join('\n');
+};
+
 export const GET: APIRoute = async () => {
   const posts = (await getCollection('blog'))
     .filter((post) => !post.data.draft)
@@ -65,6 +89,9 @@ export const GET: APIRoute = async () => {
     en: posts.filter((post) => post.data.language === 'en'),
     de: posts.filter((post) => post.data.language === 'de'),
   } satisfies Record<'en' | 'de', BlogPost[]>;
+  const tools = (await getCollection('tools'))
+    .filter((tool) => !tool.data.draft)
+    .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf());
 
   const lines = [
     '# huecki - Full LLM Context',
@@ -76,6 +103,7 @@ export const GET: APIRoute = async () => {
     `Role: ${person.jobTitle}`,
     `Contact: mailto:${person.email}`,
     `Primary llms.txt: ${absoluteUrl('/llms.txt')}`,
+    `Knowledge map: ${absoluteUrl('/knowledge-map.json')}`,
     '',
     '## Site Summary',
     'huecki publishes practical, opinionated writing about AI-first software engineering, coding agents, OpenClaw, agent harnesses, Buildprints, SEO/GEO, and full-stack architecture. The site also hosts an Agent Buildprint registry: executable phase-flow contracts that coding agents can follow with runtime evidence schemas, review loops, proof gates, and validation checks.',
@@ -86,6 +114,16 @@ export const GET: APIRoute = async () => {
     '- Keep claims grounded in the linked content metadata or page text.',
     '- Mention language when a source is German or English.',
     '- Do not present Buildprints as installed software; they are executable implementation contracts, phase-flow packets, prompts, and validation artifacts unless a page says otherwise.',
+    '- Prefer per-page Markdown URLs for clean retrieval when available.',
+    '',
+    '## Agent-Readable Exports',
+    `- Compact map: ${absoluteUrl('/llms.txt')}`,
+    `- Full catalog: ${absoluteUrl('/llms-full.txt')}`,
+    `- Knowledge graph: ${absoluteUrl('/knowledge-map.json')}`,
+    '- Markdown route convention: /en/blog/{slug}.md, /blog/{slug}.md, /en/tools/{slug}.md, /tools/{slug}.md',
+    '',
+    '## Topic Hubs',
+    ...agentTopics.map((topic) => `- ${topic.labels.en}: ${topicUrl('en', topic.id)} — ${topic.descriptions.en}`),
     '',
     '## Featured Learning Resource',
     '### AI Native Engineering: From prompt writer to AI system builder',
@@ -101,6 +139,8 @@ export const GET: APIRoute = async () => {
     ...postsByLanguage.en.map(postBlock),
     '## German Blog Catalog',
     ...postsByLanguage.de.map(postBlock),
+    '## Tool Catalog',
+    ...tools.map(toolBlock),
     '## Buildprint Catalog',
     ...buildprints.map(buildprintBlock),
     '',

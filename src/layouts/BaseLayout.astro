@@ -12,6 +12,7 @@ interface Props {
   type?: 'website' | 'article';
   jsonLd?: unknown[];
   noindex?: boolean;
+  markdownPath?: string;
 }
 
 const {
@@ -24,6 +25,7 @@ const {
   type = 'website',
   jsonLd = [],
   noindex = false,
+  markdownPath,
 } = Astro.props;
 
 const canonical = absoluteUrl(localizedPath(locale, path));
@@ -34,6 +36,7 @@ const alternates = alternatePaths
     }
   : alternateUrls(path);
 const socialImage = absoluteUrl(image);
+const markdownUrl = markdownPath ? absoluteUrl(localizedPath(locale, markdownPath)) : null;
 const lang = locale === 'de' ? 'de-DE' : 'en-US';
 const graph = [...baseJsonLd(), ...jsonLd];
 ---
@@ -50,6 +53,7 @@ const graph = [...baseJsonLd(), ...jsonLd];
     <link rel="alternate" hreflang="de-DE" href={alternates.de} />
     <link rel="alternate" hreflang="en-US" href={alternates.en} />
     <link rel="alternate" hreflang="x-default" href={alternates.en} />
+    {markdownUrl && <link rel="alternate" type="text/markdown" href={markdownUrl} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
