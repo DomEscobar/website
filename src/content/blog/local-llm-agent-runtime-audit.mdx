@@ -1,0 +1,167 @@
+---
+title: "Audit Local LLM Agents Like Runtimes"
+description: "CLAWAUDIT is a useful reminder that local agents are privileged runtimes, not chat widgets. Audit prompt assembly, parsers, tool dispatch, skill loading, memory writes, network clients, and permission gates."
+language: "en"
+slug: "local-llm-agent-runtime-audit"
+canonicalSlug: "local-llm-agent-runtime-audit"
+publishedAt: "2026-06-24"
+updatedAt: "2026-06-24"
+author: "Dominic Hückmann"
+tags: ["AI Security", "Local LLMs", "Agents", "Developer Workflow", "Runtime Security"]
+topic: "AI Agent Security"
+summary: "Local LLM agents can touch shells, files, browsers, credentials, memory, and messaging tools. Treat their runtime layer as source code worth auditing, then turn static findings into a manual review queue instead of automatic verdicts."
+heroImage: "/dominic-h.png"
+draft: false
+featured: false
+faqs:
+  - question: "Why audit a local LLM agent runtime?"
+    answer: "Because the runtime mediates between model text and host actions: shell commands, file writes, browser sessions, memory updates, stored credentials, and messages."
+  - question: "Is static scanning enough for agent security?"
+    answer: "No. Static rules are useful for recall and review queues, but agent-runtime findings need manual triage, semantic filtering, and runtime controls before production use."
+  - question: "Where should a small team start?"
+    answer: "Start with the seven runtime surfaces: prompt builder, output parser, tool dispatcher, skill loader, memory writer, network client, and permission gate."
+---
+
+import FlowGraphic from '@/components/blog/FlowGraphic.astro';
+import KeyPoints from '@/components/blog/KeyPoints.astro';
+import CompareGrid from '@/components/blog/CompareGrid.astro';
+import DoDont from '@/components/blog/DoDont.astro';
+import MetricStrip from '@/components/blog/MetricStrip.astro';
+
+## Short answer
+
+Local LLM agents are not just chatbots with a few helpful tools.
+
+They are privileged runtimes.
+
+They sit between natural-language intent and host-level actions: shell commands, files, browser sessions, credentials, memory, network clients, and messages. That makes the runtime layer a real security boundary, not a prompt detail.
+
+The useful idea in [*Local LLM Agents as Vulnerable Runtimes*](https://arxiv.org/abs/2606.21071) is to audit that layer as source code. Not "can the model be tricked?" but "where does this runtime assemble instructions, parse model output, grant tools, load skills, write memory, call the network, or check permissions?"
+
+<MetricStrip
+  metrics={[
+    { value: '7', label: 'runtime surfaces to audit before trusting a local agent' },
+    { value: '47 + 30', label: 'Semgrep rules and CodeQL queries reported by CLAWAUDIT' },
+    { value: '0', label: 'automatic vulnerability verdicts from static findings alone' },
+  ]}
+/>
+
+## The mistake
+
+Most agent security talk still starts at prompt injection, malicious webpages, and poisoned skills. Good questions. Incomplete questions.
+
+The runtime decides what model text becomes an action: how tool calls are parsed, which names are valid, whether skills can reshape priority, whether memory writes are trusted, and whether permission checks happen before side effects.
+
+If that code is sloppy, a better prompt will not save you.
+
+<FlowGraphic
+  title="Agent runtime audit loop"
+  note="source first, verdict later"
+  steps={['Map surfaces', 'Run static rules', 'Create review queue', 'Triage by exploit path', 'Patch control point', 'Add regression check']}
+/>
+
+## A workflow to steal
+
+Take one local agent runtime and make a four-column audit table:
+
+```txt
+Surface | Example risk | Evidence to inspect | Safe control
+```
+
+Use these rows:
+
+1. **Prompt builder:** untrusted text entering high-priority instruction slots.
+2. **Output parser:** fallback parsing, JSON repair, hidden command extraction, and partial parse success.
+3. **Tool dispatcher:** stringly typed routing, broad allowlists, and tools that can call other tools.
+4. **Skill loader:** remote install paths, weak provenance, and skill text that implies new authority.
+5. **Memory writer:** unverified promotion, cross-user bleed, and attacker-controlled lessons.
+6. **Network client:** implicit credential use, SSRF-shaped fetches, and weak destination checks.
+7. **Permission gate:** checks after side effects, approval stored as plain text, and bypasses for "internal" calls.
+
+For each finding, write the exploit path in boring language:
+
+```txt
+Untrusted source -> runtime transform -> privileged action -> missing gate
+```
+
+If you cannot write that path, keep the item as a hardening note, not a vulnerability claim.
+
+<KeyPoints
+  title="The practical rule"
+  items={[
+    'Audit the code path that turns language into authority.',
+    'Treat static findings as a review queue, not proof.',
+    'Patch the control point closest to the side effect.',
+    'Add a regression test that fails when the bypass returns.',
+  ]}
+/>
+
+## Static checks help, but they are noisy
+
+CLAWAUDIT reports a clear signal: agent-specific static rules can catch things general rules miss. The abstract says held-out recall rose from 21.7% to 66.8% for Semgrep and from 13.8% to 75.1% for CodeQL.
+
+That is useful.
+
+It is also not the same as "run scanner, ship fix." Recall-oriented rules over-report by design. A preliminary live-code audit in the paper still required manual triage and semantic filtering before production use.
+
+<CompareGrid
+  title="Weak vs. safer runtime audit"
+  leftLabel="Weak"
+  rightLabel="Safer"
+  rows={[
+    { left: 'Review only prompts and policy prose.', right: 'Review prompt assembly, parsing, dispatch, memory, network, and gates.' },
+    { left: 'Treat every scanner hit as a bug.', right: 'Rank hits by exploit path and reachable authority.' },
+    { left: 'Patch the prompt after a runtime bug.', right: 'Patch the parser, dispatcher, loader, writer, client, or gate.' },
+    { left: 'Trust user approval stored in conversation text.', right: 'Bind approval to a typed decision object checked before side effects.' },
+  ]}
+/>
+
+## Tiny audit prompt
+
+Use this after a scan or source read:
+
+```txt
+Review this local-agent runtime finding.
+
+Return:
+1. Surface: prompt builder / parser / dispatcher / skill loader / memory writer / network client / permission gate.
+2. Untrusted input source.
+3. Privileged action it may influence.
+4. Missing or late control.
+5. Minimal exploit path in one line.
+6. False-positive reason, if likely.
+7. Best fix location in code.
+8. Regression test that would catch it next time.
+```
+
+## Do and don't
+
+<DoDont
+  title="Runtime audit habits"
+  doLabel="Do"
+  dontLabel="Don't"
+  doItems={[
+    'Map authority boundaries before reading individual findings.',
+    'Manually triage scanner output by reachable side effect.',
+    'Require explicit gates for shell, browser, messaging, memory, credentials, and production writes.',
+    'Keep adversarial regression tests beside the runtime code.',
+  ]}
+  dontItems={[
+    'Assume prompt policy is an enforcement mechanism.',
+    'Let skills, memory, or web content enter high-priority instruction slots without labeling.',
+    'Allow broad tool dispatch because the agent is local.',
+    'Publish scanner numbers as safety proof without triage evidence.',
+  ]}
+/>
+
+## Where this fails
+
+This is not a full security program. It will miss bugs that require live state, timing, auth context, or multi-step behavior. It also gets noisy if every tool-shaped string becomes a finding.
+
+So keep the bar practical: a strong finding needs a source, a transform, a reachable privileged action, and a missing control. Local agents deserve that discipline because they run where the damage is close.
+
+## Sources
+
+- [Local LLM Agents as Vulnerable Runtimes: A Source-Code Audit of the Agent Runtime Layer](https://arxiv.org/abs/2606.21071)
+- [arXiv HTML: Local LLM Agents as Vulnerable Runtimes](https://arxiv.org/html/2606.21071)
+- Private Huecki radar artifact: `content-research/radar/2026-06-23.md`
